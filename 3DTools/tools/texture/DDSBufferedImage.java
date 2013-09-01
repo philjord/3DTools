@@ -1,0 +1,771 @@
+package tools.texture;
+
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ImageObserver;
+import java.awt.image.Raster;
+import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.Vector;
+
+/*http://en.wikipedia.org/wiki/S3_Texture_Compression*/
+public class DDSBufferedImage extends BufferedImage
+{
+
+	public static final int BLOCK_SIZE = 4;
+
+	private DDSImage ddsImage;
+
+	private int mipNumber;
+
+	private DDSImage.ImageInfo imageInfo;
+
+	private ByteBuffer buffer;
+
+	private boolean ignoreAlpha = false;
+
+	private int width;
+
+	private int height;
+
+	private String imageName = "";
+
+	/**
+	 * Note non BufferedIamge ARGB might end up not being treated by ref properly so there might be saving to be 
+	 * had to make everythis ARGB but 
+	 * @param ddsImage
+	 * @param mipNumber
+	 */
+	public DDSBufferedImage(DDSImage ddsImage, int mipNumber, String imageName)
+	{
+		super(1, 1, BufferedImage.TYPE_INT_ARGB);
+
+		this.imageName = imageName;
+		this.ddsImage = ddsImage;
+		this.mipNumber = mipNumber;
+		this.imageInfo = ddsImage.getAllMipMaps()[mipNumber];
+		this.width = imageInfo.getWidth();
+		this.height = imageInfo.getHeight();
+
+		// zero sized need to return a valid bufferedimage (should investiage if null could be better)
+		if (width < 1 || height < 1)
+		{
+			this.width = width < 1 ? 1 : width;
+			this.height = height < 1 ? 1 : height;
+		}
+		else
+		{
+			this.buffer = imageInfo.getData();
+			//always ensure little endian
+			buffer.order(ByteOrder.LITTLE_ENDIAN);
+
+			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
+			{
+				if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
+				{
+					//TODO: how do I discover no alpha flag? 
+					//C:\game media\Black Prophecy\Textures\avatar_ai_pilot_f3_05.dds wants no alpha flag
+					//possibly no mips maps indicates this?
+					ignoreAlpha = ddsImage.getNumMipMaps() == 0;
+				}
+				else
+				{
+					System.out.println("Alpha present in DXT1!; mip num = " + mipNumber);
+				}
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2)
+			{
+				System.out.println("DXT2 not supported; mip num = " + mipNumber);
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4)
+			{
+				System.out.println("DXT4 not supported; mip num = " + mipNumber);
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3 || //
+					ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5 || //
+					ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
+					ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
+					ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
+					ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+			{
+				//good
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
+			{
+				System.out.println("D3DFMT_UNKNOWN not supported; mip num = " + mipNumber);
+			}
+			else
+			{
+				System.out.println("not DDS format " + ddsImage.getPixelFormat() + "; mip num = " + mipNumber);
+			}
+		}
+	}
+
+	public BufferedImage convertImage()
+	{
+		//can't use width or height as it's been correcte to 1 already
+		if (imageInfo.getWidth() < 1 || imageInfo.getHeight() < 1)
+		{
+			return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		}
+
+		//prep the buffer
+		buffer.rewind();
+
+		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
+		{
+			//System.out.println("DXT1");
+			if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
+			{
+				//TODO: how do I discover no alpha flag? 
+				//C:\game media\Black Prophecy\Textures\avatar_ai_pilot_f3_05.dds wants no alpha flag
+				//possibly no mips maps indicates this?
+				return decodeDxt1Buffer();
+			}
+			else
+			{
+				System.out.println("Alpha present in DXT1!; mip num = " + mipNumber);
+				// eg retun decompressRGBA_S3TC_DXT1_EXT(ddsImage.getMipMap(mipNumber));
+			}
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3)
+		{
+			return decodeDxt3Buffer();
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+		{
+			return decompressRGBA_S3TC_DXT5_EXT();
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
+		{
+			return decodeR8G8B8();
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+		{
+			return decodeA8R8G8B8();
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
+		{
+			return decodeA8R8G8B8();
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+		{
+			return decodeA16R16G16B16();
+		}
+		System.err.println("BAD DXT format!! " + ddsImage.getPixelFormat());
+		return null;
+	}
+
+	public BufferedImage decodeR8G8B8()
+	{
+		//NOTE disagrees with fixed getType below
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+		int[] pixels = new int[width * height];
+		// reverse to flip Y
+		for (int y = height - 1; y >= 0; y--)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				pixels[(y * width) + x] = ((buffer.get() & 0xff) << 24 | (buffer.get() & 0xff) << 16 | (buffer.get() & 0xff) << 8);
+			}
+		}
+		delegate.setRGB(0, 0, width, height, pixels, 0, width);
+		return delegate;
+	}
+
+	public BufferedImage decodeA8R8G8B8()
+	{
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		int[] pixels = new int[width * height];
+		// reverse to flip Y
+		for (int y = height - 1; y >= 0; y--)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				pixels[(y * width) + x] = buffer.getInt();
+			}
+		}
+		delegate.setRGB(0, 0, width, height, pixels, 0, width);
+		return delegate;
+
+	}
+
+	public BufferedImage decodeA16R16G16B16()
+	{
+		//TODO: this is a dodgy layout here tested good on black prophecy images only		
+		//2&4 good for smalls
+		//2&64 for bigs
+
+		int numBlocksWide = width / 2;
+		int numBlocksHigh = 1;//height / 64;
+
+		// always at least 1x1 tile
+		numBlocksWide = numBlocksWide < 1 ? 1 : numBlocksWide;
+		numBlocksHigh = numBlocksHigh < 1 ? 1 : numBlocksHigh;
+
+		int blockWidth = Math.min(width, 2);
+		int blockHeight = height;//Math.min(height, 64);
+
+		int[] pixels = new int[blockWidth * blockHeight];
+
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		for (int col = 0; col < numBlocksWide; col++)
+		{
+			for (int row = 0; row < numBlocksHigh; row++)
+			{
+				float r = MiniFloat.toFloat((buffer.getShort()));
+				float g = MiniFloat.toFloat((buffer.getShort()));
+				float b = MiniFloat.toFloat((buffer.getShort()));
+				float a = MiniFloat.toFloat((buffer.getShort()));
+				Color c = new Color(r, g, b, a);
+				for (int br = 0; br < blockHeight; br++)
+				{
+					for (int bc = 0; bc < blockWidth; bc++)
+					{
+						// for yUp must flip it so NOT pixels[br  * blockWidth + bc] = c.getRGB();
+						pixels[((blockHeight - 1) - br) * blockWidth + bc] = c.getRGB();
+					}
+				}
+				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
+						blockWidth);
+			}
+		}
+		return delegate;
+	}
+
+	public BufferedImage decodeDxt1Buffer()
+	{
+		int numBlocksWide = width / BLOCK_SIZE;
+		int numBlocksHigh = height / BLOCK_SIZE;
+
+		// always at least 1x1 tile
+		numBlocksWide = numBlocksWide < 1 ? 1 : numBlocksWide;
+		numBlocksHigh = numBlocksHigh < 1 ? 1 : numBlocksHigh;
+
+		int blockWidth = Math.min(width, BLOCK_SIZE);
+		int blockHeight = Math.min(height, BLOCK_SIZE);
+
+		int[] pixels = new int[blockWidth * blockHeight];
+
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		//One copy of table to minimises new calls
+		Color24[] table = new Color24[4];
+		table[0] = new Color24();
+		table[1] = new Color24();
+		table[2] = new Color24();
+		table[3] = new Color24();
+
+		for (int row = 0; row < numBlocksHigh; row++)
+		{
+			for (int col = 0; col < numBlocksWide; col++)
+			{
+				short c0 = buffer.getShort();
+				short c1 = buffer.getShort();
+				int colorIndexMask = buffer.getInt();
+
+				//http://en.wikipedia.org/wiki/S3_Texture_Compression
+				if (ignoreAlpha || !Color24.hasAlphaBit(c0, c1))
+				{
+					Color24[] lookupTable = Color24.expandLookupTable(table, c0, c1);
+					for (int br = 0; br < blockHeight; br++)
+					{
+						for (int bc = 0; bc < blockWidth; bc++)
+						{
+							int k = (br * blockWidth) + bc;
+							int colorIndex = (colorIndexMask >>> k * 2) & 0x03;
+							// for yUp must flip it so NOT pixels[br  * blockWidth + bc] = (0xFF << 24) | lookupTable[colorIndex].pix888;
+							pixels[((blockHeight - 1) - br) * blockWidth + bc] = (0xFF << 24) | lookupTable[colorIndex].pix888;
+						}
+					}
+				}
+				else
+				{
+					Color24[] lookupTable = Color24.expandLookupTableAlphable(table, c0, c1);
+					for (int br = 0; br < blockHeight; br++)
+					{
+						for (int bc = 0; bc < blockWidth; bc++)
+						{
+							int k = (br * blockWidth) + bc;
+							int colorIndex = (colorIndexMask >>> k * 2) & 0x03;
+							int alpha = (colorIndex == 3) ? 0x00 : 0xFF;
+							// for yUp must flip it , so NOT pixels[br  * blockWidth + bc] = (alpha << 24) | lookupTable[colorIndex].pix888;
+							pixels[((blockHeight - 1) - br) * blockWidth + bc] = (alpha << 24) | lookupTable[colorIndex].pix888;
+						}
+					}
+				}
+
+				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
+						blockWidth);
+			}
+		}
+		return delegate;
+	}
+
+	public BufferedImage decodeDxt3Buffer()
+	{
+		int numBlocksWide = width / BLOCK_SIZE;
+		int numBlocksHigh = height / BLOCK_SIZE;
+
+		// always at least 1x1 tile
+		numBlocksWide = numBlocksWide < 1 ? 1 : numBlocksWide;
+		numBlocksHigh = numBlocksHigh < 1 ? 1 : numBlocksHigh;
+
+		int blockWidth = Math.min(width, BLOCK_SIZE);
+		int blockHeight = Math.min(height, BLOCK_SIZE);
+
+		int[] pixels = new int[blockWidth * blockHeight];
+
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		//One copy of table to minimises new calls
+		Color24[] table = new Color24[4];
+		table[0] = new Color24();
+		table[1] = new Color24();
+		table[2] = new Color24();
+		table[3] = new Color24();
+
+		for (int row = 0; row < numBlocksHigh; row++)
+		{
+			for (int col = 0; col < numBlocksWide; col++)
+			{
+				long alphaData = buffer.getLong();
+				short minColor = buffer.getShort();
+				short maxColor = buffer.getShort();
+				int colorIndexMask = buffer.getInt();
+
+				Color24[] lookupTable = Color24.expandLookupTable(table, minColor, maxColor);
+
+				for (int br = 0; br < blockHeight; br++)
+				{
+					for (int bc = 0; bc < blockWidth; bc++)
+					{
+						int k = (br * blockWidth) + bc;
+						int alpha = (int) (alphaData >>> (k * 4)) & 0xF; // Alphas are just 4 bits per pixel
+						alpha <<= 4;
+
+						int colorIndex = (colorIndexMask >>> k * 2) & 0x03;
+
+						Color24 color = lookupTable[colorIndex];
+						int pixel8888 = (alpha << 24) | color.pix888;
+
+						// for yUp must flip it , so NOT pixels[br  * blockWidth + bc] = pixel8888;
+						pixels[((blockHeight - 1) - br) * blockWidth + bc] = pixel8888;
+					}
+				}
+				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
+						blockWidth);
+			}
+
+		}
+		return delegate;
+	}
+
+	//interesting note teh worldwind sdk use the INT_ARGB_PRE type, which might be better
+	// class DXT3Decompressor uses BufferedImage.TYPE_INT_ARGB_PRE, but the web clearly says dont' do this
+	public BufferedImage decompressRGBA_S3TC_DXT5_EXT()
+	{
+		int numBlocksWide = width / BLOCK_SIZE;
+		int numBlocksHigh = height / BLOCK_SIZE;
+
+		// always at least 1x1 tile
+		numBlocksWide = numBlocksWide < 1 ? 1 : numBlocksWide;
+		numBlocksHigh = numBlocksHigh < 1 ? 1 : numBlocksHigh;
+
+		int blockWidth = Math.min(width, BLOCK_SIZE);
+		int blockHeight = Math.min(height, BLOCK_SIZE);
+
+		int[] pixels = new int[blockWidth * blockHeight];
+
+		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+
+		//One copy of table to minimises new calls
+		Color24[] table = new Color24[4];
+		table[0] = new Color24();
+		table[1] = new Color24();
+		table[2] = new Color24();
+		table[3] = new Color24();
+
+		for (int row = 0; row < numBlocksHigh; row++)
+		{
+			for (int col = 0; col < numBlocksWide; col++)
+			{
+				int alpha0 = buffer.get() & 0xff; //unsigned byte
+				int alpha1 = buffer.get() & 0xff; //unsigned byte
+
+				// next 6 bytes are a look up list (note long casts, important!)
+				long alphaBits = (buffer.get() & 0xffL) << 0L //
+						| (buffer.get() & 0xffL) << 8L //
+						| (buffer.get() & 0xffL) << 16L//
+						| (buffer.get() & 0xffL) << 24L //
+						| (buffer.get() & 0xffL) << 32L //
+						| (buffer.get() & 0xffL) << 40L;//
+
+				short minColor = buffer.getShort();
+				short maxColor = buffer.getShort();
+				int colorIndexMask = buffer.getInt();
+
+				Color24[] lookupTable = Color24.expandLookupTable(table, minColor, maxColor);
+
+				for (int br = 0; br < blockHeight; br++)
+				{
+					for (int bc = 0; bc < blockWidth; bc++)
+					{
+						int k = (br * blockWidth) + bc;
+
+						int alphaCode = (int) (alphaBits >> (3 * k) & 0x07); // bottom 3 bits
+
+						int alpha = 0;
+
+						if (alphaCode == 0)
+						{
+							alpha = alpha0;
+						}
+						else if (alphaCode == 1)
+						{
+							alpha = alpha1;
+						}
+						else if (alpha0 > alpha1)
+						{
+							alpha = ((8 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 7;
+						}
+						else
+						{
+							if (alphaCode == 6)
+								alpha = 0;
+							else if (alphaCode == 7)
+								alpha = 255;
+							else
+								alpha = ((6 - alphaCode) * alpha0 + (alphaCode - 1) * alpha1) / 5;
+
+						}
+
+						int colorIndex = (colorIndexMask >>> k * 2) & 0x03;
+
+						Color24 color = lookupTable[colorIndex];
+						int pixel8888 = (alpha << 24) | color.pix888;
+						// for yUp must flip it , so NOT pixels[br  * blockWidth + bc] = pixel8888;
+						pixels[((blockHeight - 1) - br) * blockWidth + bc] = pixel8888;
+					}
+				}
+
+				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
+						blockWidth);
+			}
+
+		}
+
+		return delegate;
+	}
+
+	@Override
+	public Vector<RenderedImage> getSources()
+	{
+		return null;
+	}
+
+	@Override
+	public Object getProperty(String name)
+	{
+		return null;
+	}
+
+	@Override
+	public String[] getPropertyNames()
+	{
+		return null;
+	}
+
+	@Override
+	public ColorModel getColorModel()
+	{
+		return ColorModel.getRGBdefault();
+	}
+
+	@Override
+	public SampleModel getSampleModel()
+	{
+		return ColorModel.getRGBdefault().createCompatibleWritableRaster(1, 1).getSampleModel();
+	}
+
+	@Override
+	public int getWidth()
+	{
+		return width;
+	}
+
+	@Override
+	public int getHeight()
+	{
+		return height;
+	}
+
+	@Override
+	public int getWidth(ImageObserver observer)
+	{
+		return width;
+	}
+
+	@Override
+	public int getHeight(ImageObserver observer)
+	{
+		return height;
+	}
+
+	@Override
+	public int getMinX()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getMinY()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getNumXTiles()
+	{
+		return 1;
+	}
+
+	@Override
+	public int getNumYTiles()
+	{
+		return 1;
+	}
+
+	@Override
+	public int getMinTileX()
+	{
+		return 0;
+	}
+
+	@Override
+	public int getMinTileY()
+	{
+		return 0;
+	}
+
+	//Below are BufferedImage methods***************************************************************************
+	/**
+	 * THIS IS USED BY J3d
+	 * (biType == BufferedImage.TYPE_INT_ARGB) ||
+	    (biType == BufferedImage.TYPE_INT_RGB)
+	    for opto,ised case
+	 * @see java.awt.image.BufferedImage#getRaster()
+	 */
+	@Override
+	public int getType()
+	{
+		return BufferedImage.TYPE_INT_ARGB;
+	}
+
+	/**
+	 * THIS IS USED BY Java3D pipeline
+	 * ((DataBufferInt)bi.getRaster().getDataBuffer()).getData();
+	 * 
+	 * 
+	 * See FontRender or J3DGraphics2DImpl
+	 * @see java.awt.image.BufferedImage#getRaster()
+	 */
+
+	private int getRasterCount = 0;
+
+	//private static int getRasterCountForAll = 0;
+
+	private BufferedImage tenuredImage = null;
+
+	@Override
+	public WritableRaster getRaster()
+	{
+		//http://dxr.mozilla.org/mozilla-central/source/gfx/gl/GLContext.h#l1008
+
+		//com.jogamp.opengl.util.texture.Texture.checkCompressedTextureExtensions(GL gl, TextureData data)
+
+		//getRasterCountForAll++;
+
+		if (tenuredImage != null)
+			return tenuredImage.getRaster();
+
+		getRasterCount++;
+		if (getRasterCount > 1)
+		{
+			if (mipNumber == 0)
+			{
+			//	System.out.println("getRasterCount " + getRasterCount + " all " + getRasterCountForAll + " " + mipNumber + " imageName "
+			//			+ imageName + " this " + this);
+			}
+			tenuredImage = convertImage();
+
+			//now release compressed buffer
+			ddsImage = null;
+			imageInfo = null;
+			buffer = null;
+
+			return tenuredImage.getRaster();
+		}
+
+		return convertImage().getRaster();
+	}
+
+	@Override
+	public int getTileWidth()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getTileHeight()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getTileGridXOffset()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getTileGridYOffset()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public BufferedImage getSubimage(int x, int y, int w, int h)
+	{
+		return convertImage().getSubimage(x, y, w, h);
+	}
+
+	@Override
+	public Raster getTile(int tileX, int tileY)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Raster getData()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Raster getData(Rectangle rect)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public WritableRaster copyData(WritableRaster raster)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public WritableRaster getAlphaRaster()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getRGB(int x, int y)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int[] getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public synchronized void setRGB(int x, int y, int rgb)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public java.awt.Graphics getGraphics()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Graphics2D createGraphics()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isAlphaPremultiplied()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void coerceData(boolean isAlphaPremultiplied)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void setData(Raster r)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean isTileWritable(int tileX, int tileY)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public Point[] getWritableTileIndices()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public boolean hasTileWriters()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public WritableRaster getWritableTile(int tileX, int tileY)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public void releaseWritableTile(int tileX, int tileY)
+	{
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public int getTransparency()
+	{
+		throw new UnsupportedOperationException();
+	}
+
+}
