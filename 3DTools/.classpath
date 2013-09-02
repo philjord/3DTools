@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="src" path="/Tools"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/jftp.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/joalmixer.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/log4j-1.2.9.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/tools.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/j3d/j3d-org-java3d-all.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/j3dcore.jar" sourcepath="E:/Java/3rd party jars/java3d/src"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/j3dutils.jar" sourcepath="E:/Java/3rd party jars/java3d/src"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/vecmath.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
+	<classpathentry kind="lib" path="/external_jars/ext/joal/joal.jar"/>
+	<classpathentry kind="lib" path="/external_jars/ext/joal/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar"/>
+	<classpathentry kind="output" path="output"/>
+</classpath>
