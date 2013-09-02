@@ -16,6 +16,7 @@ public class J3dSimpleImageLoader
 {
 
 	/**
+	 * 
 	 * Return simple non mip mapped texture 2D, not for use with DDS image format
 	 * @param fileName
 	 * @return
