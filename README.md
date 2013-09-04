@@ -1,6 +1,6 @@
-ESMJ3D
+3DTools
 ====
 
-This is the base project containgin cooomon code for each of the 4 TES project for converting the contents of an ESM file 
-into a loadable scene graph and physics sim. On it's own this project does very little, see ElderScrollsExplorer for 
-more information.
+This is a collection of general tools for use with Java3d. This is probably of little use outside my projects. 
+It's not well documented. The most interesting part is probably the dds format loader under tools.texture or
+the java3d swing overlay system under tools3d.swingoverlay
