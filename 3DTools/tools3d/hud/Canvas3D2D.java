@@ -5,8 +5,10 @@ import java.util.ArrayList;
 
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.J3DGraphics2D;
+import javax.media.j3d.Shape3D;
 
 import tools3d.swingoverlay.Panel3D;
+import tools3d.utils.leafnode.Cube;
 
 public class Canvas3D2D extends Canvas3D
 {
@@ -62,21 +64,23 @@ public class Canvas3D2D extends Canvas3D
 		}
 	}
 
-	//private AffineTransform idAT = new AffineTransform();
+	// For reseting teh texture binding in the pipelline (trust me)
+	private static Shape3D trivialShape = new Cube();
 
 	public void postRender()
 	{
+		// Oh my god. Long story short, don't touch this if doing overlays.
+		// Longer version, if the last rendered texture on a canvas3d has a transformation
+		// then calls to the J3DGraphics2D will inherit it. Easy way to ensure last texture is plain, render trival cube.
+		getGraphicsContext3D().draw(trivialShape);
+
 		J3DGraphics2D g = getGraphics2D();
 
-		//AffineTransform saveAT = g.getTransform();
-
-		//TODO:! odd image scrolling effect when looking at animated textures
-		//doesn't help
-		//g.setTransform(idAT);
 		synchronized (elements)
 		{
 			for (HUDElement e : elements)
 			{
+
 				if (e != null && e.isEnabled())
 				{
 					g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
@@ -94,12 +98,6 @@ public class Canvas3D2D extends Canvas3D
 				}
 			}
 		}
-
-		// if removeNotify has been called we might get an exception, the JDesktop internal frames used to cause
-		// this problem but a special internalframe which stubs off the setfocus calls fixes problem
-		g.flush(true);
-
-		//g.setTransform(saveAT);
-
+		g.flush(false);
 	}
 }

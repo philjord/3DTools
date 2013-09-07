@@ -35,6 +35,7 @@ public class CanvasPickRayGen //extends PickTool
 	public CanvasPickRayGen(Canvas3D c)
 	{
 		canvas = c;
+		
 	}
 
 	/** Inquire the canvas to be used for picking operations.
