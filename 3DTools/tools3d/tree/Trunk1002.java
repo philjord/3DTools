@@ -3,6 +3,8 @@ package tools3d.tree;
 import java.io.IOException;
 import java.io.InputStream;
 
+import tools.io.LittleEndianPrimitiveBytes;
+
 public class Trunk1002
 {
 	public String barkTexture2000;
@@ -24,27 +26,27 @@ public class Trunk1002
 	public Trunk1002(InputStream in) throws IOException
 	{
 
-		int id = ByteConvert2.readInt(in);
+		int id = LittleEndianPrimitiveBytes.readInt(in);
 		while (id != 1003)
 		{
 			if (id == 2000)
-				barkTexture2000 = ByteConvert2.readString(in);
+				barkTexture2000 = LittleEndianPrimitiveBytes.readSizedString(in);
 			else if (id == 2001)
-				int2001 = ByteConvert2.readInt(in);
+				int2001 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 2002)
-				byte2002 = ByteConvert2.readByte(in);
+				byte2002 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 2003)
-				int2003 = ByteConvert2.readInt(in);
+				int2003 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 2005)
-				int2005 = ByteConvert2.readInt(in);
+				int2005 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 2006)
-				int2006 = ByteConvert2.readInt(in);
+				int2006 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 2007)
-				int2007 = ByteConvert2.readInt(in);
+				int2007 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 1014)
 				branches1014 = new Branches1014(in);
 
-			id = ByteConvert2.readInt(in);
+			id = LittleEndianPrimitiveBytes.readInt(in);
 		}
 
 		//System.out.println("\t\t " + barkTexture2000);

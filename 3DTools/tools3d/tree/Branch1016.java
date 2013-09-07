@@ -3,6 +3,8 @@ package tools3d.tree;
 import java.io.IOException;
 import java.io.InputStream;
 
+import tools.io.LittleEndianPrimitiveBytes;
+
 public class Branch1016
 {
 	public BezierSpline bezierSpline6000;
@@ -43,49 +45,49 @@ public class Branch1016
 
 	public Branch1016(InputStream in) throws IOException
 	{
-		int id = ByteConvert2.readInt(in);
+		int id = LittleEndianPrimitiveBytes.readInt(in);
 		while (id != 1017)
 		{
 			if (id == 6000)
-				bezierSpline6000 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6000 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6001)
-				bezierSpline6001 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6001 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6002)
-				bezierSpline6002 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6002 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6003)
-				bezierSpline6003 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6003 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6004)
-				bezierSpline6004 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6004 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6005)
-				bezierSpline6005 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6005 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6006)
-				bezierSpline6006 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6006 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6007)
-				bezierSpline6007 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6007 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 			else if (id == 6008)
-				int6008 = ByteConvert2.readInt(in);
+				int6008 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6009)
-				int6009 = ByteConvert2.readInt(in);
+				int6009 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6010)
-				int6010 = ByteConvert2.readInt(in);
+				int6010 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6011)
-				int6011 = ByteConvert2.readInt(in);
+				int6011 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6012)
-				int6012 = ByteConvert2.readInt(in);
+				int6012 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6008)
-				int6008 = ByteConvert2.readInt(in);
+				int6008 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6013)
-				int6013 = ByteConvert2.readInt(in);
+				int6013 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6014)
-				int6014 = ByteConvert2.readInt(in);
+				int6014 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 6015)
-				byte6015 = ByteConvert2.readByte(in);
+				byte6015 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 6016)
-				byte6016 = ByteConvert2.readByte(in);
+				byte6016 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 6017)
-				bezierSpline6017 = new BezierSpline(ByteConvert2.readString(in));
+				bezierSpline6017 = new BezierSpline(LittleEndianPrimitiveBytes.readSizedString(in));
 
-			id = ByteConvert2.readInt(in);
+			id = LittleEndianPrimitiveBytes.readInt(in);
 		}
 
 	}

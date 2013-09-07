@@ -3,6 +3,8 @@ package tools3d.tree;
 import java.io.IOException;
 import java.io.InputStream;
 
+import tools.io.LittleEndianPrimitiveBytes;
+
 public class Sec1004
 {
 	public int int3000;
@@ -29,34 +31,34 @@ public class Sec1004
 
 	public Sec1004(InputStream in) throws IOException
 	{
-		int id = ByteConvert2.readInt(in);
+		int id = LittleEndianPrimitiveBytes.readInt(in);
 		while (id != 1009)
 		{
 
 			if (id == 3000)
-				int3000 = ByteConvert2.readInt(in);
+				int3000 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3001)
-				int3001 = ByteConvert2.readInt(in);
+				int3001 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3002)
-				int3002 = ByteConvert2.readInt(in);
+				int3002 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3003)
-				byte3003 = ByteConvert2.readByte(in);
+				byte3003 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 3004)
-				int3004 = ByteConvert2.readInt(in);
+				int3004 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3005)
-				int3005 = ByteConvert2.readInt(in);
+				int3005 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3006)
-				byte3006 = ByteConvert2.readByte(in);
+				byte3006 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 3007)
-				int3007 = ByteConvert2.readInt(in);
+				int3007 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3008)
-				int3008 = ByteConvert2.readInt(in);
+				int3008 = LittleEndianPrimitiveBytes.readInt(in);
 			else if (id == 3009)
-				byte3009 = ByteConvert2.readByte(in);
+				byte3009 = LittleEndianPrimitiveBytes.readByte(in);
 			else if (id == 3010)
-				int3010 = ByteConvert2.readInt(in);
+				int3010 = LittleEndianPrimitiveBytes.readInt(in);
 
-			id = ByteConvert2.readInt(in);
+			id = LittleEndianPrimitiveBytes.readInt(in);
 		}
 	}
 }

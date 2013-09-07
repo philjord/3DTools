@@ -12,6 +12,8 @@ import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
+import tools.io.LittleEndianPrimitiveBytes;
+
 /**
  * @author Administrator
  * 
@@ -80,7 +82,7 @@ public class TreeLoader
 		{
 			BufferedInputStream in = new BufferedInputStream(new FileInputStream(file), (int) (file.length() + 10));
 			SptFileData sptFileData = new SptFileData();
-			int sectionId = ByteConvert2.readInt(in);
+			int sectionId = LittleEndianPrimitiveBytes.readInt(in);
 			while (sectionId != 1 && sectionId != 0)
 			{
 				System.out.println("section to load " + sectionId);
@@ -113,7 +115,7 @@ public class TreeLoader
 					sptFileData.sec1001 = new Sec1001(in);
 				}
 
-				sectionId = ByteConvert2.readInt(in);
+				sectionId = LittleEndianPrimitiveBytes.readInt(in);
 			}
 			return sptFileData;
 		}

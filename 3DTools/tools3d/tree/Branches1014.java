@@ -3,6 +3,8 @@ package tools3d.tree;
 import java.io.IOException;
 import java.io.InputStream;
 
+import tools.io.LittleEndianPrimitiveBytes;
+
 public class Branches1014
 {
 	public int countOfBranches;
@@ -11,10 +13,10 @@ public class Branches1014
 
 	public Branches1014(InputStream in) throws IOException
 	{
-		countOfBranches = ByteConvert2.readInt(in);
+		countOfBranches = LittleEndianPrimitiveBytes.readInt(in);
 		branches = new Branch1016[countOfBranches];
 		int idx = 0;
-		int id = ByteConvert2.readInt(in);
+		int id = LittleEndianPrimitiveBytes.readInt(in);
 		while (id != 1015)
 		{
 
@@ -23,7 +25,7 @@ public class Branches1014
 				branches[idx] = new Branch1016(in);
 				idx++;
 			}
-			id = ByteConvert2.readInt(in);
+			id = LittleEndianPrimitiveBytes.readInt(in);
 		}
 	}
 }
