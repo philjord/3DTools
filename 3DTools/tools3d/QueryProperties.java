@@ -83,7 +83,7 @@ public class QueryProperties extends javax.swing.JFrame
 
 	}
 
-	/** Creates new form QueryProperties */
+	
 	public QueryProperties()
 	{
 		initComponents();
