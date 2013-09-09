@@ -149,8 +149,8 @@ public class Canvas3D2D extends Canvas3D
 
 	private void screenResized()
 	{
-		this.setSize(1024, 1024);
-		System.out.println("screenResized and forced to 1024 by 1024 in Canvas2D3D, until I get the ratio perfect");
+		//this.setSize(1024, 1024);
+		//System.out.println("screenResized and forced to 1024 by 1024 in Canvas2D3D, until I get the ratio perfect");
 		System.out.println("width " + this.getWidth());
 		System.out.println("height " + this.getHeight());
 	}
