@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path=""/>
+	<classpathentry excluding="src/" kind="src" path=""/>
+	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="/Tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jftp.jar"/>
@@ -14,7 +15,7 @@
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
-	<classpathentry kind="lib" path="/external_jars/ext/joal/joal.jar"/>
+	<classpathentry kind="lib" path="/external_jars/ext/jogl/jogl-all.jar"/>
 	<classpathentry kind="lib" path="/external_jars/ext/joal/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar"/>
