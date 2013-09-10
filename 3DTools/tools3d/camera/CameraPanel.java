@@ -8,8 +8,8 @@ import java.awt.GridLayout;
 import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.swing.JPanel;
 
-import tools3d.hud.Canvas3D2D;
-import tools3d.swingoverlay.Panel3D;
+import tools3d.mixed3d2d.Canvas3D2D;
+import tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.universe.VisualPhysicalUniverse;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;

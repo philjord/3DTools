@@ -17,7 +17,6 @@ import javax.vecmath.Vector3f;
 
 import tools3d.environment.RainyArea;
 import tools3d.environment.sky.SkySphere;
-import tools3d.hud.HUD;
 import tools3d.utils.Utils3D;
 
 import com.sun.j3d.utils.universe.PlatformGeometry;
@@ -154,11 +153,6 @@ public class DefaultUniverse extends SimpleUniverse
 		addBranchGraph(environmentGroup);
 		addBranchGraph(behaviorGroup);
 		addBranchGraph(terrainGroup);
-	}
-
-	public void setHUD(HUD hud)
-	{
-		getViewingPlatform().getPlatformGeometry().addChild(hud);
 	}
 
 	public BranchGroup getTerrainBranch()
