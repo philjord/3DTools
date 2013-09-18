@@ -1,4 +1,4 @@
-package tools3d.navigation.picking;
+package tools3d.navigation.rules.deprecated.picking;
 
 import java.util.ArrayList;
 

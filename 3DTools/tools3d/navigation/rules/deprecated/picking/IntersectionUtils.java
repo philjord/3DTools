@@ -1,4 +1,4 @@
-package tools3d.navigation.picking;
+package tools3d.navigation.rules.deprecated.picking;
 
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;

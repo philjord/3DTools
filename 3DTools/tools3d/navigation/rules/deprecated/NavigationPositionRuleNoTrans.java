@@ -1,4 +1,4 @@
-package tools3d.navigation.rules;
+package tools3d.navigation.rules.deprecated;
 
 import javax.vecmath.Vector3f;
 

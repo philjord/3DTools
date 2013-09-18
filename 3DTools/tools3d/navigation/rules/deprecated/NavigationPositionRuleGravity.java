@@ -1,4 +1,4 @@
-package tools3d.navigation.rules;
+package tools3d.navigation.rules.deprecated;
 
 import javax.media.j3d.BranchGroup;
 import javax.vecmath.Point3d;

@@ -1,4 +1,4 @@
-package tools3d.navigation.rules;
+package tools3d.navigation.rules.deprecated;
 
 import java.util.ArrayList;
 
@@ -9,8 +9,8 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
-import tools3d.navigation.picking.CorrectCylinderPicker;
-import tools3d.navigation.picking.IntersectionUtils;
+import tools3d.navigation.rules.deprecated.picking.CorrectCylinderPicker;
+import tools3d.navigation.rules.deprecated.picking.IntersectionUtils;
 
 import com.sun.j3d.utils.picking.PickIntersection;
 import com.sun.j3d.utils.picking.PickResult;

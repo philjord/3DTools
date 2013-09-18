@@ -1,4 +1,4 @@
-package tools3d.navigation.rules.debug;
+package tools3d.navigation.rules.deprecated.debug;
 
 import java.awt.GridLayout;
 
@@ -18,8 +18,8 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
-import tools3d.navigation.picking.CorrectCylinderPicker;
-import tools3d.navigation.rules.NavigationPositionRule;
+import tools3d.navigation.rules.deprecated.NavigationPositionRule;
+import tools3d.navigation.rules.deprecated.picking.CorrectCylinderPicker;
 import tools3d.universe.VisualPhysicalUniverse;
 import tools3d.utils.PhysAppearance;
 import tools3d.utils.scenegraph.EasyTransformGroup;

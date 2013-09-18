@@ -2,11 +2,9 @@ package tools3d.navigation;
 
 import java.util.Vector;
 
-import javax.media.j3d.Transform3D;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-import tools3d.navigation.rules.NavigationPositionRule;
 import tools3d.navigation.rules.NavigationRotationRule;
 import tools3d.utils.YawPitch;
 
@@ -14,11 +12,15 @@ import tools3d.utils.YawPitch;
  * 
  * Note another object must call process on a regular basis for the processor to run this is normally
  * NavigationTemporalBehaviour, but could be a simple thread
+ * This processor canonly be used for rotational constraints, all transslational rules
+ * should use the JBullet processor 
  * 
  * @author Administrator
  * 
  */
-public class NavigationProcessor implements NavigationProcessorInterface
+
+//TODO: properly split NavigationProcessorInterface (bullet and this), so the 2 are used in tandem nicely
+public class NavigationProcessorRotation implements NavigationProcessorInterface
 {
 	/** The source and destination for transform changes */
 	private AvatarLocation avatarLocation;
@@ -36,36 +38,14 @@ public class NavigationProcessor implements NavigationProcessorInterface
 	/** The absolute rotation left/right */
 	private float rotationX = 0;
 
-	/** The amount to translate the view in coords per axis per second */
-	private float zChangePerSec = 0; // move
-
-	private float xChangePerSec = 0; // straf
-
-	private float yChangePerSec = 0; // float
-
 	// NOTE not a listener list, as this rules are not simply listening
-	private Vector<NavigationPositionRule> navigationPositionRules = new Vector<NavigationPositionRule>();
-
 	private Vector<NavigationRotationRule> navigationRotationRules = new Vector<NavigationRotationRule>();
 
 	private boolean active = false;
 
-	public NavigationProcessor(AvatarLocation avatarLocation)
+	public NavigationProcessorRotation(AvatarLocation avatarLocation)
 	{
 		this.avatarLocation = avatarLocation;
-	}
-
-	public void addNavigationPositionRule(NavigationPositionRule navigationPositionRule)
-	{
-		if (!navigationPositionRules.contains(navigationPositionRule))
-		{
-			navigationPositionRules.add(navigationPositionRule);
-		}
-	}
-
-	public void removeNavigationPositionRule(NavigationPositionRule navigationPositionRule)
-	{
-		navigationPositionRules.remove(navigationPositionRule);
 	}
 
 	public void addNavigationRotationRule(NavigationRotationRule navigationRotationRule)
@@ -79,24 +59,6 @@ public class NavigationProcessor implements NavigationProcessorInterface
 	public void removeNavigationRotationRule(NavigationRotationRule navigationRotationRule)
 	{
 		navigationRotationRules.remove(navigationRotationRule);
-	}
-
-	@Override
-	public void setZChange(float zChangeMulti)
-	{
-		zChangePerSec = zChangeMulti;
-	}
-
-	@Override
-	public void setXChange(float xChangeMulti)
-	{
-		xChangePerSec = xChangeMulti;
-	}
-
-	@Override
-	public void setYChange(float yChangeMulti)
-	{
-		yChangePerSec = yChangeMulti;
 	}
 
 	@Override
@@ -123,17 +85,11 @@ public class NavigationProcessor implements NavigationProcessorInterface
 	/** starting rotation*/
 	private Quat4f avatarRot = new Quat4f();
 
-	/** A working value for the current frame's translation of the eye */
-	private Vector3f oneFrameTranslation = new Vector3f();
-
 	/** A working value for the current frame's rotation of the eye */
 	private Quat4f desiredRot = new Quat4f();
 
 	/** a temp   */
 	private YawPitch tempYawPitch = new YawPitch();
-
-	/** a temp */
-	private Transform3D tempRotator = new Transform3D();
 
 	@Override
 	public void process(long timeElapsedSinceLastProcess)
@@ -192,40 +148,6 @@ public class NavigationProcessor implements NavigationProcessorInterface
 					}
 				}
 
-				if (xChangePerSec != 0 || yChangePerSec != 0 || zChangePerSec != 0)
-				{
-					// *********TRANSLATION HANDLING ****************
-
-					oneFrameTranslation.set(xChangePerSec, yChangePerSec, -zChangePerSec);// -ve z is forward
-					oneFrameTranslation.scale(motionDelay);
-					// NOTE the below removes the rotX (pitch) so flying doesn't agree with this
-					// we need to translate the local x,y,z moves on the current axis, but without any pitch, as we are not
-					// flying yet.
-					tempYawPitch.set(desiredRot);
-					tempRotator.rotY(tempYawPitch.getYaw());
-					tempRotator.transform(oneFrameTranslation);
-
-				}
-				else
-				{
-					oneFrameTranslation.set(0, 0, 0);
-				}
-
-				// *************APPLY TRANSLATION RULES*************
-
-				// apply the various rules, NOTE these are in order, the output from one is the input to the next
-				for (NavigationPositionRule npr : navigationPositionRules)
-				{
-					if (npr.isActive())
-					{
-						oneFrameTranslation = npr.applyRule(oneFrameTranslation, avatarTranslation);
-					}
-				}
-
-				// *************APPLY CHANGE*************
-				// move the translation by the one frame change
-				avatarTranslation.add(oneFrameTranslation);
-
 				// set the location back at the avatar location
 				avatarLocation.set(desiredRot, avatarTranslation);
 
@@ -243,6 +165,26 @@ public class NavigationProcessor implements NavigationProcessorInterface
 	public void setActive(boolean active)
 	{
 		this.active = active;
+	}
+
+	@Override
+	public void setZChange(float fastForwardRate)
+	{
+		throw new UnsupportedOperationException();
+
+	}
+
+	@Override
+	public void setXChange(float f)
+	{
+		throw new UnsupportedOperationException();
+
+	}
+
+	@Override
+	public void setYChange(float verticalRate)
+	{
+		throw new UnsupportedOperationException();
 	}
 
 }
