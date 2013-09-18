@@ -9,3 +9,5 @@ A dds format loader under tools.texture
 A java3d swing overlay system under tools3d.mixed2d3d
 
 Various Camera systems for Java3d (head Trailer, birdseye) under tools3d.camera
+
+A change?
