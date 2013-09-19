@@ -24,7 +24,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import tools3d.audio.SoundEngine;
+import tools3d.audio.SimpleSounds;
 import tools3d.utils.FlippableAlpha;
 import tools3d.utils.LockStepTranslationBehavior;
 import tools3d.utils.Utils3D;
@@ -213,7 +213,7 @@ public class RainyArea extends BranchGroup implements LocationUpdateListener
 
 		if (rainySound == null)
 		{
-			rainySound = SoundEngine.createBackgroundSound("media/sounds/rain.wav");
+			rainySound = SimpleSounds.createBackgroundSound("media/sounds/rain.wav");
 			rainySound.setCapability(BranchGroup.ALLOW_DETACH);
 			addChild(rainySound);
 		}

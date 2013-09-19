@@ -1,8 +1,5 @@
 package tools3d.audio;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-
 import javax.media.j3d.BackgroundSound;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -13,61 +10,14 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
-import javazoom.jl.decoder.JavaLayerException;
-import javazoom.jl.player.AudioDevice;
-import javazoom.jl.player.FactoryRegistry;
-import javazoom.jl.player.Player;
+/**NOTE! this string is a URL this is how you specify a relative url.
+*MediaContainer sample = new MediaContainer("file:media/sounds/factCREAK.au");
+*
+*Play an mp3 lik this JLayerPlayer.playMP3("resources/sounds/Known as Dune.mp3");
+*/
 
-//NOTE! this string is a URL this is how you specify a relative url.
-//MediaContainer sample = new MediaContainer("file:media/sounds/factCREAK.au");		 
-
-public class SoundEngine extends BranchGroup
+public class SimpleSounds
 {
-	// the name of an mp3 to play
-	private String soundTrack = "media/music/Tribute.mp3";
-
-	public SoundEngine()
-	{
-		if (false)
-			playMP3(soundTrack);
-	}
-
-	public void playMP3(String musicTrack)
-	{
-
-		// just a nice sound track please in a new thread too.  
-		try
-		{
-			FileInputStream fin = new FileInputStream(musicTrack);
-			BufferedInputStream bin = new BufferedInputStream(fin);
-
-			AudioDevice audioDevice = FactoryRegistry.systemRegistry().createAudioDevice();
-			final Player player = new Player(bin, audioDevice);
-
-			// play() is a blocking call
-			Thread t = new Thread()
-			{
-				public void run()
-				{
-					try
-					{
-						player.play();
-					}
-					catch (JavaLayerException e)
-					{
-						System.out.println(e);
-					}
-				}
-			};
-			t.setDaemon(true);
-			t.start();
-		}
-		catch (Exception ex)
-		{
-			System.out.println("Problem playing file " + musicTrack + " " + ex);
-		}
-
-	}
 
 	public static BranchGroup createPointSound(String soundURL)
 	{
