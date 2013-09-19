@@ -9,7 +9,7 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Vector3f;
 
 import tools3d.utils.Utils3D;
-import tools3d.utils.scenegraph.old.SimpleTG;
+import tools3d.utils.scenegraph.SimpleTransformGroup;
 
 public class MessageBillboard extends BranchGroup
 {
@@ -26,11 +26,11 @@ public class MessageBillboard extends BranchGroup
 
 	private MyText2D superText;
 
-	private SimpleTG mainTrans = new SimpleTG(new Vector3f(0, 0, 0));
+	private SimpleTransformGroup mainTrans = new SimpleTransformGroup(new Vector3f(0, 0, 0));
 
-	private SimpleTG subTrans = new SimpleTG(new Vector3f(0, -1, 0));
+	private SimpleTransformGroup subTrans = new SimpleTransformGroup(new Vector3f(0, -1, 0));
 
-	private SimpleTG superTrans = new SimpleTG(new Vector3f(0, 1, 0));
+	private SimpleTransformGroup superTrans = new SimpleTransformGroup(new Vector3f(0, 1, 0));
 
 	private TransformGroup billTrans = new TransformGroup();
 

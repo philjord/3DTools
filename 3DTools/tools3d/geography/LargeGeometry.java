@@ -16,8 +16,6 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import tools3d.utils.BranchGroupPrecache;
-
 import com.sun.j3d.utils.geometry.GeometryInfo;
 import com.sun.j3d.utils.geometry.Stripifier;
 import com.sun.j3d.utils.picking.PickIntersection;
@@ -53,231 +51,222 @@ public class LargeGeometry implements HeightMap
 
 	private float spaceSizeZ = 0;
 
-	public LargeGeometry(int numSpaceX, int numSpaceY, int numSpaceZ, Shape3D sourceShape, String precacheName)
+	public LargeGeometry(int numSpaceX, int numSpaceY, int numSpaceZ, Shape3D sourceShape)
 	{
 		long start = System.currentTimeMillis();
 		this.numSpaceX = numSpaceX;
 		this.numSpaceY = numSpaceY;
 		this.numSpaceZ = numSpaceZ;
 
-		if (precacheName == null || !loadFromPrecache(precacheName))
+		app = sourceShape.getAppearance();
+
+		ArrayList<Triangle>[][][] subSpacesTriangles = new ArrayList[numSpaceX][numSpaceY][numSpaceZ];
+
+		if (sourceShape.numGeometries() != 1)
 		{
-			app = sourceShape.getAppearance();
-
-			ArrayList<Triangle>[][][] subSpacesTriangles = new ArrayList[numSpaceX][numSpaceY][numSpaceZ];
-
-			if (sourceShape.numGeometries() != 1)
-			{
-				System.out.println("More than one geometry, just using the 0th");
-			}
-			// Let's just assume the first geometry is the one we want, fuck it.
-			Geometry geometry = sourceShape.getGeometry(0);
-			if (geometry != null)
-			{
-				if (geometry instanceof TriangleStripArray)
-				{
-					TriangleStripArray tsa = (TriangleStripArray) geometry;
-					float[] coords = null;
-					float[] normals = null;
-
-					boolean hasNormals = (tsa.getVertexFormat() & GeometryArray.NORMALS) != 0;
-					boolean hasCoords = (tsa.getVertexFormat() & GeometryArray.COORDINATES) != 0;
-					// boolean hasColors3 = (tsa.getVertexFormat() & GeometryArray.COLOR_3) != 0;
-					// boolean hasColors4 = (tsa.getVertexFormat() & GeometryArray.COLOR_4) != 0;
-
-					// boolean hasTextureCoord2 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_2) != 0;
-					// boolean hasTextureCoord3 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_3) != 0;
-					// boolean hasTextureCoord4 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_4) != 0;
-
-					// TODO: there are many possible formats when interleaved, I am assuming normals and coords only
-					// if interleaved is true we need to do some hanky panky
-					if ((tsa.getVertexFormat() & GeometryArray.INTERLEAVED) != 0)
-					{
-						/*
-						 * If interleaved is true but NIO is false, then you get the interleaved float array by calling
-						 * getInterleavedVertices(). You have to examine the vertex format to determine what's included
-						 * in each vertex -- the texture data comes first, followed by the color, then the normal, then
-						 * the vertex coordinates.
-						 */
-
-						/*
-						 * System.out.println( "hasNormals " + hasNormals + " hasCoords " + hasCoords + " hasColors3 " +
-						 * hasColors3 + " hasColors4 " + hasColors4);
-						 * 
-						 * System.out.println( "hasTextureCoord2 " + hasTextureCoord2 + " hasTextureCoord3 " +
-						 * hasTextureCoord3 + " hasTextureCoord4 " + hasTextureCoord4);
-						 */
-						if (hasCoords)
-						{
-							coords = new float[tsa.getVertexCount() * 3];
-							float[] interleavedSource = tsa.getInterleavedVertices();
-							int idx = 0;
-							if (hasNormals)
-							{
-
-								normals = new float[tsa.getVertexCount() * 3];
-								// note assume not texcoordinate 2
-								for (int i = 0; i < interleavedSource.length; i += 6)
-								{
-									normals[idx] = interleavedSource[i];
-									coords[idx] = interleavedSource[i + 3];
-									idx++;
-									normals[idx] = interleavedSource[i + 1];
-									coords[idx] = interleavedSource[i + 4];
-									idx++;
-									normals[idx] = interleavedSource[i + 2];
-									coords[idx] = interleavedSource[i + 5];
-									idx++;
-								}
-
-							}
-							else
-							{
-								normals = new float[tsa.getVertexCount() * 3];
-								// note assume texcoordinate 2
-								for (int i = 0; i < interleavedSource.length; i += 5)
-								{
-									coords[idx] = interleavedSource[i + 2];
-									normals[idx] = 0;
-									idx++;
-									coords[idx] = interleavedSource[i + 3];
-									normals[idx] = 1;
-									idx++;
-									coords[idx] = interleavedSource[i + 4];
-									normals[idx] = 0;
-									idx++;
-								}
-							}
-						}
-
-						System.out.println("uninterleaved " + (System.currentTimeMillis() - start));
-					}
-					else
-					{
-						coords = tsa.getCoordRefFloat();
-						normals = tsa.getNormalRefFloat();
-					}
-
-					// lets find out min and maxes
-					for (int i = 0; i < coords.length; i += 3)
-					{
-						minX = coords[i] < minX ? coords[i] : minX;
-						maxX = coords[i] > maxX ? coords[i] : maxX;
-						minY = coords[i + 1] < minY ? coords[i + 1] : minY;
-						maxY = coords[i + 1] > maxY ? coords[i + 1] : maxY;
-						minZ = coords[i + 2] < minZ ? coords[i + 2] : minZ;
-						maxZ = coords[i + 2] > maxZ ? coords[i + 2] : maxZ;
-					}
-					// now to avoid troublesome calcs later
-					minX -= 1;
-					maxX += 1;
-					minY -= 1;
-					maxY += 1;
-					minZ -= 1;
-					maxZ += 1;
-
-					spaceSizeX = (maxX - minX) / numSpaceX;
-					spaceSizeY = (maxY - minY) / numSpaceY;
-					spaceSizeZ = (maxZ - minZ) / numSpaceZ;
-
-					int[] stripVCount = new int[tsa.getNumStrips()];
-					tsa.getStripVertexCounts(stripVCount);
-
-					// right now let's go through each vertex and which every subspace it falls in add
-					// the all three triangles it represents are added to the subspace.
-
-					int stripStartCoordIdx = 0;
-					Point3f p = new Point3f();
-
-					for (int stripIdx = 0; stripIdx < stripVCount.length; stripIdx++)
-					{
-						for (int i = 0; i < stripVCount[stripIdx] * 3; i += 3)
-						{
-							int currentCoord = stripStartCoordIdx + i;
-							p.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
-							// now work out which subspace p is in
-							// get dist from min then div that by space size
-							int xSpaceIdx = (int) Math.floor((p.x - minX) / spaceSizeX);
-							int ySpaceIdx = (int) Math.floor((p.y - minY) / spaceSizeY);
-							int zSpaceIdx = (int) Math.floor((p.z - minZ) / spaceSizeZ);
-
-							if (subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx] == null)
-							{
-								subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx] = new ArrayList<Triangle>();
-							}
-
-							ArrayList<Triangle> spaceVector = subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx];
-
-							// now attach the 3 (or 2 or 1) tris to that geometryarray
-							// which are v, v+1, v+2
-							// v-1, v, v+1
-							// v-2, v-1, v
-							// note vertexes not coords
-
-							if (i < (stripVCount[stripIdx] * 3) - 8)
-							{
-								Triangle t1 = new Triangle();
-								t1.v1.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
-								t1.v2.set(coords[currentCoord + 3], coords[currentCoord + 4], coords[currentCoord + 5]);
-								t1.v3.set(coords[currentCoord + 6], coords[currentCoord + 7], coords[currentCoord + 8]);
-
-								t1.n1.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
-								t1.n2.set(normals[currentCoord + 3], normals[currentCoord + 4], normals[currentCoord + 5]);
-								t1.n3.set(normals[currentCoord + 6], normals[currentCoord + 7], normals[currentCoord + 8]);
-
-								spaceVector.add(t1);
-							}
-
-							if (i > 2 && i < (stripVCount[stripIdx] * 3) - 5)
-							{
-								Triangle t2 = new Triangle();
-								t2.v1.set(coords[currentCoord - 3], coords[currentCoord - 2], coords[currentCoord - 1]);
-								t2.v2.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
-								t2.v3.set(coords[currentCoord + 3], coords[currentCoord + 4], coords[currentCoord + 5]);
-
-								t2.n1.set(normals[currentCoord - 3], normals[currentCoord - 2], normals[currentCoord - 1]);
-								t2.n2.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
-								t2.n3.set(normals[currentCoord + 3], normals[currentCoord + 4], normals[currentCoord + 5]);
-
-								spaceVector.add(t2);
-							}
-
-							if (i > 5)
-							{
-								Triangle t3 = new Triangle();
-								t3.v1.set(coords[currentCoord - 6], coords[currentCoord - 5], coords[currentCoord - 4]);
-								t3.v2.set(coords[currentCoord - 3], coords[currentCoord - 2], coords[currentCoord - 1]);
-								t3.v3.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
-
-								t3.n1.set(normals[currentCoord - 6], normals[currentCoord - 5], normals[currentCoord - 4]);
-								t3.n2.set(normals[currentCoord - 3], normals[currentCoord - 2], normals[currentCoord - 1]);
-								t3.n3.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
-
-								spaceVector.add(t3);
-							}
-
-						}
-						stripStartCoordIdx += stripVCount[stripIdx] * 3;
-					}
-				}
-				System.out.println("starting conversion " + (System.currentTimeMillis() - start));
-				// now covert from the rough vector of triangles to a real geomertry in the subspaces
-				subSpaces = convert(subSpacesTriangles);
-
-				if (precacheName != null)
-				{
-					// cache it up
-					addToPrecache(precacheName);
-				}
-
-			}
-			else
-			{
-				System.out.println("geometry 0 is null or not trianglestriparray " + geometry);
-			}
-
-			System.out.println("Geomtery indexing took " + (System.currentTimeMillis() - start));
+			System.out.println("More than one geometry, just using the 0th");
 		}
+		// Let's just assume the first geometry is the one we want, fuck it.
+		Geometry geometry = sourceShape.getGeometry(0);
+		if (geometry != null)
+		{
+			if (geometry instanceof TriangleStripArray)
+			{
+				TriangleStripArray tsa = (TriangleStripArray) geometry;
+				float[] coords = null;
+				float[] normals = null;
+
+				boolean hasNormals = (tsa.getVertexFormat() & GeometryArray.NORMALS) != 0;
+				boolean hasCoords = (tsa.getVertexFormat() & GeometryArray.COORDINATES) != 0;
+				// boolean hasColors3 = (tsa.getVertexFormat() & GeometryArray.COLOR_3) != 0;
+				// boolean hasColors4 = (tsa.getVertexFormat() & GeometryArray.COLOR_4) != 0;
+
+				// boolean hasTextureCoord2 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_2) != 0;
+				// boolean hasTextureCoord3 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_3) != 0;
+				// boolean hasTextureCoord4 = (tsa.getVertexFormat() & GeometryArray.TEXTURE_COORDINATE_4) != 0;
+
+				// TODO: there are many possible formats when interleaved, I am assuming normals and coords only
+				// if interleaved is true we need to do some hanky panky
+				if ((tsa.getVertexFormat() & GeometryArray.INTERLEAVED) != 0)
+				{
+					/*
+					 * If interleaved is true but NIO is false, then you get the interleaved float array by calling
+					 * getInterleavedVertices(). You have to examine the vertex format to determine what's included
+					 * in each vertex -- the texture data comes first, followed by the color, then the normal, then
+					 * the vertex coordinates.
+					 */
+
+					/*
+					 * System.out.println( "hasNormals " + hasNormals + " hasCoords " + hasCoords + " hasColors3 " +
+					 * hasColors3 + " hasColors4 " + hasColors4);
+					 * 
+					 * System.out.println( "hasTextureCoord2 " + hasTextureCoord2 + " hasTextureCoord3 " +
+					 * hasTextureCoord3 + " hasTextureCoord4 " + hasTextureCoord4);
+					 */
+					if (hasCoords)
+					{
+						coords = new float[tsa.getVertexCount() * 3];
+						float[] interleavedSource = tsa.getInterleavedVertices();
+						int idx = 0;
+						if (hasNormals)
+						{
+
+							normals = new float[tsa.getVertexCount() * 3];
+							// note assume not texcoordinate 2
+							for (int i = 0; i < interleavedSource.length; i += 6)
+							{
+								normals[idx] = interleavedSource[i];
+								coords[idx] = interleavedSource[i + 3];
+								idx++;
+								normals[idx] = interleavedSource[i + 1];
+								coords[idx] = interleavedSource[i + 4];
+								idx++;
+								normals[idx] = interleavedSource[i + 2];
+								coords[idx] = interleavedSource[i + 5];
+								idx++;
+							}
+
+						}
+						else
+						{
+							normals = new float[tsa.getVertexCount() * 3];
+							// note assume texcoordinate 2
+							for (int i = 0; i < interleavedSource.length; i += 5)
+							{
+								coords[idx] = interleavedSource[i + 2];
+								normals[idx] = 0;
+								idx++;
+								coords[idx] = interleavedSource[i + 3];
+								normals[idx] = 1;
+								idx++;
+								coords[idx] = interleavedSource[i + 4];
+								normals[idx] = 0;
+								idx++;
+							}
+						}
+					}
+
+					System.out.println("uninterleaved " + (System.currentTimeMillis() - start));
+				}
+				else
+				{
+					coords = tsa.getCoordRefFloat();
+					normals = tsa.getNormalRefFloat();
+				}
+
+				// lets find out min and maxes
+				for (int i = 0; i < coords.length; i += 3)
+				{
+					minX = coords[i] < minX ? coords[i] : minX;
+					maxX = coords[i] > maxX ? coords[i] : maxX;
+					minY = coords[i + 1] < minY ? coords[i + 1] : minY;
+					maxY = coords[i + 1] > maxY ? coords[i + 1] : maxY;
+					minZ = coords[i + 2] < minZ ? coords[i + 2] : minZ;
+					maxZ = coords[i + 2] > maxZ ? coords[i + 2] : maxZ;
+				}
+				// now to avoid troublesome calcs later
+				minX -= 1;
+				maxX += 1;
+				minY -= 1;
+				maxY += 1;
+				minZ -= 1;
+				maxZ += 1;
+
+				spaceSizeX = (maxX - minX) / numSpaceX;
+				spaceSizeY = (maxY - minY) / numSpaceY;
+				spaceSizeZ = (maxZ - minZ) / numSpaceZ;
+
+				int[] stripVCount = new int[tsa.getNumStrips()];
+				tsa.getStripVertexCounts(stripVCount);
+
+				// right now let's go through each vertex and which every subspace it falls in add
+				// the all three triangles it represents are added to the subspace.
+
+				int stripStartCoordIdx = 0;
+				Point3f p = new Point3f();
+
+				for (int stripIdx = 0; stripIdx < stripVCount.length; stripIdx++)
+				{
+					for (int i = 0; i < stripVCount[stripIdx] * 3; i += 3)
+					{
+						int currentCoord = stripStartCoordIdx + i;
+						p.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
+						// now work out which subspace p is in
+						// get dist from min then div that by space size
+						int xSpaceIdx = (int) Math.floor((p.x - minX) / spaceSizeX);
+						int ySpaceIdx = (int) Math.floor((p.y - minY) / spaceSizeY);
+						int zSpaceIdx = (int) Math.floor((p.z - minZ) / spaceSizeZ);
+
+						if (subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx] == null)
+						{
+							subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx] = new ArrayList<Triangle>();
+						}
+
+						ArrayList<Triangle> spaceVector = subSpacesTriangles[xSpaceIdx][ySpaceIdx][zSpaceIdx];
+
+						// now attach the 3 (or 2 or 1) tris to that geometryarray
+						// which are v, v+1, v+2
+						// v-1, v, v+1
+						// v-2, v-1, v
+						// note vertexes not coords
+
+						if (i < (stripVCount[stripIdx] * 3) - 8)
+						{
+							Triangle t1 = new Triangle();
+							t1.v1.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
+							t1.v2.set(coords[currentCoord + 3], coords[currentCoord + 4], coords[currentCoord + 5]);
+							t1.v3.set(coords[currentCoord + 6], coords[currentCoord + 7], coords[currentCoord + 8]);
+
+							t1.n1.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
+							t1.n2.set(normals[currentCoord + 3], normals[currentCoord + 4], normals[currentCoord + 5]);
+							t1.n3.set(normals[currentCoord + 6], normals[currentCoord + 7], normals[currentCoord + 8]);
+
+							spaceVector.add(t1);
+						}
+
+						if (i > 2 && i < (stripVCount[stripIdx] * 3) - 5)
+						{
+							Triangle t2 = new Triangle();
+							t2.v1.set(coords[currentCoord - 3], coords[currentCoord - 2], coords[currentCoord - 1]);
+							t2.v2.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
+							t2.v3.set(coords[currentCoord + 3], coords[currentCoord + 4], coords[currentCoord + 5]);
+
+							t2.n1.set(normals[currentCoord - 3], normals[currentCoord - 2], normals[currentCoord - 1]);
+							t2.n2.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
+							t2.n3.set(normals[currentCoord + 3], normals[currentCoord + 4], normals[currentCoord + 5]);
+
+							spaceVector.add(t2);
+						}
+
+						if (i > 5)
+						{
+							Triangle t3 = new Triangle();
+							t3.v1.set(coords[currentCoord - 6], coords[currentCoord - 5], coords[currentCoord - 4]);
+							t3.v2.set(coords[currentCoord - 3], coords[currentCoord - 2], coords[currentCoord - 1]);
+							t3.v3.set(coords[currentCoord], coords[currentCoord + 1], coords[currentCoord + 2]);
+
+							t3.n1.set(normals[currentCoord - 6], normals[currentCoord - 5], normals[currentCoord - 4]);
+							t3.n2.set(normals[currentCoord - 3], normals[currentCoord - 2], normals[currentCoord - 1]);
+							t3.n3.set(normals[currentCoord], normals[currentCoord + 1], normals[currentCoord + 2]);
+
+							spaceVector.add(t3);
+						}
+
+					}
+					stripStartCoordIdx += stripVCount[stripIdx] * 3;
+				}
+			}
+			System.out.println("starting conversion " + (System.currentTimeMillis() - start));
+			// now covert from the rough vector of triangles to a real geomertry in the subspaces
+			subSpaces = convert(subSpacesTriangles);
+
+		}
+		else
+		{
+			System.out.println("geometry 0 is null or not trianglestriparray " + geometry);
+		}
+
+		System.out.println("Geomtery indexing took " + (System.currentTimeMillis() - start));
 
 	}
 
@@ -384,97 +373,6 @@ public class LargeGeometry implements HeightMap
 		}
 
 		return subSpaces;
-	}
-
-	private void addToPrecache(String precacheName)
-	{
-		BranchGroup root = new BranchGroup();
-
-		// NOTE! using a Vector3f to serialize 3 floats, it is not a vector!
-		Vector3f[] sizes = new Vector3f[3];
-
-		sizes[0] = new Vector3f(spaceSizeX, spaceSizeY, spaceSizeZ);
-		sizes[1] = new Vector3f(minX, minY, minZ);
-		sizes[2] = new Vector3f(maxX, maxY, maxZ);
-		root.setUserData(sizes);
-
-		for (int x = 0; x < getNumSpaceX(); x++)
-		{
-			BranchGroup xbg = new BranchGroup();
-			root.addChild(xbg);
-			for (int y = 0; y < getNumSpaceY(); y++)
-			{
-				BranchGroup ybg = new BranchGroup();
-				xbg.addChild(ybg);
-				for (int z = 0; z < getNumSpaceZ(); z++)
-				{
-					BranchGroup zbg = new BranchGroup();
-					ybg.addChild(zbg);
-
-					IndexedGeometryArray tsa = subSpaces[x][y][z];
-
-					Shape3D s = new Shape3D();
-					s.setGeometry(tsa);
-					zbg.addChild(s);
-				}
-			}
-		}
-
-		// cache the app seperately
-		Shape3D appShape = new Shape3D();
-		appShape.setAppearance(app);
-		root.addChild(appShape);
-
-		BranchGroupPrecache.precache(precacheName, root);
-	}
-
-	private boolean loadFromPrecache(String precacheName)
-	{
-		subSpaces = new IndexedGeometryArray[numSpaceX][numSpaceY][numSpaceZ];
-
-		BranchGroup root = BranchGroupPrecache.getPrecached(precacheName);
-		if (root != null)
-		{
-			// a vector is used for convineence
-			Vector3f[] sizes = (Vector3f[]) root.getUserData();
-			spaceSizeX = sizes[0].x;
-			spaceSizeY = sizes[0].y;
-			spaceSizeZ = sizes[0].z;
-			minX = sizes[1].x;
-			minY = sizes[1].y;
-			minZ = sizes[1].z;
-			maxX = sizes[2].x;
-			maxY = sizes[2].y;
-			maxZ = sizes[2].z;
-
-			for (int x = 0; x < getNumSpaceX(); x++)
-			{
-				BranchGroup xbg = (BranchGroup) root.getChild(x);
-				for (int y = 0; y < getNumSpaceY(); y++)
-				{
-					BranchGroup ybg = (BranchGroup) xbg.getChild(y);
-					for (int z = 0; z < getNumSpaceZ(); z++)
-					{
-						BranchGroup zbg = (BranchGroup) ybg.getChild(z);
-
-						IndexedGeometryArray tsa = (IndexedGeometryArray) ((Shape3D) zbg.getChild(0)).getGeometry();
-
-						if (tsa != null)
-							subSpaces[x][y][z] = tsa;
-					}
-				}
-			}
-
-			// the next child after the x's is the appshape
-			Shape3D appShape = (Shape3D) root.getChild(getNumSpaceX());
-			this.app = appShape.getAppearance();
-
-			return true;
-		}
-		else
-		{
-			return false;
-		}
 	}
 
 	public synchronized float getGroundY(double x, double z)

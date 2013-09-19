@@ -16,7 +16,6 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector4f;
 
 import tools3d.geography.LargeGeometry;
-import tools3d.utils.BranchGroupPrecache;
 
 import com.sun.j3d.loaders.IncorrectFormatException;
 import com.sun.j3d.loaders.ParsingErrorException;
@@ -37,46 +36,42 @@ public class ModelLoaderOBJ
 		File file = new File(fileToLoad);
 		BranchGroup modelBranch = null;
 		// let's do a qucik pre cache check
-		modelBranch = BranchGroupPrecache.getPrecached("precache/" + file.getName() + ".pre");
-		if (modelBranch == null)
+
+		double creaseAngle = 60.0;
+
+		long startTime = System.currentTimeMillis();
+
+		ObjectFile f = new ObjectFile(flags, (float) (creaseAngle * Math.PI / 180.0));
+		f.setBasePath(basePath);
+		Scene s = null;
+
+		try
 		{
-			double creaseAngle = 60.0;
-
-			long startTime = System.currentTimeMillis();
-
-			ObjectFile f = new ObjectFile(flags, (float) (creaseAngle * Math.PI / 180.0));
-			f.setBasePath(basePath);
-			Scene s = null;
-
-			try
-			{
-				s = f.load(new BufferedReader(new FileReader(file)));
-			}
-			catch (FileNotFoundException e)
-			{
-				e.printStackTrace();
-			}
-			catch (ParsingErrorException e)
-			{
-				e.printStackTrace();
-			}
-			catch (IncorrectFormatException e)
-			{
-				e.printStackTrace();
-			}
-
-			modelBranch = s.getSceneGroup();
-			for (int i = 0; i < modelBranch.numChildren(); i++)
-			{
-				PickTool.setCapabilities(modelBranch.getChild(i), PickTool.INTERSECT_FULL);
-			}
-
-			long timeTaken = System.currentTimeMillis() - startTime;
-			if (timeTaken > 500)
-				System.out.println(fileToLoad + " in " + timeTaken + " ms");
-
-			BranchGroupPrecache.precache("precache/" + file.getName() + ".pre", modelBranch);
+			s = f.load(new BufferedReader(new FileReader(file)));
 		}
+		catch (FileNotFoundException e)
+		{
+			e.printStackTrace();
+		}
+		catch (ParsingErrorException e)
+		{
+			e.printStackTrace();
+		}
+		catch (IncorrectFormatException e)
+		{
+			e.printStackTrace();
+		}
+
+		modelBranch = s.getSceneGroup();
+		for (int i = 0; i < modelBranch.numChildren(); i++)
+		{
+			PickTool.setCapabilities(modelBranch.getChild(i), PickTool.INTERSECT_FULL);
+		}
+
+		long timeTaken = System.currentTimeMillis() - startTime;
+		if (timeTaken > 500)
+			System.out.println(fileToLoad + " in " + timeTaken + " ms");
+
 		loadedModels.put(file.getPath(), modelBranch);
 	}
 
@@ -147,16 +142,10 @@ public class ModelLoaderOBJ
 		else
 		{
 			LargeGeometry largeGeometry;
-			if (BranchGroupPrecache.isPrecached("precache/LargeGeom" + file.getName() + ".pre"))
-			{
-				largeGeometry = new LargeGeometry(40, 10, 40, null, "precache/LargeGeom" + file.getName() + ".pre");
-			}
-			else
-			{
-				Shape3D groundShape = ((Shape3D) ModelLoaderOBJ.getTerrainModel(fileToLoad, "").getChild(0));
-				largeGeometry = new LargeGeometry(40, 10, 40, groundShape, "precache/LargeGeom" + file.getName() + ".pre");
 
-			}
+			Shape3D groundShape = ((Shape3D) ModelLoaderOBJ.getTerrainModel(fileToLoad, "").getChild(0));
+			largeGeometry = new LargeGeometry(40, 10, 40, groundShape);
+
 			loadedGeometries.put(file.getPath(), largeGeometry);
 			return largeGeometry;
 		}
