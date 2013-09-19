@@ -1,9 +1,11 @@
-package tools3d.navigation.rules.deprecated;
+package tools3d.navigation;
 
 /**
  * @author Administrator
  *
  */
+
+//TODO: the jbullet physics should be listened to for these sorts of events
 public class GravityEvent
 {
 	public static final int LANDED_EVENT = 0;

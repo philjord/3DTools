@@ -9,6 +9,8 @@ import javax.vecmath.Vector3f;
 import tools.WeakListenerList;
 import tools3d.geography.HeightMap;
 import tools3d.navigation.AvatarCollisionInfo;
+import tools3d.navigation.GravityEvent;
+import tools3d.navigation.GravityListener;
 
 import com.sun.j3d.utils.picking.PickIntersection;
 import com.sun.j3d.utils.picking.PickResult;

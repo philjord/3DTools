@@ -15,7 +15,11 @@ import tools3d.navigation.rules.deprecated.picking.IntersectionUtils;
 import com.sun.j3d.utils.picking.PickIntersection;
 import com.sun.j3d.utils.picking.PickResult;
 import com.sun.j3d.utils.picking.PickTool;
-
+/**
+ * @Deprecated use jnifbullet charactercontroller
+ * @author philip
+ */
+@Deprecated 
 public class NavigationPositionRuleCollision implements NavigationPositionRule
 {
 	private AvatarCollisionInfo avatarCollisionInfo;

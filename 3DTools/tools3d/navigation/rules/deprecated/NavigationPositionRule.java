@@ -2,6 +2,11 @@ package tools3d.navigation.rules.deprecated;
 
 import javax.vecmath.Vector3f;
 
+/**
+ * @Deprecated use jnifbullet charactercontroller
+ * @author philip
+ */
+@Deprecated 
 public interface NavigationPositionRule
 {
 	/**
