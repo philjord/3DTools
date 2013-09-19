@@ -11,8 +11,9 @@ import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 import javax.swing.ImageIcon;
 
+import tools.texture.DDSBufferedImage;
 import tools.texture.DDSImage;
-import tools.texture.DDSToTextureOld;
+import tools.texture.DDSToTexture;
 
 public class SimpleImageLoader
 {
@@ -67,7 +68,7 @@ public class SimpleImageLoader
 			try
 			{
 				DDSImage ddsImage = DDSImage.read(imageName);
-				return DDSToTextureOld.convertImage(ddsImage, 0);
+				return new DDSBufferedImage(ddsImage, 0, imageName);
 			}
 			catch (IOException e)
 			{
@@ -155,9 +156,8 @@ public class SimpleImageLoader
 		{
 			try
 			{
-
-				DDSImage ddsImage = DDSImage.read(DDSToTextureOld.toByteBuffer(in));
-				return DDSToTextureOld.convertImage(ddsImage, 0);
+				DDSImage ddsImage = DDSImage.read(DDSToTexture.toByteBuffer(in));
+				new DDSBufferedImage(ddsImage, 0, imageName);
 			}
 			catch (IOException e)
 			{

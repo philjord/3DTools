@@ -108,6 +108,11 @@ public class DDSBufferedImage extends BufferedImage
 		}
 	}
 
+	public String getImageName()
+	{
+		return imageName;
+	}
+
 	public BufferedImage convertImage()
 	{
 		//can't use width or height as it's been correcte to 1 already
@@ -602,8 +607,8 @@ public class DDSBufferedImage extends BufferedImage
 		{
 			if (mipNumber == 0)
 			{
-			//	System.out.println("getRasterCount " + getRasterCount + " all " + getRasterCountForAll + " " + mipNumber + " imageName "
-			//			+ imageName + " this " + this);
+				//	System.out.println("getRasterCount " + getRasterCount + " all " + getRasterCountForAll + " " + mipNumber + " imageName "
+				//			+ imageName + " this " + this);
 			}
 			tenuredImage = convertImage();
 
