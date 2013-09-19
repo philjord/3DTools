@@ -1,4 +1,4 @@
-package tools3d;
+package tools3d.utils;
 
 import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
