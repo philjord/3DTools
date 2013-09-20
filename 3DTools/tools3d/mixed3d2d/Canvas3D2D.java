@@ -236,7 +236,7 @@ public class Canvas3D2D extends Canvas3D
 	{
 
 		// we only draw if teh hud is now in the scene live and hudelements exist or any panel3d exists
-		if ((!fixedBG.isLive() && hudElements.size() > 0) || panel3ds.size() > 0)
+		if (!fixedBG.isLive())
 		{
 			// Oh my god. Long story short, don't touch this if doing overlays.
 			// Longer version, if the last rendered texture on a canvas3d has a transformation
@@ -245,31 +245,24 @@ public class Canvas3D2D extends Canvas3D
 
 			J3DGraphics2D g = getGraphics2D();
 
-			if (!fixedBG.isLive() && hudElements.size() > 0)
+			synchronized (hudElements)
 			{
-
-				synchronized (hudElements)
+				for (HUDElement e : hudElements)
 				{
-					for (HUDElement e : hudElements)
+					if (e != null && e.isEnabled())
 					{
-						if (e != null && e.isEnabled())
-						{
-							g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
-						}
+						g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
 					}
 				}
-
 			}
-			if (panel3ds.size() > 0)
+
+			synchronized (panel3ds)
 			{
-				synchronized (panel3ds)
+				for (Panel3D p : panel3ds)
 				{
-					for (Panel3D p : panel3ds)
+					if (p != null && p.isEnabled())
 					{
-						if (p != null && p.isEnabled())
-						{
-							g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
-						}
+						g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
 					}
 				}
 			}
@@ -281,31 +274,40 @@ public class Canvas3D2D extends Canvas3D
 
 	public void updateHudShapeTexture()
 	{
-		if (hudElements.size() > 0 && panel3ds.size() == 0)
+
+		//This method will only be called when we are attached to a scene grpah, i.e. fixedBG.isLive()==true
+		// so these hudelements won't be drawn as overlays
+		Graphics2D g2 = bi2.createGraphics();
+		g2.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		g2.fillRect(0, 0, TEX_WIDTH, TEX_HEIGHT);
+		g2.drawRect(1, 1, TEX_WIDTH - 1, TEX_HEIGHT - 1);// to allow sexy placement
+
+		synchronized (hudElements)
 		{
-			//This method will onyl be called when we are attached to a scene grpah, 
-			// so these hudelements won't be draw as overlays
-			Graphics2D g2 = bi2.createGraphics();
-			g2.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-			g2.clearRect(0, 0, 1024, 1024);
-
-			g2.drawRect(0, 0, 1023, 1023);// to allow sexy placement
-
-			synchronized (hudElements)
+			for (HUDElement e : hudElements)
 			{
-				for (HUDElement e : hudElements)
+				if (e != null && e.isEnabled())
 				{
-					if (e != null && e.isEnabled())
-					{
-						g2.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
-					}
+					g2.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
 				}
 			}
-
-			//flip it now to allow the yup flag			
-			bi = op.filter(bi2, bi);
-			ic2d.set(bi);
 		}
+
+		synchronized (panel3ds)
+		{
+			for (Panel3D p : panel3ds)
+			{
+				if (p != null && p.isEnabled())
+				{
+					g2.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
+				}
+			}
+		}
+
+		//flip it now to allow the yup flag			
+		bi = op.filter(bi2, bi);
+		ic2d.set(bi);
+
 	}
 
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
