@@ -35,6 +35,7 @@ public class CameraPanel extends JPanel
 
 		setLayout(new GridLayout(1, 1));
 
+		//This stuff has to be in synch with the ScreenResolution class
 		// I must do this in order to enable the stencil buffer
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -50,7 +51,7 @@ public class CameraPanel extends JPanel
 
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
 
-		canvas3D2D = new Canvas3D2D(config);	
+		canvas3D2D = new Canvas3D2D(config);
 
 		camera = new Camera(canvas3D2D);
 

@@ -9,6 +9,7 @@ package tools3d.utils.resolution;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.Frame;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
@@ -26,7 +27,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -78,11 +78,11 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 	/**
 	 * Creates a new instance of DisplayDialog.
-	 * @param parent The parent compnent for this Swing object
+	 * @param frame The parent compnent for this Swing object
 	 */
-	public DisplayDialog(JFrame parent)
+	public DisplayDialog(Frame frame)
 	{
-		super(parent, true);
+		super(frame, true);
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		if (!graphicsDevice.isFullScreenSupported())
