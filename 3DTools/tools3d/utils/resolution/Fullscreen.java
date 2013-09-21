@@ -1,9 +1,3 @@
-/*
- * Fullscreen.java
- *
- * Created on February 21, 2007, 12:33 PM
- */
-
 package tools3d.utils.resolution;
 
 import java.awt.Dimension;
@@ -43,10 +37,10 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
  * @author Kevin J. Duling (kevin@duling.us)
  */
 public final class Fullscreen
+
 {
 	private final GraphicsDevice gd;
 
-	//  private final DisplayMode origDM;
 	private final JFrame win;
 
 	/**
@@ -82,7 +76,6 @@ public final class Fullscreen
 				final int keyCode = e.getKeyCode();
 				if ((keyCode == KeyEvent.VK_ESCAPE) || ((keyCode == KeyEvent.VK_C) && e.isControlDown()))
 				{
-					win.dispose();
 					System.exit(0);
 				}
 			}
@@ -90,10 +83,6 @@ public final class Fullscreen
 
 		if (runFullscreen)
 		{
-			//      synchronized(this)
-			//      {
-			//        origDM = dlg.getOriginalDisplayMode();
-			//      }
 			gd.setFullScreenWindow(win);
 			if (gd.getFullScreenWindow() == null)
 				System.out.println("Did not get fullscreen exclusive mode");
@@ -110,7 +99,7 @@ public final class Fullscreen
 			final Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 			{
-				JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings", "Window Too Large",
+				JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
 						JOptionPane.ERROR_MESSAGE);
 				win.setSize(size);
 			}
@@ -124,6 +113,13 @@ public final class Fullscreen
 		final SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph());
+
+		System.out.println("add VM arg -Dsun.java2d.noddraw=true or no render nothing");
+
+		// don't bother super fast for now
+		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
+		//su.addBranchGraph(fps.getBehaviorBranchGroup());
+
 	}
 
 	/**

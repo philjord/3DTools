@@ -105,7 +105,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 		pack();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		final Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation((int) (size.getWidth() - (double) getWidth()) >> 1, (int) (size.getHeight() - (double) getHeight()) >> 1);
+		setLocation((int) (size.getWidth() - getWidth()) >> 1, (int) (size.getHeight() - getHeight()) >> 1);
 		setAlwaysOnTop(true);
 	}
 
@@ -130,18 +130,26 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 		final DisplayMode[] modes = graphicsDevice.getDisplayModes();
 		final JPanel resolutionPanel = new JPanel(new GridBagLayout());
 		resolutionPanel.setBorder(new CompoundBorder(new TitledBorder(null, "Resolution", TitledBorder.LEFT, TitledBorder.TOP), border5));
+
 		for (DisplayMode mode : modes)
 		{
 			if (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400)
 			{
-				final String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth()
+				String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth()
 						+ " bpp";
 				availableDisplayModes.put(strMode, mode);
 				modesDropDown.addItem(strMode);
+				// select it if it's the current
+				if (mode.equals(originalDisplayMode))
+				{
+					desiredDisplayMode = mode;
+					modesDropDown.setSelectedItem(strMode);
+				}
 			}
 		}
 		modesDropDown.setSize(modesDropDown.getPreferredSize().width, 200);
 		resolutionPanel.add(modesDropDown);
+
 		return resolutionPanel;
 	}
 
@@ -168,7 +176,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 */
 	private void handleOkay()
 	{
-		desiredDisplayMode = availableDisplayModes.get((String) modesDropDown.getSelectedItem());
+		desiredDisplayMode = availableDisplayModes.get(modesDropDown.getSelectedItem());
 		dispose();
 	}
 
@@ -227,7 +235,6 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	public void itemStateChanged(final ItemEvent e)
 	{
 		if (e.getSource() == fullscreenCheckbox)
-			//      runFullscreen = !runFullscreen;
-			runFullscreen ^= true; // faster
+			runFullscreen = !runFullscreen;
 	}
 }
