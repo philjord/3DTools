@@ -2,6 +2,7 @@ package tools3d.utils.resolution;
 
 import java.awt.Dimension;
 import java.awt.DisplayMode;
+import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -9,6 +10,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import java3d.nativelinker.Java3dLinker2;
 
 import javax.media.j3d.Alpha;
@@ -17,6 +19,7 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GeometryArray;
+import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.Shape3D;
@@ -33,20 +36,17 @@ import javax.vecmath.Point3f;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
+ * A match altered class of:
  * A demo to illustrate fullscreen exclusive mode with Java3D
  * @author Kevin J. Duling (kevin@duling.us)
  */
-public final class Fullscreen
-
+public final class ResolutionTest
 {
 	private final GraphicsDevice gd;
 
 	private final JFrame win;
 
-	/**
-	 * Default constructor.
-	 */
-	private Fullscreen()
+	private ResolutionTest()
 	{
 
 		DisplayDialog dlg = new DisplayDialog(null);
@@ -56,19 +56,26 @@ public final class Fullscreen
 			System.exit(0);
 		boolean runFullscreen = dlg.fullscreen();
 
-		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		gd = ge.getDefaultScreenDevice();
+		GraphicsConfiguration[] gc = gd.getConfigurations();
+		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
+		// antialiasing REQUIRED is good to have
+		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
+
+		GraphicsConfiguration config = template.getBestConfiguration(gc);
+
 		win = new JFrame("Fullscreen Example", config);
 		if (runFullscreen)
 			win.setUndecorated(true);
 		win.setResizable(false);
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		gd = ge.getDefaultScreenDevice();
 
 		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 		canvas3D.setFocusable(true);
 		canvas3D.requestFocus();
+
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
 			public void keyPressed(KeyEvent e)
@@ -114,12 +121,11 @@ public final class Fullscreen
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph());
 
-		System.out.println("add VM arg -Dsun.java2d.noddraw=true or no render nothing");
-
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
 		//su.addBranchGraph(fps.getBehaviorBranchGroup());
 
+		canvas3D.getView().setSceneAntialiasingEnable(dlg.isAARequired());
 	}
 
 	/**
@@ -137,8 +143,8 @@ public final class Fullscreen
 		//       / \
 		//      /   \
 		// (2) o-----o (0)
-		final Shape3D shape = new Shape3D();
-		final TriangleArray tri = new TriangleArray(3, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		Shape3D shape = new Shape3D();
+		TriangleArray tri = new TriangleArray(3, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
 		tri.setCoordinate(0, new Point3f(0.5f, 0.0f, 0.0f));
 		tri.setCoordinate(1, new Point3f(0.0f, 0.5f, 0.0f));
 		tri.setCoordinate(2, new Point3f(-0.5f, 0.0f, 0.0f));
@@ -148,19 +154,19 @@ public final class Fullscreen
 
 		// Because we're about to spin this triangle, be sure to draw
 		// backfaces.  If we don't, the back side of the triangle is invisible.
-		final Appearance ap = new Appearance();
-		final PolygonAttributes pa = new PolygonAttributes();
+		Appearance ap = new Appearance();
+		PolygonAttributes pa = new PolygonAttributes();
 		pa.setCullFace(PolygonAttributes.CULL_NONE);
 		ap.setPolygonAttributes(pa);
 		shape.setAppearance(ap);
 
 		// Set up a simple RotationInterpolator
-		final BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 5.0);
-		final TransformGroup tg = new TransformGroup();
-		final Transform3D yAxis = new Transform3D();
-		final Alpha rotationAlpha = new Alpha(-1, 4000);
+		BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 5.0);
+		TransformGroup tg = new TransformGroup();
+		Transform3D yAxis = new Transform3D();
+		Alpha rotationAlpha = new Alpha(-1, 4000);
 		tg.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		final RotationInterpolator rotator = new RotationInterpolator(rotationAlpha, tg, yAxis, 0.0f, (float) Math.PI * 2.0f);
+		RotationInterpolator rotator = new RotationInterpolator(rotationAlpha, tg, yAxis, 0.0f, (float) Math.PI * 2.0f);
 		rotator.setSchedulingBounds(bounds);
 
 		shape.setGeometry(tri);
@@ -177,7 +183,7 @@ public final class Fullscreen
 		//load up the native dlls!		 
 		new Java3dLinker2();
 
-		new Fullscreen();
+		new ResolutionTest();
 
 	}
 }

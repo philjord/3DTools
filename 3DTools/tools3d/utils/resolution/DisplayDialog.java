@@ -29,6 +29,8 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
@@ -50,7 +52,11 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 	private final JButton okay = new JButton("Ok");
 
+	private final JButton props = new JButton("Props");
+
 	private final JCheckBox fullscreenCheckbox = new JCheckBox("Fullscreen");
+
+	private final JCheckBox aaCheckbox = new JCheckBox("AntiAlias");
 
 	private final GraphicsDevice graphicsDevice;
 
@@ -64,7 +70,9 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 	private boolean runFullscreen = false;
 
-	private static final EmptyBorder border5 = new EmptyBorder(5, 5, 5, 5);
+	private boolean aaRequired = false;
+
+	private static EmptyBorder border5 = new EmptyBorder(5, 5, 5, 5);
 
 	private static final int DONT_CARE = -1;
 
@@ -72,43 +80,51 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 * Creates a new instance of DisplayDialog.
 	 * @param parent The parent compnent for this Swing object
 	 */
-	public DisplayDialog(final JFrame parent)
+	public DisplayDialog(JFrame parent)
 	{
 		super(parent, true);
-		final GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		if (!graphicsDevice.isFullScreenSupported())
 			fullscreenCheckbox.setEnabled(false);
 		originalDisplayMode = graphicsDevice.getDisplayMode();
-		desiredDisplayMode = findDesiredDisplayMode(640, 480, 60, 32); // set this to something safe for a default value
 
 		okay.setMnemonic(KeyEvent.VK_O);
 		okay.addActionListener(this);
 
-		cancel.setMnemonic('C');
+		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
 
+		cancel.setMnemonic(KeyEvent.VK_P);
+		props.addActionListener(this);
+
 		fullscreenCheckbox.addItemListener(this);
+		aaCheckbox.addItemListener(this);
 
-		final JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		final GridLayout centerPanelLayout = new GridLayout(1, 3);
-		final JPanel centerPanel = new JPanel(centerPanelLayout);
+		GridLayout centerPanelLayout = new GridLayout(1, 1);
+		JPanel centerPanel = new JPanel(centerPanelLayout);
 		mainPanel.add("Center", centerPanel);
 		centerPanel.add(buildResolutionPanel());
 
-		final GridLayout southPanelLayout = new GridLayout(1, 3);
-		southPanelLayout.setHgap(5);
-		final JPanel southPanel = new JPanel(new GridBagLayout());
-		southPanel.add(fullscreenCheckbox);
-		southPanel.add(okay);
-		southPanel.add(cancel);
+		JPanel southPanel = new JPanel(new GridLayout(2, 1));
+		JPanel southPanelChecks = new JPanel(new GridBagLayout());
+		JPanel southPanelButts = new JPanel(new GridBagLayout());
+		southPanel.add(southPanelChecks);
+		southPanel.add(southPanelButts);
+		southPanelChecks.add(fullscreenCheckbox);
+		southPanelChecks.add(aaCheckbox);
+		southPanelButts.add(okay);
+		southPanelButts.add(cancel);
+		southPanelButts.add(props);
+
 		mainPanel.add("South", southPanel);
 
 		add(mainPanel);
 		pack();
 		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		final Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((int) (size.getWidth() - getWidth()) >> 1, (int) (size.getHeight() - getHeight()) >> 1);
 		setAlwaysOnTop(true);
 
@@ -124,6 +140,9 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 			handleOkay();
 		if (event.getSource() == cancel)
 			handleCancel();
+		if (event.getSource() == props)
+			handleProps();
+
 	}
 
 	/**
@@ -147,7 +166,6 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 				// select it if it's the current
 				if (mode.equals(originalDisplayMode))
 				{
-					desiredDisplayMode = mode;
 					modesDropDown.setSelectedItem(strMode);
 				}
 			}
@@ -192,6 +210,21 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	{
 		runFullscreen = false;
 		dispose();
+	}
+
+	private void handleProps()
+	{
+		JTextArea myTextArea = new JTextArea();
+		JScrollPane jScrollPane1 = new JScrollPane(myTextArea);
+
+		jScrollPane1.setPreferredSize(new Dimension(400, 500));
+		myTextArea.setColumns(20);
+		myTextArea.setEditable(false);
+		myTextArea.setRows(5);
+
+		QueryProperties.printJ3DProps(myTextArea);
+
+		JOptionPane.showMessageDialog(this, jScrollPane1);
 	}
 
 	/**
@@ -248,5 +281,14 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	{
 		if (e.getSource() == fullscreenCheckbox)
 			runFullscreen = !runFullscreen;
+
+		if (e.getSource() == aaCheckbox)
+			aaRequired = !aaRequired;
+
+	}
+
+	public boolean isAARequired()
+	{
+		return aaRequired;
 	}
 }

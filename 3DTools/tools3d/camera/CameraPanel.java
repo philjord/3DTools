@@ -1,5 +1,6 @@
 package tools3d.camera;
 
+import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -34,8 +35,6 @@ public class CameraPanel extends JPanel
 
 		setLayout(new GridLayout(1, 1));
 
-		// this is a crap way around the multi screen issue, if you get an issue at all
-
 		// I must do this in order to enable the stencil buffer
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
@@ -45,9 +44,13 @@ public class CameraPanel extends JPanel
 		//template.setStencilSize(8);		
 		// we must also set the stencil buffer to clear each frame (madness!)
 		// put  -Dj3d.stencilClear=true in your vm arguments!!!  
+
+		// antialiasing REQUIRED is good to have
+		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
+
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
 
-		canvas3D2D = new Canvas3D2D(config);
+		canvas3D2D = new Canvas3D2D(config);	
 
 		camera = new Camera(canvas3D2D);
 
