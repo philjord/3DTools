@@ -279,7 +279,7 @@ public class Canvas3D2D extends Canvas3D
 		// so these hudelements won't be drawn as overlays
 		Graphics2D g2 = bi2.createGraphics();
 		g2.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-		g2.fillRect(0, 0, TEX_WIDTH, TEX_HEIGHT);
+		g2.clearRect(0, 0, TEX_WIDTH, TEX_HEIGHT); //NOT fillRect doesn't work
 		g2.drawRect(1, 1, TEX_WIDTH - 1, TEX_HEIGHT - 1);// to allow sexy placement
 
 		synchronized (hudElements)
@@ -352,4 +352,7 @@ public class Canvas3D2D extends Canvas3D
 		}
 
 	}
+
+	
+
 }
