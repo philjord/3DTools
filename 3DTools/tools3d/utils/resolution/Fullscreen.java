@@ -49,29 +49,29 @@ public final class Fullscreen
 	private Fullscreen()
 	{
 
-		final DisplayDialog dlg = new DisplayDialog(null);
+		DisplayDialog dlg = new DisplayDialog(null);
 		dlg.setVisible(true);
-		final DisplayMode desiredMode = dlg.getDesiredDisplayMode();
+		DisplayMode desiredMode = dlg.getDesiredDisplayMode();
 		if (desiredMode == null)
 			System.exit(0);
-		final boolean runFullscreen = dlg.fullscreen();
+		boolean runFullscreen = dlg.fullscreen();
 
-		final GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
+		GraphicsConfiguration config = SimpleUniverse.getPreferredConfiguration();
 		win = new JFrame("Fullscreen Example", config);
 		if (runFullscreen)
 			win.setUndecorated(true);
 		win.setResizable(false);
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-		final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		gd = ge.getDefaultScreenDevice();
 
-		final Canvas3D canvas3D = new Canvas3D(config);
+		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 		canvas3D.setFocusable(true);
 		canvas3D.requestFocus();
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
-			public void keyPressed(final KeyEvent e)
+			public void keyPressed(KeyEvent e)
 			{
 				final int keyCode = e.getKeyCode();
 				if ((keyCode == KeyEvent.VK_ESCAPE) || ((keyCode == KeyEvent.VK_C) && e.isControlDown()))
@@ -96,7 +96,7 @@ public final class Fullscreen
 		}
 		else
 		{
-			final Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 			{
 				JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
@@ -110,7 +110,7 @@ public final class Fullscreen
 			}
 			win.setVisible(true);
 		}
-		final SimpleUniverse su = new SimpleUniverse(canvas3D);
+		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph());
 
@@ -171,7 +171,7 @@ public final class Fullscreen
 		return objRoot;
 	}
 
-	public static void main(final String[] args)
+	public static void main(String[] args)
 	{
 
 		//load up the native dlls!		 

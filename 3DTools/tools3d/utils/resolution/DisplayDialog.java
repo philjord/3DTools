@@ -27,6 +27,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
@@ -38,6 +39,9 @@ import javax.swing.border.TitledBorder;
  * possible display modes.  The user is able to select the screen resolution,
  * refresh rate, color depth, and whether the app should run in fullscreen or
  * windowed mode.
+ * 
+ * NOTE if you select any resolution mode other than current you will reset all attached montiors
+ * which will muck up multi monitor window layouts
  * @author Kevin J. Duling (kevin@duling.us)
  */
 public final class DisplayDialog extends JDialog implements ActionListener, ItemListener
@@ -107,6 +111,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 		final Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		setLocation((int) (size.getWidth() - getWidth()) >> 1, (int) (size.getHeight() - getHeight()) >> 1);
 		setAlwaysOnTop(true);
+
 	}
 
 	/**
@@ -225,6 +230,13 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 */
 	public boolean fullscreen()
 	{
+		//quick check for -Dsun.java2d.noddraw=true being set
+		String nodd = System.getProperty("sun.java2d.noddraw");
+		if (runFullscreen && (nodd == null || !nodd.equals("true")))
+		{
+			JOptionPane.showMessageDialog(null, "Full screen without JVM VM argument -Dsun.java2d.noddraw=true is bad.");
+		}
+
 		return runFullscreen;
 	}
 
