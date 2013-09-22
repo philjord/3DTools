@@ -7,6 +7,7 @@ import tools3d.audio.JOALMixer;
 
 import com.sun.j3d.utils.universe.Viewer;
 
+//TODO: Camera really doesn't need to extend the utility class viewer
 public class Camera extends Viewer
 {
 	// front and back clips, should be ratio of no more than 3000 
@@ -58,15 +59,5 @@ public class Camera extends Viewer
 			}
 		}
 
-	}
-
-	public double getFOV()
-	{
-		return FOV;
-	}
-
-	public void setFOV(double fOV)
-	{
-		FOV = fOV;
 	}
 }
