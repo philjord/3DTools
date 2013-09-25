@@ -141,7 +141,7 @@ public class Canvas3D2D extends Canvas3D
 
 	private void screenResized()
 	{
-		System.out.println("screenResized");
+		//System.out.println("screenResized");
 		if (getView() != null)
 		{
 			//System.out.println("screenResized width " + this.getWidth() + " height " + this.getHeight());
@@ -170,8 +170,8 @@ public class Canvas3D2D extends Canvas3D
 			//TODO: this is not upper lefted properly
 			TEX_WIDTH = 1024;
 			TEX_HEIGHT = (int) (TEX_WIDTH / aspectRatio);
-			System.out.println("TEX_WIDTH " + TEX_WIDTH);
-			System.out.println("TEX_HEIGHT " + TEX_HEIGHT);
+			//System.out.println("TEX_WIDTH " + TEX_WIDTH);
+			//System.out.println("TEX_HEIGHT " + TEX_HEIGHT);
 
 			bi = new BufferedImage(TEX_WIDTH, TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 
