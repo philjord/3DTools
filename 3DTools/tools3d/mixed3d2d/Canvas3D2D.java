@@ -99,12 +99,12 @@ public class Canvas3D2D extends Canvas3D
 		Material m = new Material();
 		m.setLightingEnable(false);
 		app.setMaterial(m);
-		
+
 		app.setCapability(Appearance.ALLOW_TEXTURE_READ);
 		app.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
 		hudShape.setAppearance(app);
-		
-		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);		
+
+		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
 
 		fixedBG.addChild(hudShape);
 
@@ -178,8 +178,8 @@ public class Canvas3D2D extends Canvas3D
 			Texture2D tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, TEX_WIDTH, TEX_HEIGHT);
 			tex.setBoundaryModeS(Texture.WRAP);
 			tex.setBoundaryModeT(Texture.WRAP);
-			tex.setMagFilter(Texture.FASTEST);
-			tex.setMinFilter(Texture.FASTEST);
+			tex.setMagFilter(Texture.FASTEST);//Texture.BASE_LEVEL_LINEAR);//
+			tex.setMinFilter(Texture.FASTEST);//Texture.BASE_LEVEL_LINEAR);//
 
 			ic2d = new ImageComponent2D(ImageComponent.FORMAT_RGBA, bi, true, true);
 			ic2d.setCapability(ImageComponent.ALLOW_IMAGE_READ);
@@ -187,8 +187,9 @@ public class Canvas3D2D extends Canvas3D
 
 			tex.setImage(0, ic2d);
 			app.setTexture(tex);
+
 		}
-	}	
+	}
 
 	/**
 	 * When the returned tree is live in the scene graph all hud lement output will go to it's 
@@ -248,7 +249,7 @@ public class Canvas3D2D extends Canvas3D
 
 	public void postRender()
 	{
-		// we only draw if teh hud is now in the scene live and hudelements exist or any panel3d exists
+		// we only draw if the hud is now in the scene live and hudelements exist or any panel3d exists
 		if (!fixedBG.isLive())
 		{
 			// Oh my god. Long story short, don't touch this if doing overlays.
@@ -323,8 +324,9 @@ public class Canvas3D2D extends Canvas3D
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
 	{
 		//FIXME: should be 2's
-		float hW = rectWidth / 2.5f;
-		float hH = rectHeight / 2.5f;
+		//TODO: when this is properly sized the image itself does nto appear on screen as it should
+		float hW = rectWidth / 2.2f;
+		float hH = rectHeight / 2.2f;
 
 		float[] verts1 =
 		{ hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
