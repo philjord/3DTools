@@ -46,6 +46,7 @@ import javax.swing.border.TitledBorder;
  * which will muck up multi monitor window layouts
  * @author Kevin J. Duling (kevin@duling.us)
  */
+@SuppressWarnings("rawtypes")
 public final class DisplayDialog extends JDialog implements ActionListener, ItemListener
 {
 	private final JButton cancel = new JButton("Cancel");
@@ -157,7 +158,8 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 		for (DisplayMode mode : modes)
 		{
-			if (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400)
+			if (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400 //
+					&& mode.getRefreshRate() % 5 == 0)// might be too restrictive
 			{
 				String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth()
 						+ " bpp";
@@ -237,9 +239,9 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 * @param depth desired color depth
 	 * @return a DisplayMode object that matches the parameters or 'null' if one could not be found
 	 */
-	private DisplayMode findDesiredDisplayMode(final int width, final int height, final int refresh, final int depth)
+	private DisplayMode findDesiredDisplayMode(int width, int height, int refresh, int depth)
 	{
-		final DisplayMode[] modes = graphicsDevice.getDisplayModes();
+		DisplayMode[] modes = graphicsDevice.getDisplayModes();
 		for (DisplayMode mode : modes)
 		{
 			boolean bFound = true;

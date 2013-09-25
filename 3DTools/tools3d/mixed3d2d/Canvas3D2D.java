@@ -5,8 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -21,7 +19,6 @@ import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.J3DGraphics2D;
 import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
@@ -78,29 +75,17 @@ public class Canvas3D2D extends Canvas3D
 
 	private BranchGroup fixedBG = new BranchGroup();
 
+	private Shape3D hudShape = new Shape3D();
+
+	private Appearance app = new Appearance();
+
 	private BufferedImage bi = new BufferedImage(TEX_WIDTH, TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 
-	// double buffer to allow easy flip to keep yUp =true
-	private BufferedImage bi2 = new BufferedImage(TEX_WIDTH, TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-
 	private ImageComponent2D ic2d;
-
-	private AffineTransformOp op;
 
 	public Canvas3D2D(GraphicsConfiguration gc)
 	{
 		super(gc);
-
-		AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
-		tx.translate(0, -TEX_HEIGHT);
-		op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-
-		Shape3D hudShape = new Shape3D();
-
-		Appearance app = new Appearance();
-
-		PolygonAttributes polyAttribs = new PolygonAttributes(PolygonAttributes.POLYGON_FILL, PolygonAttributes.CULL_NONE, 0);
-		app.setPolygonAttributes(polyAttribs);
 
 		TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
 		transparencyAttributes.setTransparencyMode(TransparencyAttributes.NICEST);
@@ -114,27 +99,12 @@ public class Canvas3D2D extends Canvas3D
 		Material m = new Material();
 		m.setLightingEnable(false);
 		app.setMaterial(m);
-
-		Texture2D tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, TEX_WIDTH, TEX_HEIGHT);
-		tex.setBoundaryModeS(Texture.WRAP);
-		tex.setBoundaryModeT(Texture.WRAP);
-		tex.setMagFilter(Texture.BASE_LEVEL_LINEAR);
-
-		ic2d = new ImageComponent2D(ImageComponent.FORMAT_RGBA, bi, true, true);
-		ic2d.setCapability(ImageComponent.ALLOW_IMAGE_READ);
-		ic2d.setCapability(ImageComponent.ALLOW_IMAGE_WRITE);
-
-		tex.setImage(0, ic2d);
-		app.setTexture(tex);
-
+		
 		app.setCapability(Appearance.ALLOW_TEXTURE_READ);
 		app.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-
-		tex.setCapability(Texture.ALLOW_IMAGE_WRITE);
-		tex.setCapability(Texture.ALLOW_IMAGE_READ);
-
-		hudShape.setGeometry(createGeometry(0.25f, 0.25f, SHAPE_Z));
 		hudShape.setAppearance(app);
+		
+		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);		
 
 		fixedBG.addChild(hudShape);
 
@@ -171,13 +141,57 @@ public class Canvas3D2D extends Canvas3D
 
 	private void screenResized()
 	{
-		//this.setSize(1024, 1024);
-		//System.out.println("screenResized and forced to 1024 by 1024 in Canvas2D3D, until I get the ratio perfect");
-		System.out.println("screenResized width " + this.getWidth() + " height " + this.getHeight());
-	}
+		System.out.println("screenResized");
+		if (getView() != null)
+		{
+			//System.out.println("screenResized width " + this.getWidth() + " height " + this.getHeight());
+
+			double aspectRatio = (double) this.getWidth() / (double) this.getHeight();
+			double fov = getView().getFieldOfView();
+			double halfFov = fov / 2d;
+
+			//System.out.println("aspectRatio " + aspectRatio);
+			//System.out.println("fov radians " + getView().getFieldOfView());
+			//System.out.println("fov deg " + ((getView().getFieldOfView() / Math.PI) * 180));
+
+			// now fov is the center of a non right angle(Isosceles) with point touching user
+			// use sohcahtoa on the 2 right tri making up isoscele
+			double distFromEye = -SHAPE_Z; //adj
+			//System.out.println("distFromEye " + distFromEye);
+			double opp = distFromEye * Math.tan(halfFov);
+			//System.out.println("opp " + opp);
+			SHAPE_WIDTH = (float) (opp * 2f);
+			//System.out.println("shapeWidth " + shapeWidth);
+			SHAPE_HEIGHT = (float) (SHAPE_WIDTH / aspectRatio);
+			//System.out.println("shapeHeight " + shapeHeight);
+
+			hudShape.setGeometry(createGeometry(SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_Z));
+
+			//TODO: this is not upper lefted properly
+			TEX_WIDTH = 1024;
+			TEX_HEIGHT = (int) (TEX_WIDTH / aspectRatio);
+			System.out.println("TEX_WIDTH " + TEX_WIDTH);
+			System.out.println("TEX_HEIGHT " + TEX_HEIGHT);
+
+			bi = new BufferedImage(TEX_WIDTH, TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+
+			Texture2D tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, TEX_WIDTH, TEX_HEIGHT);
+			tex.setBoundaryModeS(Texture.WRAP);
+			tex.setBoundaryModeT(Texture.WRAP);
+			tex.setMagFilter(Texture.FASTEST);
+			tex.setMinFilter(Texture.FASTEST);
+
+			ic2d = new ImageComponent2D(ImageComponent.FORMAT_RGBA, bi, true, true);
+			ic2d.setCapability(ImageComponent.ALLOW_IMAGE_READ);
+			ic2d.setCapability(ImageComponent.ALLOW_IMAGE_WRITE);
+
+			tex.setImage(0, ic2d);
+			app.setTexture(tex);
+		}
+	}	
 
 	/**
-	 * When the returned tree is live in teh scene graph all hud lement output will go to it's 
+	 * When the returned tree is live in the scene graph all hud lement output will go to it's 
 	 * texture, and the behaviour will keep it updated. If this is not attached to the view platform then all
 	 * hud element output will go to the (slower) overlay system.
 	 * 
@@ -234,7 +248,6 @@ public class Canvas3D2D extends Canvas3D
 
 	public void postRender()
 	{
-
 		// we only draw if teh hud is now in the scene live and hudelements exist or any panel3d exists
 		if (!fixedBG.isLive())
 		{
@@ -275,12 +288,12 @@ public class Canvas3D2D extends Canvas3D
 	public void updateHudShapeTexture()
 	{
 
-		//This method will only be called when we are attached to a scene grpah, i.e. fixedBG.isLive()==true
+		//This method will only be called when we are attached to a scene graph, i.e. fixedBG.isLive()==true
 		// so these hudelements won't be drawn as overlays
-		Graphics2D g2 = bi2.createGraphics();
-		g2.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
-		g2.clearRect(0, 0, TEX_WIDTH, TEX_HEIGHT); //NOT fillRect doesn't work
-		g2.drawRect(1, 1, TEX_WIDTH - 1, TEX_HEIGHT - 1);// to allow sexy placement
+		Graphics2D g = bi.createGraphics();
+		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		g.clearRect(0, 0, TEX_WIDTH, TEX_HEIGHT); //NOT fillRect doesn't work
+		g.drawRect(2, 2, TEX_WIDTH - 2, TEX_HEIGHT - 2);// to allow sexy placement
 
 		synchronized (hudElements)
 		{
@@ -288,7 +301,7 @@ public class Canvas3D2D extends Canvas3D
 			{
 				if (e != null && e.isEnabled())
 				{
-					g2.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
+					g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
 				}
 			}
 		}
@@ -299,29 +312,29 @@ public class Canvas3D2D extends Canvas3D
 			{
 				if (p != null && p.isEnabled())
 				{
-					g2.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
+					g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
 				}
 			}
 		}
-
-		//flip it now to allow the yup flag			
-		bi = op.filter(bi2, bi);
 		ic2d.set(bi);
 
 	}
 
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
 	{
-		float hW = rectWidth / 2f;
-		float hH = rectHeight / 2f;
+		//FIXME: should be 2's
+		float hW = rectWidth / 2.5f;
+		float hH = rectHeight / 2.5f;
 
 		float[] verts1 =
 		{ hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
+
+		//-1 flip the y axis so yUp
 		float[] texCoords =
-		{ 0f, -1f, //
+		{ 0f, 1f, //
 				0f, 0f,//
 				-1f, 0f,//
-				-1f, -1f };
+				-1f, 1f };
 
 		QuadArray rect = new QuadArray(4, GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2);
 		rect.setCoordinates(0, verts1);
@@ -352,7 +365,5 @@ public class Canvas3D2D extends Canvas3D
 		}
 
 	}
-
-	
 
 }

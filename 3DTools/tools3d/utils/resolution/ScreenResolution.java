@@ -17,6 +17,8 @@ public class ScreenResolution
 	 * 		DisplayDialog dlg = ScreenResolution.organiseResolution(this);
 	 * you should then call 
 	 * 		Canvas3D.getView().setSceneAntialiasingEnable(dlg.isAARequired());
+	 * 
+	 *  we assume the canvas3d is the ONLY child of this frame (so resolution=canvas3d dims)
 	 * @param frame
 	 * @return
 	 */
@@ -49,6 +51,7 @@ public class ScreenResolution
 		}
 		else
 		{
+
 			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 			{
@@ -58,9 +61,11 @@ public class ScreenResolution
 			}
 			else
 			{
-				frame.setSize(desiredMode.getWidth(), desiredMode.getHeight());
-				frame.setLocation(new Point((int) (size.getWidth() - frame.getWidth()) >> 1,
-						(int) (size.getHeight() - frame.getHeight()) >> 1));
+				frame.pack();// so insets return something
+				frame.setSize(desiredMode.getWidth() + frame.getInsets().left + frame.getInsets().right,
+						desiredMode.getHeight() + frame.getInsets().top + frame.getInsets().bottom);
+				frame.setLocation(new Point(((int) (size.getWidth() - frame.getWidth()) >> 1),
+						((int) (size.getHeight() - frame.getHeight()) >> 1)));
 			}
 			frame.setVisible(true);
 		}
