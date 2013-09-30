@@ -600,7 +600,8 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				MouseEvent e2 = new MouseEvent(c, e.getID(), 0, e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(),
 						e.isPopupTrigger(), e.getButton());
 				c.dispatchEvent(e2);
-				updateRequired.add(c);
+				//  not entirely sure about this, makes the screen flash too much
+				// updateRequired.add(c);
 			}
 
 		}
@@ -661,7 +662,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 						e.isPopupTrigger(), e.getButton());
 				c.dispatchEvent(e2);
 
-				// not entirely sure about this, makes teh screen flash too much
+				//  not entirely sure about this, makes teh screen flash too much
 				//	updateRequired.add(c);
 			}
 		}
