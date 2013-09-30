@@ -79,7 +79,7 @@ import tools3d.mixed3d2d.Canvas3D2D;
  *   
  *  
  * JSplitPane3D? not done 
- * JScrollPane3D? not done but notice that the interior panle must havve a resonable size set
+ * JScrollPane3D? not done but notice that the interior panel must have a resonable size set
  *  
  *
  * JTable - no selection 
@@ -660,7 +660,9 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				MouseEvent e2 = new MouseEvent(c, e.getID(), 0, e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(),
 						e.isPopupTrigger(), e.getButton());
 				c.dispatchEvent(e2);
-				updateRequired.add(c);
+
+				// not entirely sure about this, makes teh screen flash too much
+				//	updateRequired.add(c);
 			}
 		}
 
