@@ -24,11 +24,14 @@ public class ScreenResolution
 	 */
 	public static DisplayDialog organiseResolution(Frame frame)
 	{
-		DisplayDialog dlg = new DisplayDialog(null);//DON'T use frame due to frame.setUndecorated(true);
+		DisplayDialog dlg = new DisplayDialog(null);//DON'T use incoming frame due to frame.setUndecorated(true);
 		dlg.setVisible(true);
 		DisplayMode desiredMode = dlg.getDesiredDisplayMode();
 		if (desiredMode == null)
+		{
+			System.out.println("Resolution select cancelled, exiting...");
 			System.exit(0);
+		}
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();

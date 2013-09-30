@@ -477,7 +477,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				compDownButton = c;
 			}
 			else if (c instanceof JTextComponent)
-			{ 
+			{
 				currentKeyboardTarget = (JTextComponent) c;
 				((DefaultCaret) ((JTextComponent) c).getCaret()).focusGained(new FocusEvent(c, -1));
 			}
@@ -523,7 +523,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				if (compDownButton == c)
 				{
 					Point p = pointInC(mouseToHudPoint(e), c);
-					JList jList = (JList )c;
+					JList jList = (JList) c;
 					for (int i = 0; i < jList.getModel().getSize(); i++)
 					{
 						Rectangle rec = jList.getCellBounds(i, i);
@@ -536,7 +536,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				}
 			}
 			else if (c instanceof JTextComponent)
-			{ 
+			{
 				currentKeyboardTarget = (JTextComponent) c;
 				((DefaultCaret) ((JTextComponent) c).getCaret()).focusGained(new FocusEvent(c, -1));
 			}
@@ -555,7 +555,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 			if (c2 != c)
 			{
 				if (c2 instanceof JTextComponent)
-				{ 
+				{
 					((DefaultCaret) ((JTextComponent) c2).getCaret()).focusLost(new FocusEvent(c2, -1));
 				}
 			}
@@ -593,7 +593,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				dragComp = jif;
 
 			}
-			else if (c instanceof JTextComponent)
+			else
 			{
 				e.setSource(c);
 				Point p = pointInC(mouseToHudPoint(e), c);
@@ -653,6 +653,15 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 					updateRequired.add(c);
 				}
 			}
+			else
+			{
+				e.setSource(c);
+				Point p = pointInC(mouseToHudPoint(e), c);
+				MouseEvent e2 = new MouseEvent(c, e.getID(), 0, e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(),
+						e.isPopupTrigger(), e.getButton());
+				c.dispatchEvent(e2);
+				updateRequired.add(c);
+			}
 		}
 
 		for (JComponent c2 : comps)
@@ -667,6 +676,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 						updateRequired.add(c2);
 					}
 				}
+
 			}
 		}
 
@@ -679,11 +689,33 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 	@Override
 	public synchronized void mouseEntered(MouseEvent e)
 	{
+		JComponent c = findComponent(e);
+		if (c != null)
+		{
+			e.setSource(c);
+			Point p = pointInC(mouseToHudPoint(e), c);
+			MouseEvent e2 = new MouseEvent(c, e.getID(), 0, e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(),
+					e.isPopupTrigger(), e.getButton());
+			c.dispatchEvent(e2);
+			updateRequired.add(c);
+		}
+
 	}
 
 	@Override
 	public synchronized void mouseExited(MouseEvent e)
 	{
+		JComponent c = findComponent(e);
+
+		if (c != null)
+		{
+			e.setSource(c);
+			Point p = pointInC(mouseToHudPoint(e), c);
+			MouseEvent e2 = new MouseEvent(c, e.getID(), 0, e.getModifiers(), (int) p.getX(), (int) p.getY(), e.getClickCount(),
+					e.isPopupTrigger(), e.getButton());
+			c.dispatchEvent(e2);
+			updateRequired.add(c);
+		}
 	}
 
 	@Override
