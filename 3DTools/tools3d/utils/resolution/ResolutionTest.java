@@ -1,6 +1,5 @@
 package tools3d.utils.resolution;
 
-import java.awt.DisplayMode;
 import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
@@ -57,8 +56,8 @@ public final class ResolutionTest
 		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 
-		DisplayDialog dlg = ScreenResolution.organiseResolution(win);		
-		
+		GraphicsSettings dlg = ScreenResolution.organiseResolution(win);
+
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
 			public void keyPressed(KeyEvent e)
@@ -74,9 +73,9 @@ public final class ResolutionTest
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph());
-		
-		canvas3D.getView().setSceneAntialiasingEnable(dlg.isAARequired());
-		
+
+		canvas3D.getView().setSceneAntialiasingEnable(dlg.isAaRequired());
+
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
 		//su.addBranchGraph(fps.getBehaviorBranchGroup());

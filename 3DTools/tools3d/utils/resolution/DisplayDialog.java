@@ -1,9 +1,3 @@
-/*
- * DisplayDialog.java
- *
- * Created on February 21, 2007, 12:33 PM
- */
-
 package tools3d.utils.resolution;
 
 import java.awt.BorderLayout;
@@ -17,8 +11,6 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -47,7 +39,7 @@ import javax.swing.border.TitledBorder;
  * @author Kevin J. Duling (kevin@duling.us)
  */
 @SuppressWarnings("rawtypes")
-public final class DisplayDialog extends JDialog implements ActionListener, ItemListener
+public final class DisplayDialog extends JDialog implements ActionListener
 {
 	private final JButton cancel = new JButton("Cancel");
 
@@ -61,21 +53,15 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 	private final GraphicsDevice graphicsDevice;
 
-	private final DisplayMode originalDisplayMode;
-
-	private DisplayMode desiredDisplayMode = null;
-
 	private final Map<String, DisplayMode> availableDisplayModes = new HashMap<String, DisplayMode>(100);
 
 	private final JComboBox modesDropDown = new JComboBox();
 
-	private boolean runFullscreen = false;
-
-	private boolean aaRequired = false;
-
 	private static EmptyBorder border5 = new EmptyBorder(5, 5, 5, 5);
 
 	private static final int DONT_CARE = -1;
+
+	private GraphicsSettings graphicsSettings = new GraphicsSettings();
 
 	/**
 	 * Creates a new instance of DisplayDialog.
@@ -88,7 +74,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		if (!graphicsDevice.isFullScreenSupported())
 			fullscreenCheckbox.setEnabled(false);
-		originalDisplayMode = graphicsDevice.getDisplayMode();
+		graphicsSettings.setOriginalDisplayMode(graphicsDevice.getDisplayMode());
 
 		okay.setMnemonic(KeyEvent.VK_O);
 		okay.addActionListener(this);
@@ -98,9 +84,6 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 
 		cancel.setMnemonic(KeyEvent.VK_P);
 		props.addActionListener(this);
-
-		fullscreenCheckbox.addItemListener(this);
-		aaCheckbox.addItemListener(this);
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -166,7 +149,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 				availableDisplayModes.put(strMode, mode);
 				modesDropDown.addItem(strMode);
 				// select it if it's the current
-				if (mode.equals(originalDisplayMode))
+				if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
 				{
 					modesDropDown.setSelectedItem(strMode);
 				}
@@ -182,18 +165,9 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 * Retrieve the display mode desired by the user
 	 * @return a DisplayMode object
 	 */
-	public DisplayMode getDesiredDisplayMode()
+	public GraphicsSettings getGraphicsSettings()
 	{
-		return desiredDisplayMode;
-	}
-
-	/**
-	 * Retrieve the original display mode the desktop was in before the application started
-	 * @return a DisplayMode object
-	 */
-	public DisplayMode getOriginalDisplayMode()
-	{
-		return originalDisplayMode;
+		return graphicsSettings;
 	}
 
 	/**
@@ -201,7 +175,11 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 */
 	private void handleOkay()
 	{
-		desiredDisplayMode = availableDisplayModes.get(modesDropDown.getSelectedItem());
+		graphicsSettings.setCancelled(false);
+		graphicsSettings.setDesiredDisplayMode(availableDisplayModes.get(modesDropDown.getSelectedItem()));
+		graphicsSettings.setRunFullscreen(fullscreenCheckbox.isSelected());
+		graphicsSettings.setAaRequired(aaCheckbox.isSelected());
+
 		dispose();
 	}
 
@@ -210,7 +188,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 */
 	private void handleCancel()
 	{
-		runFullscreen = false;
+		graphicsSettings.setCancelled(true);
 		dispose();
 	}
 
@@ -239,7 +217,7 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 	 * @param depth desired color depth
 	 * @return a DisplayMode object that matches the parameters or 'null' if one could not be found
 	 */
-	private DisplayMode findDesiredDisplayMode(int width, int height, int refresh, int depth)
+	public DisplayMode findDesiredDisplayMode(int width, int height, int refresh, int depth)
 	{
 		DisplayMode[] modes = graphicsDevice.getDisplayModes();
 		for (DisplayMode mode : modes)
@@ -259,38 +237,4 @@ public final class DisplayDialog extends JDialog implements ActionListener, Item
 		return null;
 	}
 
-	/**
-	 * Report whether or not the fullscreen option was checked.
-	 * @return a boolean, true if the app should run in fullscreen
-	 */
-	public boolean fullscreen()
-	{
-		//quick check for -Dsun.java2d.noddraw=true being set
-		String nodd = System.getProperty("sun.java2d.noddraw");
-		if (runFullscreen && (nodd == null || !nodd.equals("true")))
-		{
-			JOptionPane.showMessageDialog(null, "Full screen without JVM VM argument -Dsun.java2d.noddraw=true is bad.");
-		}
-
-		return runFullscreen;
-	}
-
-	/**
-	 * Callback when a Swing object changes state.
-	 * @param e the Swing item that caused the event
-	 */
-	public void itemStateChanged(final ItemEvent e)
-	{
-		if (e.getSource() == fullscreenCheckbox)
-			runFullscreen = !runFullscreen;
-
-		if (e.getSource() == aaCheckbox)
-			aaRequired = !aaRequired;
-
-	}
-
-	public boolean isAARequired()
-	{
-		return aaRequired;
-	}
 }

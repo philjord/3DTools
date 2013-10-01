@@ -22,11 +22,11 @@ public class ScreenResolution
 	 * @param frame
 	 * @return
 	 */
-	public static DisplayDialog organiseResolution(Frame frame)
+	public static GraphicsSettings organiseResolution(Frame frame)
 	{
 		DisplayDialog dlg = new DisplayDialog(null);//DON'T use incoming frame due to frame.setUndecorated(true);
 		dlg.setVisible(true);
-		DisplayMode desiredMode = dlg.getDesiredDisplayMode();
+		DisplayMode desiredMode = dlg.getGraphicsSettings().getDesiredDisplayMode();
 		if (desiredMode == null)
 		{
 			System.out.println("Resolution select cancelled, exiting...");
@@ -36,7 +36,7 @@ public class ScreenResolution
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 
-		if (dlg.fullscreen())
+		if (dlg.getGraphicsSettings().isRunFullscreen())
 		{
 			frame.setUndecorated(true);
 			frame.setResizable(false);
@@ -72,6 +72,6 @@ public class ScreenResolution
 			}
 			frame.setVisible(true);
 		}
-		return dlg;
+		return dlg.getGraphicsSettings();
 	}
 }
