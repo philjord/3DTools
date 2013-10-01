@@ -1,4 +1,4 @@
-package tools3d.utils;
+package tools3d.utils.old;
 
 import javax.media.j3d.Transform3D;
 import javax.vecmath.AxisAngle4d;
