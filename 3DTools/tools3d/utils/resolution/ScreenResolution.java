@@ -22,15 +22,18 @@ public class ScreenResolution
 	 * @param frame
 	 * @return
 	 */
-	public static GraphicsSettings organiseResolution(Frame frame)
+	public static GraphicsSettings organiseResolution(Frame frame, boolean initMinRes, boolean exitOnCancel)
 	{
-		DisplayDialog dlg = new DisplayDialog(null);//DON'T use incoming frame due to frame.setUndecorated(true);
+		DisplayDialog dlg = new DisplayDialog(null, initMinRes);//DON'T use incoming frame due to frame.setUndecorated(true);
 		dlg.setVisible(true);
 		DisplayMode desiredMode = dlg.getGraphicsSettings().getDesiredDisplayMode();
 		if (desiredMode == null)
 		{
-			System.out.println("Resolution select cancelled, exiting...");
-			System.exit(0);
+			if (exitOnCancel)
+			{
+				System.out.println("Resolution select cancelled, exiting...");
+				System.exit(0);
+			}
 		}
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

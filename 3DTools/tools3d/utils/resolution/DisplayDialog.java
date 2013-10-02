@@ -66,8 +66,9 @@ public final class DisplayDialog extends JDialog implements ActionListener
 	/**
 	 * Creates a new instance of DisplayDialog.
 	 * @param frame The parent compnent for this Swing object
+	 * @param initMinRes 
 	 */
-	public DisplayDialog(Frame frame)
+	public DisplayDialog(Frame frame, boolean initMinRes)
 	{
 		super(frame, true);
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -90,7 +91,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		GridLayout centerPanelLayout = new GridLayout(1, 1);
 		JPanel centerPanel = new JPanel(centerPanelLayout);
 		mainPanel.add("Center", centerPanel);
-		centerPanel.add(buildResolutionPanel());
+		centerPanel.add(buildResolutionPanel(initMinRes));
 
 		JPanel southPanel = new JPanel(new GridLayout(2, 1));
 		JPanel southPanelChecks = new JPanel(new GridBagLayout());
@@ -131,13 +132,16 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 	/**
 	 * Utility method to build the Swing panel the controls will sit on
+	 * @param initMinRes pre select the first (lowest setting) otherwise default to current
 	 * @return a JPanel object
 	 */
-	private JPanel buildResolutionPanel()
+	private JPanel buildResolutionPanel(boolean initMinRes)
 	{
 		final DisplayMode[] modes = graphicsDevice.getDisplayModes();
 		final JPanel resolutionPanel = new JPanel(new GridBagLayout());
 		resolutionPanel.setBorder(new CompoundBorder(new TitledBorder(null, "Resolution", TitledBorder.LEFT, TitledBorder.TOP), border5));
+
+		DisplayMode lowestMode = null;
 
 		for (DisplayMode mode : modes)
 		{
@@ -149,16 +153,39 @@ public final class DisplayDialog extends JDialog implements ActionListener
 				availableDisplayModes.put(strMode, mode);
 				modesDropDown.addItem(strMode);
 				// select it if it's the current
-				if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
+				if (initMinRes)
 				{
-					modesDropDown.setSelectedItem(strMode);
+					if (lowestMode == null || isLower(lowestMode, mode))
+					{
+						lowestMode = mode;
+					}
+				}
+				else
+				{
+					if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
+					{
+						modesDropDown.setSelectedItem(strMode);
+					}
 				}
 			}
+		}
+		if (initMinRes && lowestMode != null)
+		{
+			String strMode = lowestMode.getWidth() + "x" + lowestMode.getHeight() + " " + lowestMode.getRefreshRate() + "Hz "
+					+ lowestMode.getBitDepth() + " bpp";
+			modesDropDown.setSelectedItem(strMode);
 		}
 		modesDropDown.setSize(modesDropDown.getPreferredSize().width, 200);
 		resolutionPanel.add(modesDropDown);
 
 		return resolutionPanel;
+	}
+
+	private boolean isLower(DisplayMode newMode, DisplayMode oldMode)
+	{
+
+		return newMode.getHeight() < oldMode.getHeight() && newMode.getWidth() < oldMode.getWidth()
+				&& newMode.getBitDepth() < oldMode.getBitDepth();
 	}
 
 	/**

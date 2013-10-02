@@ -56,7 +56,7 @@ public final class ResolutionTest
 		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 
-		GraphicsSettings dlg = ScreenResolution.organiseResolution(win);
+		GraphicsSettings dlg = ScreenResolution.organiseResolution(win, false, true);
 
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
