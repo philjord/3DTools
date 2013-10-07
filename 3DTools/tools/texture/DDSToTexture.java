@@ -240,7 +240,6 @@ public class DDSToTexture
 			}
 
 			// is it un mipmapped?
-
 			if (ddsImage.getNumMipMaps() <= 1)
 			{
 				BufferedImage image = new DDSBufferedImage(ddsImage, 0, filename);
@@ -258,7 +257,10 @@ public class DDSToTexture
 					}
 
 					Texture2D tex = new Texture2D(Texture.BASE_LEVEL, textureFormat, image.getWidth(), image.getHeight());
-
+					
+					tex.setMinFilter(Texture.NICEST);
+					tex.setMagFilter(Texture.NICEST);
+					
 					tex.setBoundaryModeS(Texture.WRAP);
 					tex.setBoundaryModeT(Texture.WRAP);
 
@@ -309,8 +311,9 @@ public class DDSToTexture
 					tex.setName(filename);
 					tex.setBaseLevel(0);
 					tex.setMaximumLevel(levels - 1);
-					tex.setMinFilter(Texture.MULTI_LEVEL_LINEAR);
-					tex.setMagFilter(Texture.BASE_LEVEL_LINEAR);
+					// better to let machine decide, then settings option to go fastest one day
+					tex.setMinFilter(Texture.NICEST);//Texture.MULTI_LEVEL_LINEAR);
+					tex.setMagFilter(Texture.NICEST);//Texture.BASE_LEVEL_LINEAR);
 
 					tex.setBoundaryModeS(Texture.WRAP);
 					tex.setBoundaryModeT(Texture.WRAP);
@@ -326,6 +329,8 @@ public class DDSToTexture
 						else if (images.length > 0)
 						{
 							BufferedImage image = images[images.length - 1].getSubimage(0, 0, w, h);
+							//trying to sort out darks lines in ST 
+							//BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 							tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image, true, true));
 						}
 						w >>= 1;
@@ -360,7 +365,7 @@ public class DDSToTexture
 		}
 	}
 
-	private static int BUFSIZE = 8000;
+	private static int BUFSIZE = 16000;
 
 	public static ByteBuffer toByteBuffer(InputStream in) throws IOException
 	{
