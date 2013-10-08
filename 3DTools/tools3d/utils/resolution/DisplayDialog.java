@@ -67,8 +67,9 @@ public final class DisplayDialog extends JDialog implements ActionListener
 	 * Creates a new instance of DisplayDialog.
 	 * @param frame The parent compnent for this Swing object
 	 * @param initMinRes 
+	 * @param allowFullScreen 
 	 */
-	public DisplayDialog(Frame frame, boolean initMinRes)
+	public DisplayDialog(Frame frame, boolean initMinRes, boolean allowFullScreen)
 	{
 		super(frame, true);
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -98,7 +99,8 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		JPanel southPanelButts = new JPanel(new GridBagLayout());
 		southPanel.add(southPanelChecks);
 		southPanel.add(southPanelButts);
-		southPanelChecks.add(fullscreenCheckbox);
+		if (allowFullScreen)
+			southPanelChecks.add(fullscreenCheckbox);
 		southPanelChecks.add(aaCheckbox);
 		southPanelButts.add(okay);
 		southPanelButts.add(cancel);

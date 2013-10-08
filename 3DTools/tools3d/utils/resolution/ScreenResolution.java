@@ -1,5 +1,6 @@
 package tools3d.utils.resolution;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Frame;
@@ -42,7 +43,7 @@ public class ScreenResolution
 		if (gs == null || gs.isCancelled())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes);//DON'T use incoming frame due to frame.setUndecorated(true);
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true);//DON'T use incoming frame due to frame.setUndecorated(true);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
 		}
@@ -84,7 +85,6 @@ public class ScreenResolution
 		}
 		else
 		{
-
 			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 			if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 			{
@@ -102,6 +102,68 @@ public class ScreenResolution
 			}
 			frame.setVisible(true);
 		}
+		return gs;
+	}
+
+	/**
+	 * For use is setting up an embedded component
+	 * @param prefs
+	 * @param frame
+	 * @param initMinRes
+	 * @param exitOnCancel
+	 * @param forceSelect
+	 * @return
+	 */
+	public static GraphicsSettings organiseResolution(Preferences prefs, Component comp, boolean initMinRes, boolean exitOnCancel,
+			boolean forceSelect)
+	{
+		GraphicsSettings gs = null;
+		if (prefs != null && !forceSelect)
+		{
+			String prefStr = prefs.get("GraphicsSettings", "");
+			if (prefStr != null && prefStr.length() > 0)
+			{
+				gs = new GraphicsSettings();
+				gs.fromPrefString(prefStr);
+			}
+		}
+
+		if (gs == null || gs.isCancelled())
+		{
+			gs = new GraphicsSettings();
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes, false);
+			dlg.setVisible(true);
+			gs = dlg.getGraphicsSettings();
+		}
+
+		if (gs == null || gs.isCancelled())
+		{
+			if (exitOnCancel)
+			{
+				System.out.println("Resolution select cancelled, exiting...");
+				System.exit(0);
+			}
+			return null;
+		}
+		if (prefs != null)
+		{
+			prefs.put("GraphicsSettings", gs.toPrefString());
+		}
+
+		DisplayMode desiredMode = gs.getDesiredDisplayMode();
+
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
+		{
+			JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
+					JOptionPane.ERROR_MESSAGE);
+			comp.setSize(size);
+		}
+		else
+		{
+			comp.setSize(desiredMode.getWidth(), desiredMode.getHeight());
+		}
+
 		return gs;
 	}
 }
