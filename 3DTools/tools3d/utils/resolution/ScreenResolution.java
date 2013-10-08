@@ -43,7 +43,7 @@ public class ScreenResolution
 		if (gs == null || gs.isCancelled())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true);//DON'T use incoming frame due to frame.setUndecorated(true);
+			DisplayDialog dlg = new DisplayDialog(frame, initMinRes, true);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
 		}
@@ -69,8 +69,10 @@ public class ScreenResolution
 
 		if (gs.isRunFullscreen())
 		{
+			gd.setFullScreenWindow(null);
+			frame.removeNotify();
 			frame.setUndecorated(true);
-			frame.setResizable(false);
+			frame.addNotify();
 			gd.setFullScreenWindow(frame);
 			if (gd.getFullScreenWindow() == null)
 				System.out.println("Did not get fullscreen exclusive mode");
@@ -82,6 +84,7 @@ public class ScreenResolution
 				gd.setDisplayMode(desiredMode);
 			}
 
+			frame.requestFocus();
 		}
 		else
 		{
