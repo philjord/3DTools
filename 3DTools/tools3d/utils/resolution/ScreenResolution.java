@@ -7,6 +7,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.util.prefs.Preferences;
 
 import javax.swing.JOptionPane;
 
@@ -14,32 +15,56 @@ public class ScreenResolution
 {
 	/**
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
-	 * 		DisplayDialog dlg = ScreenResolution.organiseResolution(this);
+	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
 	 * you should then call 
-	 * 		Canvas3D.getView().setSceneAntialiasingEnable(dlg.isAARequired());
+	 * 		Canvas3D.getView().setSceneAntialiasingEnable(gs.isAARequired());
 	 * 
 	 *  we assume the canvas3d is the ONLY child of this frame (so resolution=canvas3d dims)
+	 * @param prefs where to gather data from, use null to force reselect
 	 * @param frame
 	 * @return
 	 */
-	public static GraphicsSettings organiseResolution(Frame frame, boolean initMinRes, boolean exitOnCancel)
+
+	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel)
 	{
-		DisplayDialog dlg = new DisplayDialog(null, initMinRes);//DON'T use incoming frame due to frame.setUndecorated(true);
-		dlg.setVisible(true);
-		DisplayMode desiredMode = dlg.getGraphicsSettings().getDesiredDisplayMode();
-		if (desiredMode == null)
+		GraphicsSettings gs = null;
+		if (prefs != null)
+		{
+
+			String prefStr = prefs.get("GraphicsSettings", "");
+			if (prefStr != null && prefStr.length() > 0)
+			{
+				gs = new GraphicsSettings();
+				gs.fromPrefString(prefStr);
+			}
+		}
+
+		if (gs == null || gs.isCancelled())
+		{
+			gs = new GraphicsSettings();
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes);//DON'T use incoming frame due to frame.setUndecorated(true);
+			dlg.setVisible(true);
+			gs = dlg.getGraphicsSettings();
+		}
+
+		if (gs == null || gs.isCancelled())
 		{
 			if (exitOnCancel)
 			{
 				System.out.println("Resolution select cancelled, exiting...");
 				System.exit(0);
 			}
+			return null;
 		}
+
+		prefs.put("GraphicsSettings", gs.toPrefString());
+
+		DisplayMode desiredMode = gs.getDesiredDisplayMode();
 
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		GraphicsDevice gd = ge.getDefaultScreenDevice();
 
-		if (dlg.getGraphicsSettings().isRunFullscreen())
+		if (gs.isRunFullscreen())
 		{
 			frame.setUndecorated(true);
 			frame.setResizable(false);
@@ -75,6 +100,6 @@ public class ScreenResolution
 			}
 			frame.setVisible(true);
 		}
-		return dlg.getGraphicsSettings();
+		return gs;
 	}
 }
