@@ -25,12 +25,12 @@ public class ScreenResolution
 	 * @return
 	 */
 
-	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel)
+	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
+			boolean forceSelect)
 	{
 		GraphicsSettings gs = null;
-		if (prefs != null)
+		if (prefs != null && !forceSelect)
 		{
-
 			String prefStr = prefs.get("GraphicsSettings", "");
 			if (prefStr != null && prefStr.length() > 0)
 			{
@@ -56,8 +56,10 @@ public class ScreenResolution
 			}
 			return null;
 		}
-
-		prefs.put("GraphicsSettings", gs.toPrefString());
+		if (prefs != null)
+		{
+			prefs.put("GraphicsSettings", gs.toPrefString());
+		}
 
 		DisplayMode desiredMode = gs.getDesiredDisplayMode();
 
