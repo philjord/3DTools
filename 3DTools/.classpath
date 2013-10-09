@@ -4,7 +4,6 @@
 	<classpathentry kind="src" path="/Tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jftp.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/joalmixer.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/log4j-1.2.9.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/tools.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/j3d/j3d-org-java3d-all.jar" sourcepath="E:/Java/3rd party jars/j3d/src"/>
