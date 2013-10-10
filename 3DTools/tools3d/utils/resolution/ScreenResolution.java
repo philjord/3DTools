@@ -15,6 +15,19 @@ import javax.swing.JOptionPane;
 public class ScreenResolution
 {
 	/**
+	 * 
+	 * NOTE!! JRE7 can crash out on calls to config the canvas3D
+	 * From Readme:
+	 * Jre 7 some version cause a crash bug, wiht an error log like:
+	 * DefaultRenderingErrorListener.errorOccurred:
+	 * CONTEXT_CREATION_ERROR: Renderer: Error creating Canvas3D graphics context or bad pixelformat 
+	 * Or
+	 *  javax.media.j3d.IllegalRenderingStateException: Java 3D ERROR : OpenGL 1.2 or better is required (GL_VERSION=1.1)
+	 * Run check java to discover installed version, uninstalling java 7 or forcibly using jre6 are teh only solutions
+	 * Programmatic solution is...
+	 * add the canvas3d on screen early, just before this method call
+	 * cameraPanel.startRendering();
+	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
 	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
 	 * you should then call 
@@ -29,6 +42,7 @@ public class ScreenResolution
 	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
 	{
+		System.out.println("organising Resolution...");
 		GraphicsSettings gs = null;
 		if (prefs != null && !forceSelect)
 		{
@@ -43,7 +57,8 @@ public class ScreenResolution
 		if (gs == null || gs.isCancelled())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(frame, initMinRes, true);
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true);
+			//DisplayDialog dlg = new DisplayDialog(frame, initMinRes, true);			
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
 		}
