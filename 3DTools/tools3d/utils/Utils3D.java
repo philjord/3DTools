@@ -63,6 +63,14 @@ public class Utils3D
 		return transform;
 	}
 
+	public static synchronized Transform3D createTransform(double rotY, Vector3f translation)
+	{
+		Transform3D transform = new Transform3D();
+		transform.rotY(rotY);
+		transform.setTranslation(translation);
+		return transform;
+	}
+
 	public static synchronized Vector3f defactorRotation(Node node, Vector3f trans)
 	{
 		Vector3f returnVector = new Vector3f(trans);
