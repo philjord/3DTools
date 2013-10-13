@@ -1,4 +1,4 @@
-package tools3d.utils.resolution;
+package tools3d.resolution;
 
 import java.awt.Component;
 import java.awt.Dimension;

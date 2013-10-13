@@ -1,4 +1,4 @@
-package tools3d.utils.resolution;
+package tools3d.resolution;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
