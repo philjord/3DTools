@@ -90,6 +90,9 @@ public class QueryProperties extends JFrame
 		Properties props = System.getProperties();
 		props.list(System.out);
 
+		//and output if java3d is sealed too for fun
+		System.out.println("javax.media.j3d .isSealed() = " + Package.getPackage("javax.media.j3d").isSealed());
+
 	}
 
 	public QueryProperties()
