@@ -56,6 +56,10 @@ public class GraphicsSettings
 		return originalDisplayMode;
 	}
 
+	/**
+	 * Can be null in case of cancel
+	 * @return
+	 */
 	public DisplayMode getDesiredDisplayMode()
 	{
 		return desiredDisplayMode;

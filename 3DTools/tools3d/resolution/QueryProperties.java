@@ -6,6 +6,7 @@ import java.awt.EventQueue;
 import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -13,18 +14,22 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import java3d.nativelinker.Java3dLinker2;
 
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.VirtualUniverse;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
 @SuppressWarnings("all")
 public class QueryProperties extends JFrame
 {
+	public static String ps = System.getProperty("path.separator");
+
 	private JScrollPane jScrollPane1;
 
 	private JTextArea myTextArea;
@@ -91,8 +96,36 @@ public class QueryProperties extends JFrame
 		props.list(System.out);
 
 		//and output if java3d is sealed too for fun
-		System.out.println("javax.media.j3d .isSealed() = " + Package.getPackage("javax.media.j3d").isSealed());
+		System.out.println("javax.media.j3d isSealed? " + Package.getPackage("javax.media.j3d").isSealed());
 
+		// check for java3d installed
+		String extProp = props.getProperty("java.ext.dirs");
+		if (extProp != null)
+		{
+			String[] paths = extProp.split(ps);
+			for (String path : paths)
+			{System.out.println("path " + path);
+				File folder = new File(path);
+				if (folder.exists() && folder.isDirectory())
+				{
+					File[] listOfFiles = folder.listFiles();
+					for (int i = 0; i < listOfFiles.length; i++)
+					{
+						
+						if (listOfFiles[i].isFile())
+						{
+							if (listOfFiles[i].getName().indexOf("j3d") != -1)
+							{
+								String mess = listOfFiles[i].getPath() + " looks like Java3d, it needs to be uninstalled.";
+								System.out.println(mess);
+								JOptionPane.showMessageDialog(null, mess);
+							}
+						}
+					}
+				}
+			}
+
+		}
 	}
 
 	public QueryProperties()

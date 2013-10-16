@@ -78,47 +78,49 @@ public class ScreenResolution
 		}
 
 		DisplayMode desiredMode = gs.getDesiredDisplayMode();
-
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-
-		if (gs.isRunFullscreen())
+		if (desiredMode != null)
 		{
-			gd.setFullScreenWindow(null);
-			frame.removeNotify();
-			frame.setUndecorated(true);
-			frame.addNotify();
-			gd.setFullScreenWindow(frame);
-			if (gd.getFullScreenWindow() == null)
-				System.out.println("Did not get fullscreen exclusive mode");
-			else
-				System.out.println("Got fullscreen exclusive mode");
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			GraphicsDevice gd = ge.getDefaultScreenDevice();
 
-			if (gd.isDisplayChangeSupported())
+			if (gs.isRunFullscreen())
 			{
-				gd.setDisplayMode(desiredMode);
-			}
+				gd.setFullScreenWindow(null);
+				frame.removeNotify();
+				frame.setUndecorated(true);
+				frame.addNotify();
+				gd.setFullScreenWindow(frame);
+				if (gd.getFullScreenWindow() == null)
+					System.out.println("Did not get fullscreen exclusive mode");
+				else
+					System.out.println("Got fullscreen exclusive mode");
 
-			frame.requestFocus();
-		}
-		else
-		{
-			Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-			if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
-			{
-				JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
-						JOptionPane.ERROR_MESSAGE);
-				frame.setSize(size);
+				if (gd.isDisplayChangeSupported())
+				{
+					gd.setDisplayMode(desiredMode);
+				}
+
+				frame.requestFocus();
 			}
 			else
 			{
-				frame.pack();// so insets return something
-				frame.setSize(desiredMode.getWidth() + frame.getInsets().left + frame.getInsets().right,
-						desiredMode.getHeight() + frame.getInsets().top + frame.getInsets().bottom);
-				frame.setLocation(new Point(((int) (size.getWidth() - frame.getWidth()) >> 1),
-						((int) (size.getHeight() - frame.getHeight()) >> 1)));
+				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+				if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
+				{
+					JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
+							JOptionPane.ERROR_MESSAGE);
+					frame.setSize(size);
+				}
+				else
+				{
+					frame.pack();// so insets return something
+					frame.setSize(desiredMode.getWidth() + frame.getInsets().left + frame.getInsets().right, desiredMode.getHeight()
+							+ frame.getInsets().top + frame.getInsets().bottom);
+					frame.setLocation(new Point(((int) (size.getWidth() - frame.getWidth()) >> 1), ((int) (size.getHeight() - frame
+							.getHeight()) >> 1)));
+				}
+				frame.setVisible(true);
 			}
-			frame.setVisible(true);
 		}
 		return gs;
 	}
