@@ -16,6 +16,6 @@
 	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar"/>
 	<classpathentry kind="lib" path="/external_jars/jogamp/jar/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="/external_jars/jogamp/jar/joal.jar"/>
+	<classpathentry kind="lib" path="/external_jars/jogamp/jar/joal.jar" sourcepath="E:/downloads&amp;installs/develop/java/jogamp/jogamp-all-platforms/joal-java-src.zip"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>

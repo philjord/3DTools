@@ -5,6 +5,7 @@ import javax.media.j3d.View;
 
 import tools3d.audio.JOALMixer;
 
+import com.jogamp.openal.sound3d.AudioSystem3D;
 import com.sun.j3d.utils.universe.Viewer;
 
 //TODO: Camera really doesn't need to extend the utility class viewer
@@ -18,15 +19,14 @@ public class Camera extends Viewer
 
 	private double FOV = 65;
 
+	private JOALMixer mixer = null;
+
 	public Camera(Canvas3D canvas3D)
 	{
 		// create a viewer with the given canvas, physical environemnt and physical body are defaulted
 		super(canvas3D);
 
 		getView().setTransparencySortingPolicy(View.TRANSPARENCY_SORT_GEOMETRY);
-		//getView().setSceneAntialiasingEnable(true); 
-
-		// setAvatar(new SimpleAvatar("media/models/eyeAvatar.ac"));
 
 		// set up the view
 		getView().setFrontClipPolicy(View.VIRTUAL_EYE);
@@ -40,24 +40,21 @@ public class Camera extends Viewer
 		double fov = FOV * Math.PI / 180.0;
 		getView().setFieldOfView(fov);
 
-		// set max frame rate to 50, only don't for now and see what it's like <-pj
-		//getView().setMinimumFrameCycleTime(20);
-
 		//other wise restricted access exception
 		if (getView().getUserHeadToVworldEnable())
 		{
 			// create and adds a joalmixer as the audio device
-			JOALMixer mixer = new JOALMixer(getPhysicalEnvironment());
+			mixer = new JOALMixer(getPhysicalEnvironment());
 			boolean success = mixer.initialize();
 
 			if (!success)
 			{
-
-				System.out.println("Open AL failed to init, is it installed?");
+				System.out.println("Open AL failed to init");
 				// remove the audio device
 				getPhysicalEnvironment().setAudioDevice(null);
 			}
 		}
 
 	}
+
 }

@@ -583,8 +583,8 @@ public class JOALMixer extends AudioEngine3DL2 implements AudioDevice, AudioDevi
 			float[] backAttenuationScaleFactor)
 	{
 		if (debug & debugDistanceGain)
-			System.out.println("JOALMixer - setDistanceGain for " + index + " with " + frontDistance + ", " + frontAttenuationScaleFactor + ", "
-					+ backDistance + ", " + backAttenuationScaleFactor);
+			System.out.println("JOALMixer - setDistanceGain for " + index + " with " + frontDistance + ", " + frontAttenuationScaleFactor
+					+ ", " + backDistance + ", " + backAttenuationScaleFactor);
 		super.setDistanceGain(index, frontDistance, frontAttenuationScaleFactor, backDistance, backAttenuationScaleFactor);
 	}
 
@@ -839,6 +839,7 @@ public class JOALMixer extends AudioEngine3DL2 implements AudioDevice, AudioDevi
 	 */
 	public boolean close()
 	{
+
 		if (debug)
 			System.out.println("JOALMixer - close...");
 		// Not sure if all the samples should be clear(ed), if yes then uncomment
@@ -1169,23 +1170,33 @@ public class JOALMixer extends AudioEngine3DL2 implements AudioDevice, AudioDevi
 	 * Unused code for to release resources created with the function above. Maybe useful later if the option of
 	 * selecting which device on the machine is used. This would be used to close device.
 	 */
-	static void exitOpenAL()
+	public static void exitOpenAL()
 	{
-		ALCcontext curContext;
-		ALCdevice curDevice;
+		try
+		{
+			if (alc != null)
+			{
+				ALCcontext curContext;
+				ALCdevice curDevice;
 
-		// Get the current context.
-		curContext = alc.alcGetCurrentContext();
+				// Get the current context.
+				curContext = alc.alcGetCurrentContext();
 
-		// Get the device used by that context.
-		curDevice = alc.alcGetContextsDevice(curContext);
+				// Get the device used by that context.
+				curDevice = alc.alcGetContextsDevice(curContext);
 
-		// Reset the current context to NULL.
-		alc.alcMakeContextCurrent(null);
+				// Reset the current context to NULL.
+				alc.alcMakeContextCurrent(null);
 
-		// Release the context and the device.
-		alc.alcDestroyContext(curContext);
-		alc.alcCloseDevice(curDevice);
+				// Release the context and the device.
+				alc.alcDestroyContext(curContext);
+				alc.alcCloseDevice(curDevice);
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private void calculateOrientation(View view)
