@@ -97,9 +97,13 @@ public class QueryProperties extends JFrame
 
 		//and output if java3d is sealed too for fun
 		System.out.println("javax.media.j3d isSealed? " + Package.getPackage("javax.media.j3d").isSealed());
+		checkForInstalledJ3d();
+	}
 
+	public static void checkForInstalledJ3d()
+	{
 		// check for java3d installed
-		String extProp = props.getProperty("java.ext.dirs");
+		String extProp = System.getProperties().getProperty("java.ext.dirs");
 		if (extProp != null)
 		{
 			String[] paths = extProp.split(ps);
@@ -119,7 +123,7 @@ public class QueryProperties extends JFrame
 								String mess = listOfFiles[i].getPath() + " looks like Java3d, it needs to be uninstalled.";
 								System.out.println(mess);
 								JOptionPane.showMessageDialog(null, mess);
-								break;
+								return;
 							}
 						}
 					}

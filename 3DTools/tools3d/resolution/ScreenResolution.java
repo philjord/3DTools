@@ -43,6 +43,9 @@ public class ScreenResolution
 			boolean forceSelect)
 	{
 		System.out.println("organising Resolution...");
+		
+		QueryProperties.checkForInstalledJ3d();
+		
 		GraphicsSettings gs = null;
 		if (prefs != null && !forceSelect)
 		{
@@ -137,6 +140,8 @@ public class ScreenResolution
 	public static GraphicsSettings organiseResolution(Preferences prefs, Component comp, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
 	{
+		QueryProperties.checkForInstalledJ3d();
+		
 		GraphicsSettings gs = null;
 		if (prefs != null && !forceSelect)
 		{
