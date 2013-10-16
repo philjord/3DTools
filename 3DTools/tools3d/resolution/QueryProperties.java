@@ -100,7 +100,7 @@ public class QueryProperties extends JFrame
 		checkForInstalledJ3d();
 	}
 
-	public static void checkForInstalledJ3d()
+	public static boolean checkForInstalledJ3d()
 	{
 		// check for java3d installed
 		String extProp = System.getProperties().getProperty("java.ext.dirs");
@@ -123,7 +123,7 @@ public class QueryProperties extends JFrame
 								String mess = listOfFiles[i].getPath() + " looks like Java3d, it needs to be uninstalled.";
 								System.out.println(mess);
 								JOptionPane.showMessageDialog(null, mess);
-								return;
+								return true;
 							}
 						}
 					}
@@ -131,6 +131,8 @@ public class QueryProperties extends JFrame
 			}
 
 		}
+
+		return false;
 	}
 
 	public QueryProperties()
