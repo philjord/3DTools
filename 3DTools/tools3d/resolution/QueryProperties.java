@@ -109,7 +109,6 @@ public class QueryProperties extends JFrame
 			String[] paths = extProp.split(ps);
 			for (String path : paths)
 			{
-				System.out.println("path " + path);
 				File folder = new File(path);
 				if (folder.exists() && folder.isDirectory())
 				{
