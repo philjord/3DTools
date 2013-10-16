@@ -104,14 +104,14 @@ public class QueryProperties extends JFrame
 		{
 			String[] paths = extProp.split(ps);
 			for (String path : paths)
-			{System.out.println("path " + path);
+			{
+				System.out.println("path " + path);
 				File folder = new File(path);
 				if (folder.exists() && folder.isDirectory())
 				{
 					File[] listOfFiles = folder.listFiles();
 					for (int i = 0; i < listOfFiles.length; i++)
 					{
-						
 						if (listOfFiles[i].isFile())
 						{
 							if (listOfFiles[i].getName().indexOf("j3d") != -1)
@@ -119,6 +119,7 @@ public class QueryProperties extends JFrame
 								String mess = listOfFiles[i].getPath() + " looks like Java3d, it needs to be uninstalled.";
 								System.out.println(mess);
 								JOptionPane.showMessageDialog(null, mess);
+								break;
 							}
 						}
 					}
