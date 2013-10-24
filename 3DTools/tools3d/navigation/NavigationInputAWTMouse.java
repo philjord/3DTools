@@ -5,6 +5,8 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -15,7 +17,7 @@ import javax.vecmath.Point2f;
 
 import tools.WeakListenerList;
 
-public class NavigationInputAWTMouse implements MouseListener, MouseMotionListener
+public class NavigationInputAWTMouse implements MouseListener, MouseMotionListener, FocusListener
 {
 	// multiplyer to get from pixels difference to radian turnage
 	// eg 0.01f mean 100 pixels makes for 1 PI per second or 180 degrees
@@ -48,11 +50,14 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 
 	boolean isFreeLook = false;
 
+	private boolean hasFocus = false;
+
 	private WeakListenerList<NavigationRotationStateListener> navigationRotationStateListeners = new WeakListenerList<NavigationRotationStateListener>();
 
 	public NavigationInputAWTMouse()
 	{
-		invisibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(""), new Point(0, 0), "invisible");
+		invisibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(Toolkit.getDefaultToolkit().getImage(""), new Point(0, 0),
+				"invisible");
 
 		try
 		{
@@ -87,6 +92,7 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 		{
 			canvas.removeMouseListener(this);
 			canvas.removeMouseMotionListener(this);
+			canvas.removeFocusListener(this);
 			setFreelook(false);
 		}
 
@@ -95,8 +101,22 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 		{
 			canvas.addMouseListener(this);
 			canvas.addMouseMotionListener(this);
+			hasFocus = true;
+			canvas.addFocusListener(this);
 			// setFreelook(true);
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e)
+	{
+		hasFocus = true;
+	}
+
+	@Override
+	public void focusLost(FocusEvent e)
+	{
+		hasFocus = false;
 	}
 
 	private void setFreelook(boolean b)
@@ -119,7 +139,7 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 
 	private void recenterMouse()
 	{
-		if (canvas != null && robot != null)
+		if (canvas != null && robot != null && hasFocus)
 		{
 			centerLocation.x = canvas.getWidth() / 2;
 			centerLocation.y = canvas.getHeight() / 2;
@@ -147,7 +167,7 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 
 	public void mouseMoved(MouseEvent e)
 	{
-		if (isFreeLook)
+		if (isFreeLook && hasFocus)
 		{
 			// this event is from the re-centering the mouse - ignore it
 			if (isRecentering)
@@ -284,5 +304,4 @@ public class NavigationInputAWTMouse implements MouseListener, MouseMotionListen
 	{
 	}
 
- 
 }

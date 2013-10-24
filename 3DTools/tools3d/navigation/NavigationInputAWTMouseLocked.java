@@ -5,6 +5,8 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.Robot;
 import java.awt.Toolkit;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -14,7 +16,7 @@ import javax.swing.SwingUtilities;
 
 import tools.WeakListenerList;
 
-public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotionListener
+public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotionListener, FocusListener
 {
 	// multiplyer to get from pixels difference to radian turnage
 	// eg 0.01f mean 100 pixels makes for 1 PI per second or 180 degrees
@@ -39,6 +41,8 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	private Point centerLocation = new Point();
 
 	boolean isRecentering = false;
+
+	private boolean hasFocus = false;
 
 	private WeakListenerList<NavigationRotationStateListener> navigationRotationStateListeners = new WeakListenerList<NavigationRotationStateListener>();
 
@@ -80,22 +84,39 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 		{
 			canvas.removeMouseListener(this);
 			canvas.removeMouseMotionListener(this);
+			canvas.removeFocusListener(this);
 			canvas.setCursor(Cursor.getDefaultCursor());
 		}
 
 		canvas = newCanvas;
 		if (canvas != null)
 		{
+
 			canvas.addMouseListener(this);
 			canvas.addMouseMotionListener(this);
 			recenterMouse();
 			canvas.setCursor(invisibleCursor);
+
+			hasFocus = true;
+			canvas.addFocusListener(this);
 		}
+	}
+
+	@Override
+	public void focusGained(FocusEvent e)
+	{
+		hasFocus = true;
+	}
+
+	@Override
+	public void focusLost(FocusEvent e)
+	{
+		hasFocus = false;
 	}
 
 	private void recenterMouse()
 	{
-		if (canvas != null && robot != null)
+		if (canvas != null && robot != null && hasFocus)
 		{
 			centerLocation.x = canvas.getWidth() / 2;
 			centerLocation.y = canvas.getHeight() / 2;
@@ -123,49 +144,51 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 
 	public void mouseMoved(MouseEvent e)
 	{
-		// this event is from the re-centering the mouse - ignore it
-		if (isRecentering)
+		if (hasFocus)
 		{
-			isRecentering = false;
-		}
-		else
-		{
-
-			//NOTE DX and DY are from mouse usage so are reversed for the 3d coords
-			int dx = e.getX() - previousMouseLocation.x;
-			int dy = e.getY() - previousMouseLocation.y;
-
-			if (dx != 0 || dy != 0)
+			// this event is from the re-centering the mouse - ignore it
+			if (isRecentering)
 			{
-				double scaledDeltaY = (double) dy * FREE_LOOK_GROSS_ROTATE_FACTOR;
-				double scaledDeltaX = (double) dx * FREE_LOOK_GROSS_ROTATE_FACTOR;
-
-				if (Math.abs(dy) < MAX_PIXEL_FOR_FINE_MOVEMENT && Math.abs(dx) < MAX_PIXEL_FOR_FINE_MOVEMENT)
-				{
-					scaledDeltaY *= FINE_RATIO_OF_GROSS;
-					scaledDeltaX *= FINE_RATIO_OF_GROSS;
-				}
-
-				if (navigationProcesor != null)
-				{
-					navigationProcesor.changeRotation(scaledDeltaY, scaledDeltaX);
-				}
-
+				isRecentering = false;
 			}
-			//TODO: but how do I send all stopped messages? I'm on a move listener.
-			fireListeners(dx < 0, dx > 0, dy > 0, dy < 0);
-
-			mousePoint.setLocation(e.getPoint());
-			SwingUtilities.convertPointToScreen(mousePoint, canvas);
-			if (centerLocation.distance(mousePoint) > 100)
+			else
 			{
-				recenterMouse();
+
+				//NOTE DX and DY are from mouse usage so are reversed for the 3d coords
+				int dx = e.getX() - previousMouseLocation.x;
+				int dy = e.getY() - previousMouseLocation.y;
+
+				if (dx != 0 || dy != 0)
+				{
+					double scaledDeltaY = (double) dy * FREE_LOOK_GROSS_ROTATE_FACTOR;
+					double scaledDeltaX = (double) dx * FREE_LOOK_GROSS_ROTATE_FACTOR;
+
+					if (Math.abs(dy) < MAX_PIXEL_FOR_FINE_MOVEMENT && Math.abs(dx) < MAX_PIXEL_FOR_FINE_MOVEMENT)
+					{
+						scaledDeltaY *= FINE_RATIO_OF_GROSS;
+						scaledDeltaX *= FINE_RATIO_OF_GROSS;
+					}
+
+					if (navigationProcesor != null)
+					{
+						navigationProcesor.changeRotation(scaledDeltaY, scaledDeltaX);
+					}
+
+				}
+				//TODO: but how do I send all stopped messages? I'm on a move listener.
+				fireListeners(dx < 0, dx > 0, dy > 0, dy < 0);
+
+				mousePoint.setLocation(e.getPoint());
+				SwingUtilities.convertPointToScreen(mousePoint, canvas);
+				if (centerLocation.distance(mousePoint) > 100)
+				{
+					recenterMouse();
+				}
 			}
+
+			previousMouseLocation.x = e.getX();
+			previousMouseLocation.y = e.getY();
 		}
-
-		previousMouseLocation.x = e.getX();
-		previousMouseLocation.y = e.getY();
-
 	}
 
 	private void fireListeners(boolean turnLeft, boolean turnRight, boolean turnUp, boolean turnDown)
