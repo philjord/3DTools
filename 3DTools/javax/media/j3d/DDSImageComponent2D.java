@@ -3,7 +3,7 @@ package javax.media.j3d;
 import java.awt.image.RenderedImage;
 
 /**
- * This class extends a core class, teh jars for java3d must not be sealed
+ * This class extends a core class, the jars for java3d must not be sealed
  * This means java3d 1.5.2 install in lib\ext will cause a crash
  * run
  * //DDS requires no installed java3D

@@ -12,11 +12,10 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 	{
 	}
 
-
 	@Override
 	/**
-	 * MASSIVE assumptions that we've been handed a DDSbufferedimage byref yup
-	 * for teh 1 pixel image we also support bufferedimage
+	 * MASSIVE assumptions that we've been handed a DDSBufferedImage byref yup
+	 * for the 1 pixel image we also support bufferedimage
 	 * @param byRefImage
 	 * @return
 	 */
@@ -89,7 +88,7 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		Object get()
 		{
 			//This is the critical part, it calls a rebuild of uncompressed data
-			// therefore only the ocmpress DDSbi is held
+			// therefore only the compress DDSbi is held
 			return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
 		}
 

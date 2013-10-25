@@ -13,6 +13,7 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.HashSet;
 import java.util.Vector;
 
 /*http://en.wikipedia.org/wiki/S3_Texture_Compression*/
@@ -38,8 +39,31 @@ public class DDSBufferedImage extends BufferedImage
 	private String imageName = "";
 
 	/**
+	 * This class does some crazy things to optomises memory versus speed
+	 * The source data is compress at a 1:4 ratio of the required buffered image
+	 * However the buffered image raster data is pulled out and sent to the GPU so we have at least a double 
+	 * up of each image usage, bummer.
+	 * Most images are called once and then their Texture reference is shared, so the majority (80%?) 
+	 * need to uncompress once and discard the source data and in fact teh uncompressed data
+	 * However if we have no data copy then if a econd get raster is called we'd ahve to go to the 
+	 * disk again and getRaster is in teh render pipeline so it MUST be super fast.
+	 * We need a system to work out a head of time if we will ever see getRaster called twice
+	 * But I can't work that out, it's probably relateed to how many Appearance use teh texture and what
+	 * Other attributes there are (like transparency for one).
+	 * The constructor calls is often on a  seperate thread form the renderer, so we want the first call to uncompress the
+	 * image data at least, then on first getRaster we discard the uncompressed. On second get Raster we uncompress
+	 * And keep the compressed data ready for the third etc call.
+	 * If however I was to make the 3rd getRaster call the one to tenure the raster data, I'd save 200MB memory
+	 * as there are more 3+ getRaster call textures 
+	 * 
+	 * getRasterCountForAll 1700
+	 * Call Count 0 0
+	 * Call Count 1 172
+	 * Call Count 2 23
+	 * Call Count 3 81
+	 * 
 	 * Note non BufferedIamge ARGB might end up not being treated by ref properly so there might be saving to be 
-	 * had to make everythis ARGB but 
+	 * had to make every this ARGB but 
 	 * @param ddsImage
 	 * @param mipNumber
 	 */
@@ -106,6 +130,9 @@ public class DDSBufferedImage extends BufferedImage
 				System.out.println("not DDS format " + ddsImage.getPixelFormat() + "; mip num = " + mipNumber);
 			}
 		}
+
+		//ready for first getRaster call
+		tenuredImage = convertImage();
 	}
 
 	public String getImageName()
@@ -113,7 +140,7 @@ public class DDSBufferedImage extends BufferedImage
 		return imageName;
 	}
 
-	public BufferedImage convertImage()
+	private BufferedImage convertImage()
 	{
 		//can't use width or height as it's been correcte to 1 already
 		if (imageInfo.getWidth() < 1 || imageInfo.getHeight() < 1)
@@ -168,7 +195,7 @@ public class DDSBufferedImage extends BufferedImage
 		return null;
 	}
 
-	public BufferedImage decodeR8G8B8()
+	private BufferedImage decodeR8G8B8()
 	{
 		//NOTE disagrees with fixed getType below
 		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -185,7 +212,7 @@ public class DDSBufferedImage extends BufferedImage
 		return delegate;
 	}
 
-	public BufferedImage decodeA8R8G8B8()
+	private BufferedImage decodeA8R8G8B8()
 	{
 		BufferedImage delegate = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		int[] pixels = new int[width * height];
@@ -202,7 +229,7 @@ public class DDSBufferedImage extends BufferedImage
 
 	}
 
-	public BufferedImage decodeA16R16G16B16()
+	private BufferedImage decodeA16R16G16B16()
 	{
 		//TODO: this is a dodgy layout here tested good on black prophecy images only		
 		//2&4 good for smalls
@@ -246,7 +273,7 @@ public class DDSBufferedImage extends BufferedImage
 		return delegate;
 	}
 
-	public BufferedImage decodeDxt1Buffer()
+	private BufferedImage decodeDxt1Buffer()
 	{
 		int numBlocksWide = width / BLOCK_SIZE;
 		int numBlocksHigh = height / BLOCK_SIZE;
@@ -315,7 +342,7 @@ public class DDSBufferedImage extends BufferedImage
 		return delegate;
 	}
 
-	public BufferedImage decodeDxt3Buffer()
+	private BufferedImage decodeDxt3Buffer()
 	{
 		int numBlocksWide = width / BLOCK_SIZE;
 		int numBlocksHigh = height / BLOCK_SIZE;
@@ -376,7 +403,7 @@ public class DDSBufferedImage extends BufferedImage
 
 	//interesting note teh worldwind sdk use the INT_ARGB_PRE type, which might be better
 	// class DXT3Decompressor uses BufferedImage.TYPE_INT_ARGB_PRE, but the web clearly says dont' do this
-	public BufferedImage decompressRGBA_S3TC_DXT5_EXT()
+	private BufferedImage decompressRGBA_S3TC_DXT5_EXT()
 	{
 		int numBlocksWide = width / BLOCK_SIZE;
 		int numBlocksHigh = height / BLOCK_SIZE;
@@ -471,6 +498,118 @@ public class DDSBufferedImage extends BufferedImage
 		return delegate;
 	}
 
+	//Below are BufferedImage methods***************************************************************************
+	/**
+	 * THIS IS USED BY J3d
+	 * (biType == BufferedImage.TYPE_INT_ARGB) ||
+	    (biType == BufferedImage.TYPE_INT_RGB)
+	    for optomised case
+	 * @see java.awt.image.BufferedImage#getRaster()
+	 */
+	@Override
+	public int getType()
+	{
+		return BufferedImage.TYPE_INT_ARGB;
+	}
+
+	/**
+	 * THIS IS USED BY Java3D pipeline
+	 * ImageData.get()
+	 * ((DataBufferInt)bi.getRaster().getDataBuffer()).getData();
+	 * See FontRender or J3DGraphics2DImpl
+	 * @see java.awt.image.BufferedImage#getRaster()
+	 */
+
+	public int getRasterCount = 0;
+
+	private static int getRasterCountForAll = 0;
+
+	private BufferedImage tenuredImage = null;
+
+	private static HashSet<DDSBufferedImage> allDDSBufferedImage = new HashSet<DDSBufferedImage>();
+
+	@Override
+	public WritableRaster getRaster()
+	{
+		getRasterCount++;
+
+		//http://dxr.mozilla.org/mozilla-central/source/gfx/gl/GLContext.h#l1008
+
+		//com.jogamp.opengl.util.texture.Texture.checkCompressedTextureExtensions(GL gl, TextureData data)
+
+		//Output some stats
+		//dealWithStats();
+
+		//first call discard pre decompressed tenured
+		if (getRasterCount == 1)
+		{
+			WritableRaster wr = tenuredImage.getRaster();
+			tenuredImage = null;
+			return wr;
+		}
+		// second call make a tenured and discard compressed data
+		else
+		{
+			if (tenuredImage == null)
+			{
+				tenuredImage = convertImage();
+
+				//now release compressed buffer
+				ddsImage = null;
+				imageInfo = null;
+				buffer = null;
+			}
+			return tenuredImage.getRaster();
+		}
+	}
+
+	private void dealWithStats()
+	{
+		if (mipNumber == 0)
+		{
+			getRasterCountForAll++;
+
+			allDDSBufferedImage.add(this);
+
+			if (getRasterCountForAll % 100 == 0)
+			{
+				System.out.println("getRasterCountForAll " + getRasterCountForAll);
+				int[] callCountCounts = new int[11];//10 is 10 and up
+				int countOfTenured = 0;
+				int countTenuredOnly = 0;
+				System.out.println("allDDSBufferedImage.size() " + allDDSBufferedImage.size());
+				for (DDSBufferedImage im : allDDSBufferedImage)
+				{
+					if (im.getRasterCount > 1)
+						System.out.println("DDSBufferedImage " + im.getRasterCount + " " + im.getImageName());
+					
+					if (im.getRasterCount < 10)
+					{
+						callCountCounts[im.getRasterCount]++;
+					}
+					else
+					{
+						callCountCounts[10]++;
+					}
+
+					if (im.tenuredImage != null)
+						countOfTenured++;
+
+					if (im.ddsImage == null)
+						countTenuredOnly++;
+				}
+
+				for (int i = 0; i < callCountCounts.length; i++)
+				{
+					System.out.println("Call Count " + i + " " + callCountCounts[i]);
+				}
+				System.out.println("countOfTenured " + countOfTenured);
+				System.out.println("countTenuredOnly " + countTenuredOnly);
+			}
+		}
+
+	}
+
 	@Override
 	public Vector<RenderedImage> getSources()
 	{
@@ -559,68 +698,6 @@ public class DDSBufferedImage extends BufferedImage
 	public int getMinTileY()
 	{
 		return 0;
-	}
-
-	//Below are BufferedImage methods***************************************************************************
-	/**
-	 * THIS IS USED BY J3d
-	 * (biType == BufferedImage.TYPE_INT_ARGB) ||
-	    (biType == BufferedImage.TYPE_INT_RGB)
-	    for opto,ised case
-	 * @see java.awt.image.BufferedImage#getRaster()
-	 */
-	@Override
-	public int getType()
-	{
-		return BufferedImage.TYPE_INT_ARGB;
-	}
-
-	/**
-	 * THIS IS USED BY Java3D pipeline
-	 * ((DataBufferInt)bi.getRaster().getDataBuffer()).getData();
-	 * 
-	 * 
-	 * See FontRender or J3DGraphics2DImpl
-	 * @see java.awt.image.BufferedImage#getRaster()
-	 */
-
-	private int getRasterCount = 0;
-
-	//private static int getRasterCountForAll = 0;
-
-	private BufferedImage tenuredImage = null;
-
-	@Override
-	public WritableRaster getRaster()
-	{
-		//http://dxr.mozilla.org/mozilla-central/source/gfx/gl/GLContext.h#l1008
-
-		//com.jogamp.opengl.util.texture.Texture.checkCompressedTextureExtensions(GL gl, TextureData data)
-
-		//getRasterCountForAll++;
-
-		if (tenuredImage != null)
-			return tenuredImage.getRaster();
-
-		getRasterCount++;
-		if (getRasterCount > 1)
-		{
-			if (mipNumber == 0)
-			{
-				//	System.out.println("getRasterCount " + getRasterCount + " all " + getRasterCountForAll + " " + mipNumber + " imageName "
-				//			+ imageName + " this " + this);
-			}
-			tenuredImage = convertImage();
-
-			//now release compressed buffer
-			ddsImage = null;
-			imageInfo = null;
-			buffer = null;
-
-			return tenuredImage.getRaster();
-		}
-
-		return convertImage().getRaster();
 	}
 
 	@Override
