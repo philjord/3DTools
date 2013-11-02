@@ -782,6 +782,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 
 		public ToolTipTimer()
 		{
+			this.setName("3D Tools ToolTipTimer");
 			this.setDaemon(true);
 		}
 
