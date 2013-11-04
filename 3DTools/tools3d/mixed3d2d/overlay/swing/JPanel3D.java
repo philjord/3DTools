@@ -50,6 +50,7 @@ public class JPanel3D extends JPanel
 					{
 						JComponent jc = (JComponent) comp;
 						panel3D.addJComponent(jc);
+						
 					}
 
 				}

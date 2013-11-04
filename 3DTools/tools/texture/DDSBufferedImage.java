@@ -132,7 +132,8 @@ public class DDSBufferedImage extends BufferedImage
 		}
 
 		//ready for first getRaster call
-		tenuredImage = convertImage();
+		//TODO: this cause out of memeories
+		//tenuredImage = convertImage();
 	}
 
 	public String getImageName()
@@ -541,13 +542,31 @@ public class DDSBufferedImage extends BufferedImage
 		//dealWithStats();
 
 		//first call discard pre decompressed tenured
-		if (getRasterCount == 1)
+		/*	if (getRasterCount == 1)
+			{
+				WritableRaster wr = tenuredImage.getRaster();
+				tenuredImage = null;
+				return wr;
+			}
+			// second call make a tenured and discard compressed data
+			else
+			{
+				if (tenuredImage == null)
+				{
+					tenuredImage = convertImage();
+
+					//now release compressed buffer
+					ddsImage = null;
+					imageInfo = null;
+					buffer = null;
+				}
+				return tenuredImage.getRaster();
+			}*/
+
+		if (getRasterCount < 3)
 		{
-			WritableRaster wr = tenuredImage.getRaster();
-			tenuredImage = null;
-			return wr;
+			return convertImage().getRaster();
 		}
-		// second call make a tenured and discard compressed data
 		else
 		{
 			if (tenuredImage == null)
@@ -561,6 +580,7 @@ public class DDSBufferedImage extends BufferedImage
 			}
 			return tenuredImage.getRaster();
 		}
+
 	}
 
 	private void dealWithStats()
@@ -582,7 +602,7 @@ public class DDSBufferedImage extends BufferedImage
 				{
 					if (im.getRasterCount > 1)
 						System.out.println("DDSBufferedImage " + im.getRasterCount + " " + im.getImageName());
-					
+
 					if (im.getRasterCount < 10)
 					{
 						callCountCounts[im.getRasterCount]++;

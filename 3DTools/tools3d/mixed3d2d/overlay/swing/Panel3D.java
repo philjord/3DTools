@@ -726,10 +726,13 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 	{
 
 	}
+	//TODO: the caret listener is a problem, I need a system to call redraw every time repaint is called on a component!
+	// possibly a custom event queue that watches for repaints?
 
 	@Override
 	public synchronized void keyTyped(KeyEvent e)
 	{
+		//NOTE some keyboard events are only pressed released, like UP arrow for example
 		if (currentKeyboardTarget != null && comps.contains(currentKeyboardTarget) && e.getSource() == canvas3D2D)
 		{
 			e.setSource(currentKeyboardTarget);
