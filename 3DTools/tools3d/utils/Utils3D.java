@@ -142,13 +142,13 @@ public class Utils3D
 		return billTrans;
 	}
 
-	public static String outputTransform(Transform3D t)
+	public static String outputTransform(Transform3D t2)
 	{
-		if (t != null)
+		if (t2 != null)
 		{
-			Vector3f v = new Vector3f();
-			t.get(v);
-			return "Transform " + outputTrans(t) + " :: " + outputRot(t);
+			Vector3f v2 = new Vector3f();
+			t2.get(v2);
+			return "Transform " + outputTrans(t2) + " :: " + outputRot(t2);
 		}
 		else
 		{
@@ -156,13 +156,13 @@ public class Utils3D
 		}
 	}
 
-	public static String outputTrans(Transform3D t)
+	public static String outputTrans(Transform3D t2)
 	{
-		if (t != null)
+		if (t2 != null)
 		{
-			Vector3f v = new Vector3f();
-			t.get(v);
-			return "Trans:" + v;
+			Vector3f v2 = new Vector3f();
+			t2.get(v2);
+			return "Trans:" + v2;
 		}
 		else
 		{
@@ -170,13 +170,13 @@ public class Utils3D
 		}
 	}
 
-	public static String outputRot(Transform3D t)
+	public static String outputRot(Transform3D t2)
 	{
-		if (t != null)
+		if (t2 != null)
 		{
-			Quat4f v = new Quat4f();
-			t.get(v);
-			return "Quat:" + v;
+			Quat4f v2 = new Quat4f();
+			t2.get(v2);
+			return "Quat:" + v2;
 		}
 		else
 		{
