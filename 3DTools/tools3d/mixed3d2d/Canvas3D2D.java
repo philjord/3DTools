@@ -98,6 +98,7 @@ public class Canvas3D2D extends Canvas3D
 
 		Material m = new Material();
 		m.setLightingEnable(false);
+
 		app.setMaterial(m);
 
 		app.setCapability(Appearance.ALLOW_TEXTURE_READ);
@@ -294,7 +295,7 @@ public class Canvas3D2D extends Canvas3D
 		Graphics2D g = bi.createGraphics();
 		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));
 		g.clearRect(0, 0, TEX_WIDTH, TEX_HEIGHT); //NOT fillRect doesn't work
-		g.drawRect(2, 2, TEX_WIDTH - 2, TEX_HEIGHT - 2);// to allow sexy placement
+		//g.drawRect(2, 2, TEX_WIDTH - 4, TEX_HEIGHT - 4);// to help place hud elements
 
 		synchronized (hudElements)
 		{
@@ -323,13 +324,14 @@ public class Canvas3D2D extends Canvas3D
 
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
 	{
-		//FIXME: should be 2's
-		//TODO: when this is properly sized the image itself does nto appear on screen as it should
-		float hW = rectWidth / 2.2f;
-		float hH = rectHeight / 2.2f;
 
+		float hW = rectWidth / 2f;
+		float hH = rectHeight / 2f;
+
+		//TODO: multiples to pull in right and bottom?feels like 0,0,0  is in lower right of screen?
+		//TODO: the "central" open close action message is way lower right!
 		float[] verts1 =
-		{ hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
+		{ hW * 0.85f, -hH * 0.85f, z, hW * 0.85f, hH, z, -hW, hH, z, -hW, -hH * 0.85f, z };
 
 		//-1 flip the y axis so yUp
 		float[] texCoords =
