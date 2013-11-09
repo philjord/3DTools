@@ -168,7 +168,6 @@ public class Canvas3D2D extends Canvas3D
 
 			hudShape.setGeometry(createGeometry(SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_Z));
 
-			//TODO: this is not upper lefted properly
 			TEX_WIDTH = 1024;
 			TEX_HEIGHT = (int) (TEX_WIDTH / aspectRatio);
 			//System.out.println("TEX_WIDTH " + TEX_WIDTH);
@@ -297,13 +296,21 @@ public class Canvas3D2D extends Canvas3D
 		g.clearRect(0, 0, TEX_WIDTH, TEX_HEIGHT); //NOT fillRect doesn't work
 		//g.drawRect(2, 2, TEX_WIDTH - 4, TEX_HEIGHT - 4);// to help place hud elements
 
+		//ok I've got it, the hud sizes are for screen coords, but for hud shape
+		// I've got a fixed width of 1024, so the draws need to account for that properly
+
+		float hW = (float) TEX_WIDTH / (float) this.getWidth();
+		float hH = (float) TEX_HEIGHT / (float) this.getHeight();
+		//System.out.println("hW " + hW + " " + TEX_WIDTH + "/" + this.getWidth());
+		//	System.out.println("hH " + hH + " " + TEX_HEIGHT + "/" + this.getHeight());
+
 		synchronized (hudElements)
 		{
 			for (HUDElement e : hudElements)
 			{
 				if (e != null && e.isEnabled())
 				{
-					g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
+					g.drawImage(e.getBufferedImage(), (int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), null);
 				}
 			}
 		}
@@ -328,10 +335,8 @@ public class Canvas3D2D extends Canvas3D
 		float hW = rectWidth / 2f;
 		float hH = rectHeight / 2f;
 
-		//TODO: multiples to pull in right and bottom?feels like 0,0,0  is in lower right of screen?
-		//TODO: the "central" open close action message is way lower right!
 		float[] verts1 =
-		{ hW * 0.85f, -hH * 0.85f, z, hW * 0.85f, hH, z, -hW, hH, z, -hW, -hH * 0.85f, z };
+		{ hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
 
 		//-1 flip the y axis so yUp
 		float[] texCoords =

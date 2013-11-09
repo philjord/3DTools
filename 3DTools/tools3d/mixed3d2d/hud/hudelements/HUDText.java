@@ -70,6 +70,7 @@ public class HUDText extends HUDElementContainer
 		textElement.clear();
 		textElement.getGraphics().setColor(textColor);
 		textElement.getGraphics().setFont(textFont);
+		//TODO: must centralise the text
 		textElement.getGraphics().drawString(newText, 0, 35);
 
 		textShadowElement.clear();

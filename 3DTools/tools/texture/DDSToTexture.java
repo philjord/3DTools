@@ -257,10 +257,10 @@ public class DDSToTexture
 					}
 
 					Texture2D tex = new Texture2D(Texture.BASE_LEVEL, textureFormat, image.getWidth(), image.getHeight());
-					
+
 					tex.setMinFilter(Texture.NICEST);
 					tex.setMagFilter(Texture.NICEST);
-					
+
 					tex.setBoundaryModeS(Texture.WRAP);
 					tex.setBoundaryModeT(Texture.WRAP);
 
@@ -314,9 +314,11 @@ public class DDSToTexture
 					// better to let machine decide, then settings option to go fastest one day
 					tex.setMinFilter(Texture.NICEST);//Texture.MULTI_LEVEL_LINEAR);
 					tex.setMagFilter(Texture.NICEST);//Texture.BASE_LEVEL_LINEAR);
+					
 
 					tex.setBoundaryModeS(Texture.WRAP);
-					tex.setBoundaryModeT(Texture.WRAP);
+					tex.setBoundaryModeT(Texture.WRAP);			
+					
 
 					int w = images[0].getWidth();
 					int h = images[0].getHeight();
