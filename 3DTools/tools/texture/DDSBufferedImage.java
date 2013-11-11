@@ -11,6 +11,8 @@ import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.lang.ref.SoftReference;
+import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.HashSet;
@@ -45,22 +47,25 @@ public class DDSBufferedImage extends BufferedImage
 	 * up of each image usage, bummer.
 	 * Most images are called once and then their Texture reference is shared, so the majority (80%?) 
 	 * need to uncompress once and discard the source data and in fact teh uncompressed data
-	 * However if we have no data copy then if a econd get raster is called we'd ahve to go to the 
-	 * disk again and getRaster is in teh render pipeline so it MUST be super fast.
+	 * However if we have no data copy then if a second get raster is called we'd have to go to the 
+	 * disk again and getRaster is in the render pipeline so it MUST be super fast.
 	 * We need a system to work out a head of time if we will ever see getRaster called twice
-	 * But I can't work that out, it's probably relateed to how many Appearance use teh texture and what
-	 * Other attributes there are (like transparency for one).
-	 * The constructor calls is often on a  seperate thread form the renderer, so we want the first call to uncompress the
+	 * But I can't work that out, it's probably related to how many Appearances use the texture and what
+	 * other attributes there are (like transparency for one).
+	 * The constructor call is often on a  seperate thread form the renderer, so we want the first call to uncompress the
 	 * image data at least, then on first getRaster we discard the uncompressed. On second get Raster we uncompress
 	 * And keep the compressed data ready for the third etc call.
 	 * If however I was to make the 3rd getRaster call the one to tenure the raster data, I'd save 200MB memory
 	 * as there are more 3+ getRaster call textures 
+	 * Only now I basically keep a weak reference to the handed out raster
 	 * 
 	 * getRasterCountForAll 1700
 	 * Call Count 0 0
 	 * Call Count 1 172
 	 * Call Count 2 23
 	 * Call Count 3 81
+	 * 
+	 * 
 	 * 
 	 * Note non BufferedIamge ARGB might end up not being treated by ref properly so there might be saving to be 
 	 * had to make every this ARGB but 
@@ -132,8 +137,8 @@ public class DDSBufferedImage extends BufferedImage
 		}
 
 		//ready for first getRaster call
-		//TODO: this cause out of memeories
-		//tenuredImage = convertImage();
+		//TODO: skyrim OOM with this in, but obliv is fine
+		//firstTimeRasterRef = convertImage().getRaster();
 	}
 
 	public String getImageName()
@@ -143,7 +148,7 @@ public class DDSBufferedImage extends BufferedImage
 
 	private BufferedImage convertImage()
 	{
-		//can't use width or height as it's been correcte to 1 already
+		//can't use width or height as it's been corrected to 1 already
 		if (imageInfo.getWidth() < 1 || imageInfo.getHeight() < 1)
 		{
 			return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
@@ -523,65 +528,53 @@ public class DDSBufferedImage extends BufferedImage
 
 	public int getRasterCount = 0;
 
-	private static int getRasterCountForAll = 0;
+	private WritableRaster firstTimeRasterRef = null;
 
-	private BufferedImage tenuredImage = null;
-
-	private static HashSet<DDSBufferedImage> allDDSBufferedImage = new HashSet<DDSBufferedImage>();
+	private SoftReference<WritableRaster> weakRasterRef;
 
 	@Override
 	public WritableRaster getRaster()
 	{
 		getRasterCount++;
 
-		//http://dxr.mozilla.org/mozilla-central/source/gfx/gl/GLContext.h#l1008
-
-		//com.jogamp.opengl.util.texture.Texture.checkCompressedTextureExtensions(GL gl, TextureData data)
-
 		//Output some stats
 		//dealWithStats();
 
-		//first call discard pre decompressed tenured
-		/*	if (getRasterCount == 1)
-			{
-				WritableRaster wr = tenuredImage.getRaster();
-				tenuredImage = null;
-				return wr;
-			}
-			// second call make a tenured and discard compressed data
-			else
-			{
-				if (tenuredImage == null)
-				{
-					tenuredImage = convertImage();
+		// oh my god!, After the first getRaster from J3d, it'll askme for it again
+		// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
+		// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
 
-					//now release compressed buffer
-					ddsImage = null;
-					imageInfo = null;
-					buffer = null;
-				}
-				return tenuredImage.getRaster();
-			}*/
-
-		if (getRasterCount < 3)
+		// for first time only use constructors hard ref, and then drop it to weak
+		if (firstTimeRasterRef != null)
 		{
-			return convertImage().getRaster();
+			weakRasterRef = new SoftReference<WritableRaster>(firstTimeRasterRef);
+			WritableRaster ret = firstTimeRasterRef;
+			firstTimeRasterRef = null;
+			return ret;
 		}
 		else
 		{
-			if (tenuredImage == null)
+			if (weakRasterRef != null)
 			{
-				tenuredImage = convertImage();
-
-				//now release compressed buffer
-				ddsImage = null;
-				imageInfo = null;
-				buffer = null;
+				WritableRaster prevWr = weakRasterRef.get();
+				if (prevWr != null)
+				{
+					return prevWr;
+				}
 			}
-			return tenuredImage.getRaster();
-		}
 
+			// don't have it any more so re-create it
+			System.out.println("Had to re create raster!");
+			WritableRaster wr = convertImage().getRaster();
+			weakRasterRef = new SoftReference<WritableRaster>(wr);
+
+			return wr;
+		}
 	}
+
+	private static HashSet<DDSBufferedImage> allDDSBufferedImage = new HashSet<DDSBufferedImage>();
+
+	private static int getRasterCountForAll = 0;
 
 	private void dealWithStats()
 	{
@@ -612,8 +605,8 @@ public class DDSBufferedImage extends BufferedImage
 						callCountCounts[10]++;
 					}
 
-					if (im.tenuredImage != null)
-						countOfTenured++;
+					//if (im.tenuredImage != null)
+					//	countOfTenured++;
 
 					if (im.ddsImage == null)
 						countTenuredOnly++;
