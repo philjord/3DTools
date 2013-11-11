@@ -564,7 +564,7 @@ public class DDSBufferedImage extends BufferedImage
 			}
 
 			// don't have it any more so re-create it
-			System.out.println("Had to re create raster!");
+			//System.out.println("Had to re create raster!");
 			WritableRaster wr = convertImage().getRaster();
 			weakRasterRef = new SoftReference<WritableRaster>(wr);
 
