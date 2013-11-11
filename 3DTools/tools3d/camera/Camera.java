@@ -5,7 +5,6 @@ import javax.media.j3d.View;
 
 import tools3d.audio.JOALMixer;
 
-import com.jogamp.openal.sound3d.AudioSystem3D;
 import com.sun.j3d.utils.universe.Viewer;
 
 //TODO: Camera really doesn't need to extend the utility class viewer
@@ -32,7 +31,7 @@ public class Camera extends Viewer
 		getView().setFrontClipPolicy(View.VIRTUAL_EYE);
 		getView().setBackClipDistance(BACK_CLIP);
 		getView().setFrontClipDistance(FRONT_CLIP);
-		getView().setMinimumFrameCycleTime(10);// max 100fps
+		getView().setMinimumFrameCycleTime(15);// max 66fps
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?

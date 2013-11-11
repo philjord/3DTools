@@ -27,8 +27,6 @@ public class CameraPanel extends JPanel
 
 	private boolean isRendering = false;
 
-	private Panel3D overlay;
-
 	public CameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
@@ -55,15 +53,6 @@ public class CameraPanel extends JPanel
 
 		camera = new Camera(canvas3D2D);
 
-		overlay = new Panel3D();//full screen
-		overlay.setLocation(0, 0);
-		overlay.setConfig(canvas3D2D);
-
-	}
-
-	public Panel3D getOverlay()
-	{
-		return overlay;
 	}
 
 	public void setPhysicalsVisible(boolean visible)

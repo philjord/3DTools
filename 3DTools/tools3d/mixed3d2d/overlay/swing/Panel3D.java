@@ -102,7 +102,6 @@ import tools3d.mixed3d2d.Canvas3D2D;
 
 public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 {
-
 	private boolean enabled = true;
 
 	private BufferedImage currentBufferedImage;
@@ -149,7 +148,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 	private boolean fullSized = false;
 
 	/**
-	 * fullScreen
+	 * fullScreen, But only on a good pausey screen as this is expensive to render (postRender)
 	 */
 	public Panel3D()
 	{
@@ -726,6 +725,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 	{
 
 	}
+
 	//TODO: the caret listener is a problem, I need a system to call redraw every time repaint is called on a component!
 	// possibly a custom event queue that watches for repaints?
 
@@ -843,6 +843,16 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				hoverStartTime = System.currentTimeMillis();
 			}
 		}
+	}
+
+	public int getWidth()
+	{
+		return width;
+	}
+
+	public int getHeight()
+	{
+		return height;
 	}
 
 }
