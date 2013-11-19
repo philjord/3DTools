@@ -12,6 +12,7 @@ import javax.vecmath.Point3d;
 
 /** A behavior that updates on a frequency based on distance from viewer, 
  * so more distance animations can run slower
+ * current 1 frame 5 frames 15 frames and 50 frame
  * 
  * @author philip
  *
@@ -24,7 +25,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 	private WakeupOnElapsedFrames wakeupFrame5 = new WakeupOnElapsedFrames(5, true);
 
-	private WakeupOnElapsedFrames wakeupFrame10 = new WakeupOnElapsedFrames(10, true);
+	private WakeupOnElapsedFrames wakeupFrame15 = new WakeupOnElapsedFrames(15, true);
 
 	private WakeupOnElapsedFrames wakeupFrame50 = new WakeupOnElapsedFrames(50, true);
 
@@ -116,7 +117,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		}
 		else if (dist < dists[2])
 		{
-			wakeupOn(wakeupFrame10);
+			wakeupOn(wakeupFrame15);
 		}
 		else
 		{
