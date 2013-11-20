@@ -371,7 +371,6 @@ public class DDSToTexture
 
 	public static ByteBuffer toByteBuffer(InputStream in) throws IOException
 	{
-
 		ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
 		byte[] tmp = new byte[BUFSIZE];
 		while (true)

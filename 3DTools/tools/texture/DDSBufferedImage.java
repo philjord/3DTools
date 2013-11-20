@@ -137,8 +137,8 @@ public class DDSBufferedImage extends BufferedImage
 		}
 
 		//ready for first getRaster call
-		//TODO: skyrim OOM with this in, but obliv is fine
-		//firstTimeRasterRef = convertImage().getRaster();
+		//TODO: skyrim used to OOM with this in, but obliv is fine, though skyrim doesn't have  chars yet
+		firstTimeRasterRef = convertImage().getRaster();
 	}
 
 	public String getImageName()
@@ -531,6 +531,7 @@ public class DDSBufferedImage extends BufferedImage
 	private WritableRaster firstTimeRasterRef = null;
 
 	private SoftReference<WritableRaster> weakRasterRef;
+	//private WeakReference<WritableRaster> weakRasterRef;
 
 	@Override
 	public WritableRaster getRaster()
@@ -548,6 +549,7 @@ public class DDSBufferedImage extends BufferedImage
 		if (firstTimeRasterRef != null)
 		{
 			weakRasterRef = new SoftReference<WritableRaster>(firstTimeRasterRef);
+			//weakRasterRef = new WeakReference<WritableRaster>(firstTimeRasterRef);
 			WritableRaster ret = firstTimeRasterRef;
 			firstTimeRasterRef = null;
 			return ret;
@@ -567,6 +569,7 @@ public class DDSBufferedImage extends BufferedImage
 			//System.out.println("Had to re create raster!");
 			WritableRaster wr = convertImage().getRaster();
 			weakRasterRef = new SoftReference<WritableRaster>(wr);
+			//weakRasterRef = new WeakReference<WritableRaster>(wr);
 
 			return wr;
 		}
