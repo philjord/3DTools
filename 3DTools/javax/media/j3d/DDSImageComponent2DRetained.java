@@ -6,6 +6,8 @@ import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import tools.texture.DDSBufferedImage;
+
 public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 {
 	public DDSImageComponent2DRetained()
@@ -87,9 +89,15 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		 */
 		Object get()
 		{
-			//This is the critical part, it calls a rebuild of uncompressed data
-			// therefore only the compress DDSbi is held
-			return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
+			if (bi instanceof DDSBufferedImage)
+			{
+				//This is the critical part, this call is optomised to rebuild less often
+				return ((DDSBufferedImage) bi).getInts();
+			}
+			else
+			{
+				return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
+			}
 		}
 
 		/**

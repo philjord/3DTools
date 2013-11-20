@@ -6,16 +6,15 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.lang.ref.SoftReference;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.HashSet;
 import java.util.Vector;
 
 /*http://en.wikipedia.org/wiki/S3_Texture_Compression*/
@@ -138,7 +137,8 @@ public class DDSBufferedImage extends BufferedImage
 
 		//ready for first getRaster call
 		//TODO: skyrim used to OOM with this in, but obliv is fine, though skyrim doesn't have  chars yet
-		firstTimeRasterRef = convertImage().getRaster();
+		//firstTimeRasterRef = convertImage().getRaster();
+		firstTimeIntsRef = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
 	}
 
 	public String getImageName()
@@ -526,39 +526,32 @@ public class DDSBufferedImage extends BufferedImage
 	 * @see java.awt.image.BufferedImage#getRaster()
 	 */
 
-	public int getRasterCount = 0;
+	private SoftReference<Object> ints;
 
-	private WritableRaster firstTimeRasterRef = null;
+	private Object firstTimeIntsRef = null;
 
-	private SoftReference<WritableRaster> weakRasterRef;
-	//private WeakReference<WritableRaster> weakRasterRef;
-
-	@Override
-	public WritableRaster getRaster()
+	public Object getInts()
 	{
-		getRasterCount++;
-
-		//Output some stats
-		//dealWithStats();
-
 		// oh my god!, After the first getRaster from J3d, it'll askme for it again
 		// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
 		// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
 
+		//FCUK!! possibly small gain from GC not clearing up fast, does work like I suggested, nobody holds a ref to 
+		// returned raster at all
+
 		// for first time only use constructors hard ref, and then drop it to weak
-		if (firstTimeRasterRef != null)
+		if (firstTimeIntsRef != null)
 		{
-			weakRasterRef = new SoftReference<WritableRaster>(firstTimeRasterRef);
-			//weakRasterRef = new WeakReference<WritableRaster>(firstTimeRasterRef);
-			WritableRaster ret = firstTimeRasterRef;
-			firstTimeRasterRef = null;
+			Object ret = firstTimeIntsRef;
+			ints = new SoftReference<Object>(ret);
+			firstTimeIntsRef = null;
 			return ret;
 		}
 		else
 		{
-			if (weakRasterRef != null)
+			if (ints != null)
 			{
-				WritableRaster prevWr = weakRasterRef.get();
+				Object prevWr = ints.get();
 				if (prevWr != null)
 				{
 					return prevWr;
@@ -566,66 +559,119 @@ public class DDSBufferedImage extends BufferedImage
 			}
 
 			// don't have it any more so re-create it
-			//System.out.println("Had to re create raster!");
-			WritableRaster wr = convertImage().getRaster();
-			weakRasterRef = new SoftReference<WritableRaster>(wr);
-			//weakRasterRef = new WeakReference<WritableRaster>(wr);
+			Object ret = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
+			ints = new SoftReference<Object>(ret);
 
-			return wr;
+			return ret;
 		}
 	}
 
-	private static HashSet<DDSBufferedImage> allDDSBufferedImage = new HashSet<DDSBufferedImage>();
+	//TODO: probably dump this lot??  
+	/*	public int getRasterCount = 0;
 
-	private static int getRasterCountForAll = 0;
+		private WritableRaster firstTimeRasterRef = null;
 
-	private void dealWithStats()
-	{
-		if (mipNumber == 0)
+		private SoftReference<WritableRaster> weakRasterRef;
+
+		//private WeakReference<WritableRaster> weakRasterRef;
+
+		@Override
+		public WritableRaster getRaster()
 		{
-			getRasterCountForAll++;
+			getRasterCount++;
 
-			allDDSBufferedImage.add(this);
+			//Output some stats
+			//dealWithStats();
 
-			if (getRasterCountForAll % 100 == 0)
+			// oh my god!, After the first getRaster from J3d, it'll askme for it again
+			// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
+			// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
+
+			//FCUK!! possibly small gain from GC not clearing up fast, does work like I suggested, nobody holds a ref to 
+			// returned raster at all
+
+			// for first time only use constructors hard ref, and then drop it to weak
+			if (firstTimeRasterRef != null)
 			{
-				System.out.println("getRasterCountForAll " + getRasterCountForAll);
-				int[] callCountCounts = new int[11];//10 is 10 and up
-				int countOfTenured = 0;
-				int countTenuredOnly = 0;
-				System.out.println("allDDSBufferedImage.size() " + allDDSBufferedImage.size());
-				for (DDSBufferedImage im : allDDSBufferedImage)
+				weakRasterRef = new SoftReference<WritableRaster>(firstTimeRasterRef);
+				//weakRasterRef = new WeakReference<WritableRaster>(firstTimeRasterRef);
+				WritableRaster ret = firstTimeRasterRef;
+				firstTimeRasterRef = null;
+				return ret;
+			}
+			else
+			{
+				if (weakRasterRef != null)
 				{
-					if (im.getRasterCount > 1)
-						System.out.println("DDSBufferedImage " + im.getRasterCount + " " + im.getImageName());
-
-					if (im.getRasterCount < 10)
+					WritableRaster prevWr = weakRasterRef.get();
+					if (prevWr != null)
 					{
-						callCountCounts[im.getRasterCount]++;
+						System.out.println("prev raster hit!");
+						return prevWr;
 					}
-					else
-					{
-						callCountCounts[10]++;
-					}
-
-					//if (im.tenuredImage != null)
-					//	countOfTenured++;
-
-					if (im.ddsImage == null)
-						countTenuredOnly++;
 				}
 
-				for (int i = 0; i < callCountCounts.length; i++)
-				{
-					System.out.println("Call Count " + i + " " + callCountCounts[i]);
-				}
-				System.out.println("countOfTenured " + countOfTenured);
-				System.out.println("countTenuredOnly " + countTenuredOnly);
+				// don't have it any more so re-create it
+				//System.out.println("Had to re create raster!");
+				WritableRaster wr = convertImage().getRaster();
+				weakRasterRef = new SoftReference<WritableRaster>(wr);
+				//weakRasterRef = new WeakReference<WritableRaster>(wr);
+
+				return wr;
 			}
 		}
 
-	}
+		private static HashSet<DDSBufferedImage> allDDSBufferedImage = new HashSet<DDSBufferedImage>();
 
+		private static int getRasterCountForAll = 0;
+
+		private void dealWithStats()
+		{
+			if (mipNumber == 0)
+			{
+				getRasterCountForAll++;
+
+				allDDSBufferedImage.add(this);
+
+				if (getRasterCountForAll % 100 == 0)
+				{
+					System.out.println("getRasterCountForAll " + getRasterCountForAll);
+					int[] callCountCounts = new int[11];//10 is 10 and up
+					int countOfTenured = 0;
+					int countTenuredOnly = 0;
+					System.out.println("allDDSBufferedImage.size() " + allDDSBufferedImage.size());
+					for (DDSBufferedImage im : allDDSBufferedImage)
+					{
+						if (im.getRasterCount > 1)
+							System.out.println("DDSBufferedImage " + im.getRasterCount + " " + im.getImageName());
+
+						if (im.getRasterCount < 10)
+						{
+							callCountCounts[im.getRasterCount]++;
+						}
+						else
+						{
+							callCountCounts[10]++;
+						}
+
+						//if (im.tenuredImage != null)
+						//	countOfTenured++;
+
+						if (im.ddsImage == null)
+							countTenuredOnly++;
+					}
+
+					for (int i = 0; i < callCountCounts.length; i++)
+					{
+						System.out.println("Call Count " + i + " " + callCountCounts[i]);
+					}
+					System.out.println("countOfTenured " + countOfTenured);
+					System.out.println("countTenuredOnly " + countTenuredOnly);
+				}
+			}
+
+		}
+	*/
 	@Override
 	public Vector<RenderedImage> getSources()
 	{
