@@ -5,6 +5,7 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import tools.WeakValueHashMap;
+import tools.io.FastByteArrayInputStream;
 import tools.swing.DetailsFileChooser;
 
 /*http://en.wikipedia.org/wiki/S3_Texture_Compression*/
@@ -314,11 +316,9 @@ public class DDSToTexture
 					// better to let machine decide, then settings option to go fastest one day
 					tex.setMinFilter(Texture.NICEST);//Texture.MULTI_LEVEL_LINEAR);
 					tex.setMagFilter(Texture.NICEST);//Texture.BASE_LEVEL_LINEAR);
-					
 
 					tex.setBoundaryModeS(Texture.WRAP);
-					tex.setBoundaryModeT(Texture.WRAP);			
-					
+					tex.setBoundaryModeT(Texture.WRAP);
 
 					int w = images[0].getWidth();
 					int h = images[0].getHeight();
@@ -331,7 +331,7 @@ public class DDSToTexture
 						else if (images.length > 0)
 						{
 							BufferedImage image = images[images.length - 1].getSubimage(0, 0, w, h);
-							//trying to sort out darks lines in ST 
+							//trying to sort out darks lines in ST and fallout 3
 							//BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
 							tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image, true, true));
 						}
@@ -371,18 +371,27 @@ public class DDSToTexture
 
 	public static ByteBuffer toByteBuffer(InputStream in) throws IOException
 	{
-		ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
-		byte[] tmp = new byte[BUFSIZE];
-		while (true)
+		if (in instanceof FastByteArrayInputStream)
 		{
-			int r = in.read(tmp);
-			if (r == -1)
-				break;
-
-			out.write(tmp, 0, r);
+			FastByteArrayInputStream bais = (FastByteArrayInputStream) in;
+			return ByteBuffer.wrap(bais.getBuf());
 		}
+		else
+		{
+			//note toByteArray trims to size
+			ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
+			byte[] tmp = new byte[BUFSIZE];
+			while (true)
+			{
+				int r = in.read(tmp);
+				if (r == -1)
+					break;
 
-		return ByteBuffer.wrap(out.toByteArray());
+				out.write(tmp, 0, r);
+			}
+
+			return ByteBuffer.wrap(out.toByteArray());
+		}
 	}
 
 }
