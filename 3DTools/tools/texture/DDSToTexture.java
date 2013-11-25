@@ -5,7 +5,6 @@ import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -175,22 +174,32 @@ public class DDSToTexture
 
 	/**
 	 * A hashmap of the loaded image instances. Weak so that we can discard them if they are not in use by at least 1 shape
+	 * Note self expunging
 	 */
 	private static WeakValueHashMap<String, Texture2D> loadedTextures = new WeakValueHashMap<String, Texture2D>();
 
 	//private static ReferenceQueue<Texture2D> refQueue = new ReferenceQueue<Texture2D>();
 
 	/**
-	 * Returns the associated Texture object or null if the image failed to load
-	 * 
-	 * @return The associated Texture object
+	 * Called to early out in case of cache hit, very likely to return null!
+	 * @param filename
+	 * @return
 	 */
+	public static Texture checkCachedTexture(String filename)
+	{
+		return loadedTextures.get(filename);
+	}
 
 	public static void clearCache()
 	{
 		loadedTextures.clear();
 	}
 
+	/**
+	 * Returns the associated Texture object or null if the image failed to load
+	 * 
+	 * @return The associated Texture object
+	 */
 	public static Texture getTexture(File file)
 	{
 		String filename = file.getAbsolutePath();
@@ -203,16 +212,6 @@ public class DDSToTexture
 			System.out.println("" + DDSToTexture.class + " had a  IO problem with " + filename + " : " + e.getMessage());
 			return null;
 		}
-	}
-
-	/**
-	 * Called to early out n case of cache hit, very likely to return null!
-	 * @param filename
-	 * @return
-	 */
-	public static Texture checkCachedTexture(String filename)
-	{
-		return loadedTextures.get(filename);
 	}
 
 	public static Texture getTexture(String filename, InputStream inputStream)

@@ -167,7 +167,7 @@ public class HudShape3D extends BranchGroup
 		//g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOT fillRect doesn't work
 
 		// Enable to help place hud elements
-		//g.drawRect(2, 2, TEX_WIDTH - 4, TEX_HEIGHT - 4);
+		//g.drawRect(2, 2, SHAPE_TEX_WIDTH - 4, SHAPE_TEX_HEIGHT - 4);
 
 		//ok I've got it, the hud sizes are for screen coords, but for hud shape
 		// I've got a fixed width of 1024, so the draws need to account for that properly
