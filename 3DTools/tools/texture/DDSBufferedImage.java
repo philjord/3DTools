@@ -136,9 +136,8 @@ public class DDSBufferedImage extends BufferedImage
 		}
 
 		//ready for first getRaster call
-		//TODO: skyrim used to OOM with this in, but obliv is fine, though skyrim doesn't have  chars yet
-		//firstTimeRasterRef = convertImage().getRaster();
-		firstTimeIntsRef = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
+		// if I call this all unseen shapes textures must be held, but if they are never seen wasteful in fallout3
+		//firstTimeIntsRef = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
 	}
 
 	public String getImageName()

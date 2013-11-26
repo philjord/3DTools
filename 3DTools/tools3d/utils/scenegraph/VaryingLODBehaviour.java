@@ -23,11 +23,11 @@ public abstract class VaryingLODBehaviour extends Behavior
 	// Wakeup condition for node
 	private WakeupOnElapsedFrames wakeupFrameFast = new WakeupOnElapsedFrames(1, true);
 
-	private WakeupOnElapsedFrames wakeupFrame5 = new WakeupOnElapsedFrames(5, true);
+	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(2, true);
 
-	private WakeupOnElapsedFrames wakeupFrame15 = new WakeupOnElapsedFrames(15, true);
+	private WakeupOnElapsedFrames wakeupFrame8 = new WakeupOnElapsedFrames(8, true);
 
-	private WakeupOnElapsedFrames wakeupFrame50 = new WakeupOnElapsedFrames(50, true);
+	private WakeupOnElapsedFrames wakeupFrame20 = new WakeupOnElapsedFrames(20, true);
 
 	// Node to operate on.
 	private Node node = null;
@@ -76,7 +76,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (node == null || dists == null)
 		{
 			//System.out.println("somefing null");
-			wakeupOn(wakeupFrame50);
+			wakeupOn(wakeupFrame20);
 			return;
 		}
 
@@ -85,7 +85,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (v == null)
 		{
 			//System.out.println("view null");
-			wakeupOn(wakeupFrame50);
+			wakeupOn(wakeupFrame20);
 			return;
 		}
 		Canvas3D canvas = v.getCanvas3D(0);
@@ -113,15 +113,15 @@ public abstract class VaryingLODBehaviour extends Behavior
 		}
 		else if (dist < dists[1])
 		{
-			wakeupOn(wakeupFrame5);
+			wakeupOn(wakeupFrame2);
 		}
 		else if (dist < dists[2])
 		{
-			wakeupOn(wakeupFrame15);
+			wakeupOn(wakeupFrame8);
 		}
 		else
 		{
-			wakeupOn(wakeupFrame50);
+			wakeupOn(wakeupFrame20);
 		}
 
 	}

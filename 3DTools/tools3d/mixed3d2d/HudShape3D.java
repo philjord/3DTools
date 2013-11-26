@@ -14,6 +14,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
+import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.Material;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
@@ -27,7 +28,7 @@ import javax.vecmath.Point3d;
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
 
-public class HudShape3D extends BranchGroup
+public class HudShape3D extends BranchGroup implements Updater, ComponentListener
 {
 	public static int SHAPE_TEX_WIDTH = 1024;
 
@@ -43,8 +44,6 @@ public class HudShape3D extends BranchGroup
 
 	private Appearance hudShapeApp = new Appearance();
 
-	private BufferedImage hudShapeBufferedImage = new BufferedImage(SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
-
 	private ImageComponent2D hudShapeIc2d;
 
 	private Canvas3D2D canvas;
@@ -52,6 +51,10 @@ public class HudShape3D extends BranchGroup
 	public HudShape3D(Canvas3D2D canvas)
 	{
 		this.canvas = canvas;
+
+		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_READ);
+		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+
 		TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
 		transparencyAttributes.setTransparencyMode(TransparencyAttributes.NICEST);
 		transparencyAttributes.setTransparency(0.0f);
@@ -63,46 +66,17 @@ public class HudShape3D extends BranchGroup
 
 		Material m = new Material();
 		m.setLightingEnable(false);
-
 		hudShapeApp.setMaterial(m);
 
-		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_READ);
-		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-		hudShape.setAppearance(hudShapeApp);
-
 		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-
+		hudShape.setAppearance(hudShapeApp);
 		addChild(hudShape);
 
 		UpdateHudTextureBehavior hudTextureBehave = new UpdateHudTextureBehavior();
 		addChild(hudTextureBehave);
 		hudTextureBehave.setEnable(true);
 
-		canvas.addComponentListener(new ComponentListener()
-		{
-
-			@Override
-			public void componentResized(ComponentEvent e)
-			{
-				screenResized();
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e)
-			{
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e)
-			{
-				screenResized();
-			}
-
-			@Override
-			public void componentHidden(ComponentEvent e)
-			{
-			}
-		});
+		canvas.addComponentListener(this);
 	}
 
 	public void screenResized()
@@ -138,7 +112,7 @@ public class HudShape3D extends BranchGroup
 			//System.out.println("TEX_WIDTH " + TEX_WIDTH);
 			//System.out.println("TEX_HEIGHT " + TEX_HEIGHT);
 
-			hudShapeBufferedImage = new BufferedImage(SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
+			BufferedImage hudShapeBufferedImage = new BufferedImage(SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 
 			Texture2D tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT);
 			tex.setBoundaryModeS(Texture.WRAP);
@@ -158,9 +132,15 @@ public class HudShape3D extends BranchGroup
 
 	public void updateHudShapeTexture()
 	{
+		hudShapeIc2d.updateData(this, 0, 0, hudShapeIc2d.getWidth(), hudShapeIc2d.getHeight());
+	}
+
+	@Override
+	public void updateData(ImageComponent2D imageComponent, int x, int y, int width, int height)
+	{
 		//This method will only be called when we are attached to a scene graph, i.e. fixedBG.isLive()==true
 		// so these hudelements won't be drawn as overlays
-		Graphics2D g = hudShapeBufferedImage.createGraphics();
+		Graphics2D g = imageComponent.getImage().createGraphics();
 		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear REct to work
 
 		//TODO: I'd be way better off clearing the individual hud elements littel squares worth
@@ -196,7 +176,7 @@ public class HudShape3D extends BranchGroup
 			{
 				if (p != null && p.isEnabled())
 				{
-					g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOT fillRect doesn't work
+					g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
 				}
 			}
 		}
@@ -226,7 +206,6 @@ public class HudShape3D extends BranchGroup
 				}
 			}
 		}
-		hudShapeIc2d.set(hudShapeBufferedImage);
 
 	}
 
@@ -253,6 +232,28 @@ public class HudShape3D extends BranchGroup
 		return rect;
 	}
 
+	@Override
+	public void componentResized(ComponentEvent e)
+	{
+		screenResized();
+	}
+
+	@Override
+	public void componentMoved(ComponentEvent e)
+	{
+	}
+
+	@Override
+	public void componentShown(ComponentEvent e)
+	{
+		screenResized();
+	}
+
+	@Override
+	public void componentHidden(ComponentEvent e)
+	{
+	}
+
 	class UpdateHudTextureBehavior extends Behavior
 	{
 		private WakeupOnElapsedFrames wakeupCriterion = new WakeupOnElapsedFrames(2);
@@ -275,4 +276,5 @@ public class HudShape3D extends BranchGroup
 		}
 
 	}
+
 }
