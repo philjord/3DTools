@@ -44,6 +44,12 @@ public class ScreenResolution
 	{
 		System.out.println("organising Resolution...");
 
+		// warn about Java 7
+		if (System.getProperty("java.version").indexOf("1.7.") != -1)
+		{
+			System.out.println("Warning! Java 7 can cause crashes in java3d, uninstall it is the only answer");
+		}
+
 		GraphicsSettings gs = null;
 		if (prefs != null && !forceSelect)
 		{
