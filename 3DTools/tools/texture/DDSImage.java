@@ -159,6 +159,7 @@ public class DDSImage
 	public static final int D3DFMT_X8R8G8B8 = 22;
 
 	public static final int DDS_A16B16G16R16F = 113;//added by phil quite late http:
+
 	//msdn.microsoft.com/en-us/library/windows/desktop/bb172558%28v=vs.85%29.aspx
 	//D3DFMT_A16B16G16R16F	113	64-bit float format using 16 bits for the each channel (alpha, blue, green, red).
 

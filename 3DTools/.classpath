@@ -7,15 +7,14 @@
 	<classpathentry kind="lib" path="/external_jars/external jars/log4j-1.2.9.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/tools.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/j3d/j3d-org-java3d-all.jar" sourcepath="E:/Java/3rd party jars/j3d/src"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/j3dcore.jar" sourcepath="E:/Java/3rd party jars/java3d/src"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/j3dutils.jar" sourcepath="E:/Java/3rd party jars/java3d/src"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/lib/ext/vecmath.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar"/>
 	<classpathentry kind="lib" path="/external_jars/jogamp/jar/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/external_jars/jogamp/jar/joal.jar" sourcepath="E:/downloads&amp;installs/develop/java/jogamp/jogamp-all-platforms/joal-java-src.zip"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Java3DJOGL2"/>
+	<classpathentry kind="lib" path="/external_jars/jogamp/jar/jogl-all.jar" sourcepath="E:/downloads&amp;installs/develop/java/jogamp/jogamp-all-platforms/jogl-java-src.zip"/>
+	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>

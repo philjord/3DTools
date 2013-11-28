@@ -23,7 +23,7 @@ public class DDSBufferedImage extends BufferedImage
 
 	public static final int BLOCK_SIZE = 4;
 
-	private DDSImage ddsImage;
+	public DDSImage ddsImage;
 
 	private int mipNumber;
 
@@ -40,6 +40,8 @@ public class DDSBufferedImage extends BufferedImage
 	private String imageName = "";
 
 	/**
+	 * DDS support to the jogl piepline is in.
+	 * 
 	 * This class does some crazy things to optomises memory versus speed
 	 * The source data is compress at a 1:4 ratio of the required buffered image
 	 * However the buffered image raster data is pulled out and sent to the GPU so we have at least a double 
@@ -87,12 +89,11 @@ public class DDSBufferedImage extends BufferedImage
 		{
 			this.width = width < 1 ? 1 : width;
 			this.height = height < 1 ? 1 : height;
+			buffer = ByteBuffer.allocate(width * height);
+			//TODO: the prior image strip ssytem from DSTExture here now?
 		}
 		else
 		{
-			this.buffer = imageInfo.getData();
-			//always ensure little endian
-			buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
 			{
@@ -133,7 +134,22 @@ public class DDSBufferedImage extends BufferedImage
 			{
 				System.out.println("not DDS format " + ddsImage.getPixelFormat() + "; mip num = " + mipNumber);
 			}
+
+			//now flip dxt that go stright to the opengl card
+			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 || ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3
+					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+			{
+				DxtFlipper.flip(ddsImage, imageInfo);
+			}
+
+			this.buffer = imageInfo.getData();
+			//always ensure little endian
+			buffer.order(ByteOrder.LITTLE_ENDIAN);
+
 		}
+
+		//TODO: DXT1 images with non w==h show as blank
+		//TODO: DXT5 flip is badly
 
 		//ready for first getRaster call
 		// if I call this all unseen shapes textures must be held, but if they are never seen wasteful in fallout3
@@ -145,7 +161,7 @@ public class DDSBufferedImage extends BufferedImage
 		return imageName;
 	}
 
-	private BufferedImage convertImage()
+	public BufferedImage convertImage()
 	{
 		//can't use width or height as it's been corrected to 1 already
 		if (imageInfo.getWidth() < 1 || imageInfo.getHeight() < 1)
@@ -158,6 +174,10 @@ public class DDSBufferedImage extends BufferedImage
 
 		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
 		{
+			//TODO: this should work with    http://worldwind31.arc.nasa.gov/svnandroid/WorldWindAndroid/WWAndroid/src/gov/nasa/worldwind/util/dds/DDSTextureReader.java
+			//protected static final int GL_COMPRESSED_RGB_S3TC_DXT1_EXT = 0x83F0;
+			//protected static final int GL_COMPRESSED_RGBA_S3TC_DXT1_EXT = 0x83F1;
+
 			//System.out.println("DXT1");
 			if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
 			{
@@ -398,6 +418,7 @@ public class DDSBufferedImage extends BufferedImage
 						pixels[((blockHeight - 1) - br) * blockWidth + bc] = pixel8888;
 					}
 				}
+				//notice vertical flipping there
 				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
 						blockWidth);
 			}
@@ -406,8 +427,6 @@ public class DDSBufferedImage extends BufferedImage
 		return delegate;
 	}
 
-	//interesting note teh worldwind sdk use the INT_ARGB_PRE type, which might be better
-	// class DXT3Decompressor uses BufferedImage.TYPE_INT_ARGB_PRE, but the web clearly says dont' do this
 	private BufferedImage decompressRGBA_S3TC_DXT5_EXT()
 	{
 		int numBlocksWide = width / BLOCK_SIZE;
@@ -493,7 +512,7 @@ public class DDSBufferedImage extends BufferedImage
 						pixels[((blockHeight - 1) - br) * blockWidth + bc] = pixel8888;
 					}
 				}
-
+				//notice vertical flipping there
 				delegate.setRGB(col * blockWidth, (height - blockHeight) - (row * blockHeight), blockWidth, blockHeight, pixels, 0,
 						blockWidth);
 			}
@@ -517,6 +536,12 @@ public class DDSBufferedImage extends BufferedImage
 		return BufferedImage.TYPE_INT_ARGB;
 	}
 
+	public ByteBuffer getBuffer()
+	{
+		buffer.rewind();
+		return buffer;
+	}
+
 	/**
 	 * THIS IS USED BY Java3D pipeline
 	 * ImageData.get()
@@ -531,7 +556,7 @@ public class DDSBufferedImage extends BufferedImage
 
 	public Object getInts()
 	{
-		// oh my god!, After the first getRaster from J3d, it'll askme for it again
+		// oh my god!, After the first getRaster from J3d, it'll ask me for it again
 		// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
 		// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
 
@@ -788,7 +813,8 @@ public class DDSBufferedImage extends BufferedImage
 	@Override
 	public BufferedImage getSubimage(int x, int y, int w, int h)
 	{
-		return convertImage().getSubimage(x, y, w, h);
+		throw new UnsupportedOperationException();
+		//return convertImage().getSubimage(x, y, w, h);
 	}
 
 	@Override

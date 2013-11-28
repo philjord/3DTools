@@ -52,7 +52,7 @@ public class DDSToTexture
 			{
 				prefs.put("DDSToTexture", file.getAbsolutePath());
 				System.out.println("Selected file: " + file);
-				showImage(file, 50000);
+				showImage(file, 15000);
 			}
 		});
 
@@ -119,6 +119,7 @@ public class DDSToTexture
 		try
 		{
 			ddsImage = DDSImage.read(toByteBuffer(inputStream));
+			ddsImage.debugPrint();
 		}
 		catch (IOException e)
 		{
@@ -132,7 +133,7 @@ public class DDSToTexture
 		int width = 0;
 		for (int i = 0; i < infos.length; i++)
 		{
-			BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
+			DDSBufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
 			if (image != null)
 			{
 				if (height == -1)// height of first big one only
@@ -143,7 +144,7 @@ public class DDSToTexture
 				AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
 				tx.translate(0, -image.getHeight());
 				BufferedImage mine = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-				((Graphics2D) mine.getGraphics()).drawImage(image, tx, null);
+				((Graphics2D) mine.getGraphics()).drawImage(image.convertImage(), tx, null);
 
 				ImageIcon icon = new ImageIcon(mine);
 				f.getContentPane().add(new JLabel(icon));

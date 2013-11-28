@@ -6,10 +6,15 @@ import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
+import javax.media.opengl.GL;
+
 import tools.texture.DDSBufferedImage;
+import tools.texture.DDSImage;
 
 public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 {
+	RenderedImage _byRefImage;
+
 	public DDSImageComponent2DRetained()
 	{
 	}
@@ -23,8 +28,64 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 	 */
 	ImageData createRenderedImageDataObject(RenderedImage byRefImage)
 	{
-		int unitsPerPixel = 4;
-		return new ImageData2(ImageDataType.TYPE_INT_ARRAY, width * height * depth * unitsPerPixel, width, height, byRefImage);
+		this._byRefImage = byRefImage;
+		if (byRefImage instanceof DDSBufferedImage)
+		{
+			return new ImageData2(ImageDataType.TYPE_BYTE_BUFFER, -1, width, height, byRefImage);
+		}
+		else
+		{
+			int unitsPerPixel = 4;
+			return new ImageData2(ImageDataType.TYPE_INT_ARRAY, width * height * depth * unitsPerPixel, width, height, byRefImage);
+		}
+
+	}
+
+	int getImageFormatTypeIntValue(boolean powerOfTwoData)
+	{
+		if (_byRefImage instanceof DDSBufferedImage)
+		{
+			DDSImage ddsImage = ((DDSBufferedImage) _byRefImage).ddsImage;
+			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
+			{
+				if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
+				{
+
+					return GL.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+				}
+				else
+				{
+					System.out.println("Alpha present in DXT1!;");
+					return -1;
+				}
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3)
+			{
+				return GL.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+			{
+				return GL.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+			{
+			}
+			System.out.println("bad format for now! " + ddsImage.getPixelFormat());
+			return -1;
+		}
+		else
+		{
+			return super.getImageFormatTypeIntValue(powerOfTwoData);
+		}
 	}
 
 	class ImageData2 extends ImageData
@@ -33,19 +94,19 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 
 		private ImageDataType imageDataType = ImageDataType.TYPE_NULL;
 
-		private int length = 0;
+		//private int length = 0;
 
 		private boolean dataIsByRef = false;
 
 		private int dataWidth, dataHeight;
 
-		ImageData2(ImageDataType imageDataType, int length, int dataWidth, int dataHeight, Object byRefImage)
+		ImageData2(ImageDataType imageDataType, int length, int dataWidth, int dataHeight, RenderedImage byRefImage)
 		{
 			// no impact super constructor
-			super(ImageDataType.TYPE_INT_ARRAY, 0, 0, 0);
+			super(imageDataType, 0, 0, 0);
 
 			this.imageDataType = imageDataType;
-			this.length = length;
+			//this.length = length;
 			this.dataWidth = dataWidth;
 			this.dataHeight = dataHeight;
 			this.dataIsByRef = true;
@@ -65,7 +126,7 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		 */
 		int length()
 		{
-			return length;
+			throw new UnsupportedOperationException();
 		}
 
 		/**
@@ -89,15 +150,39 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		 */
 		Object get()
 		{
-			if (bi instanceof DDSBufferedImage)
+
+			//This is the critical part, this call is optomised to rebuild less often
+			//return ((DDSBufferedImage) bi).getInts();
+
+			if (_byRefImage instanceof DDSBufferedImage)
 			{
-				//This is the critical part, this call is optomised to rebuild less often
-				return ((DDSBufferedImage) bi).getInts();
+				DDSImage ddsImage = ((DDSBufferedImage) _byRefImage).ddsImage;
+				if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1//
+						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3//
+						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+				{
+					return ((DDSBufferedImage) bi).getBuffer();
+				}
+				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
+				{
+				}
+				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+				{
+				}
+				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
+				{
+				}
+				else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+				{
+				}
+				System.out.println("bad format for now! " + ddsImage.getPixelFormat());
+				return null;
 			}
 			else
 			{
 				return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
 			}
+
 		}
 
 		/**
