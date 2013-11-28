@@ -1,4 +1,4 @@
-package tools.texture;
+package tools.ddstexture;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
@@ -217,102 +217,75 @@ public class DDSToTexture
 
 	public static Texture getTexture(String filename, InputStream inputStream)
 	{
-		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
-
-		if (ret_val == null)
+		try
 		{
-			DDSImage ddsImage;
-			try
-			{
-				ddsImage = DDSImage.read(toByteBuffer(inputStream));
-			}
-			catch (IOException e)
-			{
-				System.out.println("" + DDSToTexture.class + " had a  IO problem with " + filename + " : " + e.getMessage());
-				return null;
-			}
+			// Check the cache for an instance first
+			Texture ret_val = loadedTextures.get(filename);
 
-			// return null for unsupproted types
-			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2 || ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4
-					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
+			if (ret_val == null)
 			{
-				System.out.println("Unsupported DDS format " + ddsImage.getPixelFormat() + " for file " + filename);
-				return null;
-			}
+				DDSImage ddsImage = DDSImage.read(toByteBuffer(inputStream));
 
-			// is it un mipmapped?
-			if (ddsImage.getNumMipMaps() <= 1)
-			{
-				BufferedImage image = new DDSBufferedImage(ddsImage, 0, filename);
-
-				if (image != null)
+				// return null for unsupproted types
+				if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2 //
+						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4 //
+						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
 				{
-					int imageComponentFormat = ImageComponent.FORMAT_RGBA;
-					int textureFormat = Texture.RGBA;
-
-					// non alpha images will be just RGB
-					if (!image.getColorModel().hasAlpha())
-					{
-						imageComponentFormat = ImageComponent.FORMAT_RGB;
-						textureFormat = Texture.RGB;
-					}
-
-					Texture2D tex = new Texture2D(Texture.BASE_LEVEL, textureFormat, image.getWidth(), image.getHeight());
-
-					tex.setMinFilter(Texture.NICEST);
-					tex.setMagFilter(Texture.NICEST);
-
-					tex.setBoundaryModeS(Texture.WRAP);
-					tex.setBoundaryModeT(Texture.WRAP);
-
-					tex.setImage(0, new DDSImageComponent2D(imageComponentFormat, image, true, true));
-
-					loadedTextures.put(filename, tex);
-					ret_val = tex;
+					System.out.println("Unsupported DDS format " + ddsImage.getPixelFormat() + " for file " + filename);
+					return null;
 				}
-				ddsImage.close();
-			}
-			else if (ddsImage.getNumMipMaps() > 1)
-			{
 
-				DDSImage.ImageInfo[] infos = ddsImage.getAllMipMaps();
-
-				BufferedImage[] images = new BufferedImage[infos.length];
-
-				for (int i = 0; i < infos.length; i++)
+				// is it un mipmapped?
+				if (ddsImage.getNumMipMaps() <= 1)
 				{
-					BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
+					BufferedImage image = new DDSBufferedImage(ddsImage, 0, filename);
 
 					if (image != null)
 					{
-						images[i] = image;
-					}
-					else
-					{
-						System.out.println("null image in file " + filename + " image number " + i);
-					}
-				}
+						int imageComponentFormat = ImageComponent.FORMAT_RGBA;
+						int textureFormat = Texture.RGBA;
 
-				if (images[0] != null)
+						// non alpha images will be just RGB
+						if (!image.getColorModel().hasAlpha())
+						{
+							imageComponentFormat = ImageComponent.FORMAT_RGB;
+							textureFormat = Texture.RGB;
+						}
+
+						Texture2D tex = new Texture2D(Texture.BASE_LEVEL, textureFormat, image.getWidth(), image.getHeight());
+
+						tex.setMinFilter(Texture.NICEST);
+						tex.setMagFilter(Texture.NICEST);
+
+						tex.setBoundaryModeS(Texture.WRAP);
+						tex.setBoundaryModeT(Texture.WRAP);
+
+						tex.setImage(0, new DDSImageComponent2D(imageComponentFormat, image));
+
+						loadedTextures.put(filename, tex);
+						ret_val = tex;
+					}
+					ddsImage.close();
+				}
+				else if (ddsImage.getNumMipMaps() > 1)
 				{
+
+					//DDSImage.ImageInfo[] infos = ddsImage.getAllMipMaps();
+
 					int imageComponentFormat = ImageComponent.FORMAT_RGBA;
 					int textureFormat = Texture.RGBA;
 
-					// non alpha images will be just RGB
-					if (!images[0].getColorModel().hasAlpha())
-					{
-						imageComponentFormat = ImageComponent.FORMAT_RGB;
-						textureFormat = Texture.RGB;
-					}
+					int levels = ddsImage.getNumMipMaps();
+					// now check how big it should be! sometime these things run out with 0w or 0h size images
+					int levels2 = Math.min(computeLog(ddsImage.getWidth()), computeLog(ddsImage.getHeight())) + 1;
+					levels = levels > levels2 ? levels2 : levels;
 
-					int levels = Math.max(computeLog(images[0].getWidth()), computeLog(images[0].getHeight())) + 1;
-
-					Texture2D tex = new Texture2D(Texture.MULTI_LEVEL_MIPMAP, textureFormat, images[0].getWidth(), images[0].getHeight());
+					Texture2D tex = new Texture2D(Texture.MULTI_LEVEL_MIPMAP, textureFormat, ddsImage.getWidth(), ddsImage.getHeight());
 
 					tex.setName(filename);
 					tex.setBaseLevel(0);
 					tex.setMaximumLevel(levels - 1);
+
 					// better to let machine decide, then settings option to go fastest one day
 					tex.setMinFilter(Texture.NICEST);//Texture.MULTI_LEVEL_LINEAR);
 					tex.setMagFilter(Texture.NICEST);//Texture.BASE_LEVEL_LINEAR);
@@ -320,51 +293,64 @@ public class DDSToTexture
 					tex.setBoundaryModeS(Texture.WRAP);
 					tex.setBoundaryModeT(Texture.WRAP);
 
-					int w = images[0].getWidth();
-					int h = images[0].getHeight();
+					//E:\game media\Oblivion\meshes\architecture\imperialcity\icauouterwall01_far.nif 7 good
+					//E:\game media\Fallout\meshes\landscape\trees\treedead01.nif should be 8 is 10?
+
+					/*BufferedImage[] images = new BufferedImage[infos.length];
+
+					for (int i = 0; i < infos.length; i++)
+					{
+						
+
+						if (image != null)
+						{
+							images[i] = image;
+						}
+						else
+						{
+							System.out.println("null image in file " + filename + " image number " + i);
+						}
+					}*/
+
+					//int w = images[0].getWidth();
+					//int h = images[0].getHeight();
 					for (int i = 0; i < levels; i++)
 					{
-						if (i < images.length)
+						//if (i < ddsImage.getNumMipMaps())
 						{
-							tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, images[i], true, true));
+							BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
+							tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image));
 						}
-						else if (images.length > 0)
+						//else
 						{
-							BufferedImage image = images[images.length - 1].getSubimage(0, 0, w, h);
+							//BufferedImage image = images[images.length - 1].getSubimage(0, 0, w, h);
 							//trying to sort out darks lines in ST and fallout 3
+							//System.out.println("Not enough mip maps");
+							//throw new UnsupportedOperationException();
 							//BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-							tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image, true, true));
+							//tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image));
 						}
-						w >>= 1;
-						w = w < 1 ? 1 : w;
-						h >>= 1;
-						h = h < 1 ? 1 : h;
+						//w >>= 1;
+						//w = w < 1 ? 1 : w;
+						//h >>= 1;
+						//h = h < 1 ? 1 : h;
 					}
 
 					loadedTextures.put(filename, tex);
 					ret_val = tex;
 				}
 				ddsImage.close();
+
 			}
 
+			return ret_val;
 		}
-
-		return ret_val;
-	}
-
-	private static int computeLog(int value)
-	{
-		int i = 0;
-
-		if (value == 0)
-			return -1;
-		for (;;)
+		catch (IOException e)
 		{
-			if (value == 1)
-				return i;
-			value >>= 1;
-			i++;
+			System.out.println("" + DDSToTexture.class + " had a  IO problem with " + filename + " : " + e.getMessage());
+			return null;
 		}
+
 	}
 
 	private static int BUFSIZE = 16000;
@@ -394,4 +380,18 @@ public class DDSToTexture
 		}
 	}
 
+	private static int computeLog(int value)
+	{
+		int i = 0;
+
+		if (value == 0)
+			return -1;
+		for (;;)
+		{
+			if (value == 1)
+				return i;
+			value >>= 1;
+			i++;
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package tools.texture;
+package tools.ddstexture;
 
 import java.io.BufferedInputStream;
 import java.io.File;

@@ -11,9 +11,9 @@ import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 import javax.swing.ImageIcon;
 
-import tools.texture.DDSBufferedImage;
-import tools.texture.DDSImage;
-import tools.texture.DDSToTexture;
+import tools.ddstexture.DDSBufferedImage;
+import tools.ddstexture.DDSImage;
+import tools.ddstexture.DDSToTexture;
 
 public class SimpleImageLoader
 {

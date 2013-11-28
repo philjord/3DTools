@@ -1,4 +1,4 @@
-package tools.texture;
+package tools.ddstexture;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,13 +6,11 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
-import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
-import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Vector;
@@ -41,6 +39,13 @@ public class DDSBufferedImage extends BufferedImage
 
 	/**
 	 * DDS support to the jogl piepline is in.
+	 * 
+	 * JoglPipeline has changes
+	 * TextureRetained has changes -> force extension?
+	 * 2 new extension for ImageComponent adn ImageComponent2D Retained
+	 * This class, DDSToTexture adn DxtFlipper
+	 * 
+	 * 
 	 * 
 	 * This class does some crazy things to optomises memory versus speed
 	 * The source data is compress at a 1:4 ratio of the required buffered image
@@ -84,17 +89,15 @@ public class DDSBufferedImage extends BufferedImage
 		this.width = imageInfo.getWidth();
 		this.height = imageInfo.getHeight();
 
-		// zero sized need to return a valid bufferedimage (should investiage if null could be better)
+		// top mips are sometime 1,0 or 0,1
 		if (width < 1 || height < 1)
 		{
-			this.width = width < 1 ? 1 : width;
-			this.height = height < 1 ? 1 : height;
-			buffer = ByteBuffer.allocate(width * height);
-			//TODO: the prior image strip ssytem from DSTExture here now?
+			throw new UnsupportedOperationException();
+			//this.width = width < 1 ? 1 : width;
+			//this.height = height < 1 ? 1 : height;
 		}
 		else
 		{
-
 			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
 			{
 				if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
@@ -111,11 +114,11 @@ public class DDSBufferedImage extends BufferedImage
 			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2)
 			{
-				System.out.println("DXT2 not supported; mip num = " + mipNumber);
+				System.out.println("DXT2 not supported; " + imageName + "; mip num = " + mipNumber);
 			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4)
 			{
-				System.out.println("DXT4 not supported; mip num = " + mipNumber);
+				System.out.println("DXT4 not supported; " + imageName + "; mip num = " + mipNumber);
 			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3 || //
 					ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5 || //
@@ -128,11 +131,11 @@ public class DDSBufferedImage extends BufferedImage
 			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
 			{
-				System.out.println("D3DFMT_UNKNOWN not supported; mip num = " + mipNumber);
+				System.out.println("D3DFMT_UNKNOWN not supported; " + imageName + "; mip num = " + mipNumber);
 			}
 			else
 			{
-				System.out.println("not DDS format " + ddsImage.getPixelFormat() + "; mip num = " + mipNumber);
+				System.out.println("not DDS format; " + ddsImage.getPixelFormat() + "; " + imageName + "; mip num = " + mipNumber);
 			}
 
 			//now flip dxt that go stright to the opengl card
@@ -142,18 +145,9 @@ public class DDSBufferedImage extends BufferedImage
 				DxtFlipper.flip(ddsImage, imageInfo);
 			}
 
-			this.buffer = imageInfo.getData();
-			//always ensure little endian
-			buffer.order(ByteOrder.LITTLE_ENDIAN);
-
+			
 		}
-
-		//TODO: DXT1 images with non w==h show as blank
-		//TODO: DXT5 flip is badly
-
-		//ready for first getRaster call
-		// if I call this all unseen shapes textures must be held, but if they are never seen wasteful in fallout3
-		//firstTimeIntsRef = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
+		this.buffer = imageInfo.getData();
 	}
 
 	public String getImageName()
@@ -171,6 +165,7 @@ public class DDSBufferedImage extends BufferedImage
 
 		//prep the buffer
 		buffer.rewind();
+		buffer.order(ByteOrder.LITTLE_ENDIAN);
 
 		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
 		{
@@ -538,7 +533,6 @@ public class DDSBufferedImage extends BufferedImage
 
 	public ByteBuffer getBuffer()
 	{
-		buffer.rewind();
 		return buffer;
 	}
 
@@ -550,45 +544,45 @@ public class DDSBufferedImage extends BufferedImage
 	 * @see java.awt.image.BufferedImage#getRaster()
 	 */
 
-	private SoftReference<Object> ints;
+	/*	private SoftReference<Object> ints;
 
-	private Object firstTimeIntsRef = null;
+		private Object firstTimeIntsRef = null;
 
-	public Object getInts()
-	{
-		// oh my god!, After the first getRaster from J3d, it'll ask me for it again
-		// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
-		// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
-
-		//FCUK!! possibly small gain from GC not clearing up fast, does work like I suggested, nobody holds a ref to 
-		// returned raster at all
-
-		// for first time only use constructors hard ref, and then drop it to weak
-		if (firstTimeIntsRef != null)
+		public Object getInts()
 		{
-			Object ret = firstTimeIntsRef;
-			ints = new SoftReference<Object>(ret);
-			firstTimeIntsRef = null;
-			return ret;
-		}
-		else
-		{
-			if (ints != null)
+			// oh my god!, After the first getRaster from J3d, it'll ask me for it again
+			// only it turns out it's still holding the ref from the first time, so I can weakly hold it too
+			// and hand it back whenever I'm asked for it! crazy. But sometimes it's let go of it, possibly soft?
+
+			//FCUK!! possibly small gain from GC not clearing up fast, does work like I suggested, nobody holds a ref to 
+			// returned raster at all
+
+			// for first time only use constructors hard ref, and then drop it to weak
+			if (firstTimeIntsRef != null)
 			{
-				Object prevWr = ints.get();
-				if (prevWr != null)
-				{
-					return prevWr;
-				}
+				Object ret = firstTimeIntsRef;
+				ints = new SoftReference<Object>(ret);
+				firstTimeIntsRef = null;
+				return ret;
 			}
+			else
+			{
+				if (ints != null)
+				{
+					Object prevWr = ints.get();
+					if (prevWr != null)
+					{
+						return prevWr;
+					}
+				}
 
-			// don't have it any more so re-create it
-			Object ret = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
-			ints = new SoftReference<Object>(ret);
+				// don't have it any more so re-create it
+				Object ret = ((DataBufferInt) convertImage().getRaster().getDataBuffer()).getData();
+				ints = new SoftReference<Object>(ret);
 
-			return ret;
-		}
-	}
+				return ret;
+			}
+		}*/
 
 	//TODO: probably dump this lot??  
 	/*	public int getRasterCount = 0;
@@ -787,6 +781,14 @@ public class DDSBufferedImage extends BufferedImage
 	}
 
 	@Override
+	public BufferedImage getSubimage(int x, int y, int w, int h)
+	{
+		throw new UnsupportedOperationException();
+		//return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB).getSubimage(x, y, w, h);
+		//return convertImage().getSubimage(x, y, w, h);
+	}
+
+	@Override
 	public int getTileWidth()
 	{
 		throw new UnsupportedOperationException();
@@ -808,13 +810,6 @@ public class DDSBufferedImage extends BufferedImage
 	public int getTileGridYOffset()
 	{
 		throw new UnsupportedOperationException();
-	}
-
-	@Override
-	public BufferedImage getSubimage(int x, int y, int w, int h)
-	{
-		throw new UnsupportedOperationException();
-		//return convertImage().getSubimage(x, y, w, h);
 	}
 
 	@Override

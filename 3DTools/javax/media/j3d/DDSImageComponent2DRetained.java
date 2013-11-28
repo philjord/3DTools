@@ -1,15 +1,14 @@
 package javax.media.j3d;
 
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 
-import tools.texture.DDSBufferedImage;
-import tools.texture.DDSImage;
+import tools.ddstexture.DDSBufferedImage;
+import tools.ddstexture.DDSImage;
 
 public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 {
@@ -22,7 +21,6 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 	@Override
 	/**
 	 * MASSIVE assumptions that we've been handed a DDSBufferedImage byref yup
-	 * for the 1 pixel image we also support bufferedimage
 	 * @param byRefImage
 	 * @return
 	 */
@@ -31,12 +29,13 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		this._byRefImage = byRefImage;
 		if (byRefImage instanceof DDSBufferedImage)
 		{
-			return new ImageData2(ImageDataType.TYPE_BYTE_BUFFER, -1, width, height, byRefImage);
+			return new ImageData2(ImageDataType.TYPE_BYTE_BUFFER, width, height, byRefImage);
 		}
 		else
 		{
-			int unitsPerPixel = 4;
-			return new ImageData2(ImageDataType.TYPE_INT_ARRAY, width * height * depth * unitsPerPixel, width, height, byRefImage);
+			throw new UnsupportedOperationException();
+			//int unitsPerPixel = 4;
+			//return new ImageData2(ImageDataType.TYPE_INT_ARRAY, width * height * depth * unitsPerPixel, width, height, byRefImage);
 		}
 
 	}
@@ -92,24 +91,17 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 	{
 		private BufferedImage bi;
 
-		private ImageDataType imageDataType = ImageDataType.TYPE_NULL;
-
-		//private int length = 0;
-
-		private boolean dataIsByRef = false;
+		private ImageDataType imageDataType;
 
 		private int dataWidth, dataHeight;
 
-		ImageData2(ImageDataType imageDataType, int length, int dataWidth, int dataHeight, RenderedImage byRefImage)
+		ImageData2(ImageDataType imageDataType, int dataWidth, int dataHeight, RenderedImage byRefImage)
 		{
 			// no impact super constructor
 			super(imageDataType, 0, 0, 0);
-
 			this.imageDataType = imageDataType;
-			//this.length = length;
 			this.dataWidth = dataWidth;
 			this.dataHeight = dataHeight;
-			this.dataIsByRef = true;
 			bi = (BufferedImage) byRefImage;
 		}
 
@@ -175,12 +167,14 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 				else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
 				{
 				}
-				System.out.println("bad format for now! " + ddsImage.getPixelFormat());
+				System.out.println("Bad format for now! " + ((DDSBufferedImage) _byRefImage).getImageName() + "; "
+						+ ddsImage.getPixelFormat());
 				return null;
 			}
 			else
 			{
-				return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
+				throw new UnsupportedOperationException();
+				//return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
 			}
 
 		}
@@ -190,7 +184,7 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		 */
 		boolean isDataByRef()
 		{
-			return dataIsByRef;
+			return true;
 		}
 
 		/**

@@ -1,8 +1,8 @@
-package tools.texture;
+package tools.ddstexture;
 
 import java.nio.ByteBuffer;
 
-import tools.texture.DDSImage.ImageInfo;
+import tools.ddstexture.DDSImage.ImageInfo;
 
 public class DxtFlipper
 {

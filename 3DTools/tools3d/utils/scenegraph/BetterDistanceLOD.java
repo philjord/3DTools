@@ -17,6 +17,8 @@ import javax.vecmath.Point3d;
 // I also notice that shared grup appear to be massively inefficient
 //allows a transition zone of fadness sent out to 2 nodes attached
 
+//TODO: if there is a scale transform node above this one then teh view distance is scaled and wrong
+// see bloated float sign
 public class BetterDistanceLOD extends Behavior
 {
 	private float FADE_RANGE = 3f; //TODO: better as a percent of min dist?

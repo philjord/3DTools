@@ -1,4 +1,4 @@
-package tools.texture;
+package tools.ddstexture;
 
 /**
  * 24 bit 888 RGB color

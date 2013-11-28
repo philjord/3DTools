@@ -16,7 +16,7 @@ import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector4f;
 
-import tools.texture.DDSToTexture;
+import tools.ddstexture.DDSToTexture;
 
 public class Sea extends BranchGroup
 {

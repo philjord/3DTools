@@ -17,8 +17,16 @@ import java.awt.image.RenderedImage;
  */
 public class DDSImageComponent2D extends ImageComponent2D
 {
+	private static boolean byRef = true;
 
-	public DDSImageComponent2D(int format, RenderedImage image, boolean byRef, boolean yUp)
+	private static boolean yUp = true;
+
+	/**
+	 * Note ByREf adn YUp are force to true to ensure no image copies happen
+	 * @param format
+	 * @param image
+	 */
+	public DDSImageComponent2D(int format, RenderedImage image)
 	{
 		super(format, image, byRef, yUp);
 	}
