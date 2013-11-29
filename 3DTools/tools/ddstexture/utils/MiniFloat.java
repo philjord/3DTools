@@ -1,4 +1,4 @@
-package tools.ddstexture;
+package tools.ddstexture.utils;
 
 public class MiniFloat
 {

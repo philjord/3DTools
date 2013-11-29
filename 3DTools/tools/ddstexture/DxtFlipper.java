@@ -123,6 +123,9 @@ public class DxtFlipper
 			// Number of pixels DXTx
 			int nBytes = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;
 
+			//TODO: I could halve this requirement by copying the bottom half out
+			//then flipping downward to half then flipping from here down
+			
 			byte[] pixels = new byte[nBytes];
 
 			// Flip & copy to actual pixel buffer

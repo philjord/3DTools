@@ -12,79 +12,57 @@ import tools.ddstexture.DDSImage;
 
 public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 {
-	RenderedImage _byRefImage;
+	DDSBufferedImage _byRefImage;
 
 	public DDSImageComponent2DRetained()
 	{
 	}
-
+	
 	@Override
-	/**
-	 * MASSIVE assumptions that we've been handed a DDSBufferedImage byref yup
-	 * @param byRefImage
-	 * @return
-	 */
 	ImageData createRenderedImageDataObject(RenderedImage byRefImage)
 	{
-		this._byRefImage = byRefImage;
 		if (byRefImage instanceof DDSBufferedImage)
 		{
+			this._byRefImage = (DDSBufferedImage) byRefImage;
 			return new ImageData2(ImageDataType.TYPE_BYTE_BUFFER, width, height, byRefImage);
 		}
 		else
 		{
 			throw new UnsupportedOperationException();
-			//int unitsPerPixel = 4;
-			//return new ImageData2(ImageDataType.TYPE_INT_ARRAY, width * height * depth * unitsPerPixel, width, height, byRefImage);
 		}
 
 	}
 
+	/**
+	 * Note this does NOT return a 
+	 * @param powerOfTwoData
+	 * @return
+	 */
+	@Override
 	int getImageFormatTypeIntValue(boolean powerOfTwoData)
 	{
-		if (_byRefImage instanceof DDSBufferedImage)
+		DDSImage ddsImage = _byRefImage.ddsImage;
+		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
 		{
-			DDSImage ddsImage = ((DDSBufferedImage) _byRefImage).ddsImage;
-			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
-			{
-				if (!ddsImage.isPixelFormatFlagSet(DDSImage.DDPF_ALPHAPIXELS))
-				{
-
-					return GL.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
-				}
-				else
-				{
-					System.out.println("Alpha present in DXT1!;");
-					return -1;
-				}
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3)
-			{
-				return GL.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
-			{
-				return GL.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
-			{
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
-			{
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
-			{
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
-			{
-			}
-			System.out.println("bad format for now! " + ddsImage.getPixelFormat());
-			return -1;
+			return GL.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 		}
-		else
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3)
 		{
-			return super.getImageFormatTypeIntValue(powerOfTwoData);
+			return GL.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+		{
+			return GL.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+		{
+			//not yet supported
+		}
+		System.out.println("bad format for now! " + ddsImage.getPixelFormat() + " in " + _byRefImage.getImageName());
+		return -1;
 	}
 
 	class ImageData2 extends ImageData

@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 
 import tools.ddstexture.DDSBufferedImage;
 import tools.ddstexture.DDSImage;
-import tools.ddstexture.DDSToTexture;
+import tools.ddstexture.DDSTextureLoader;
 
 public class SimpleImageLoader
 {
@@ -156,7 +156,7 @@ public class SimpleImageLoader
 		{
 			try
 			{
-				DDSImage ddsImage = DDSImage.read(DDSToTexture.toByteBuffer(in));
+				DDSImage ddsImage = DDSImage.read(DDSTextureLoader.toByteBuffer(in));
 				new DDSBufferedImage(ddsImage, 0, imageName);
 			}
 			catch (IOException e)

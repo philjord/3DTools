@@ -2,16 +2,12 @@ package javax.media.j3d;
 
 import java.awt.image.RenderedImage;
 
+import tools.ddstexture.DDSBufferedImage;
+
 /**
  * This class extends a core class, the jars for java3d must not be sealed
- * This means java3d 1.5.2 install in lib\ext will cause a crash
- * run
- * //DDS requires no installed java3D
- *		if (QueryProperties.checkForInstalledJ3d())
- *		{
- *			System.exit(0);
- *		}
- * If you want to use this class, it will tell the user to uninstall
+ * This means java3d (e.g. 1.5.2) installed in lib\ext will cause a crash
+ * 
  * @author philip
  *
  */
@@ -22,15 +18,25 @@ public class DDSImageComponent2D extends ImageComponent2D
 	private static boolean yUp = true;
 
 	/**
-	 * Note ByREf adn YUp are force to true to ensure no image copies happen
-	 * @param format
-	 * @param image
+	 * See DDSTextureLoader for an example of how to use this class
+	 * 
+	 * Note ByRef and YUp are forced to true to ensure no image copies happen inside TextureRetained
+	 * 
+	 * @param format Only ImageComponent.FORMAT_RGBA supported
+	 * @param image Only a DDSBufferedImage can be handed to DDSImageComponent2D
 	 */
 	public DDSImageComponent2D(int format, RenderedImage image)
 	{
 		super(format, image, byRef, yUp);
+		if (!(image instanceof DDSBufferedImage))
+		{
+			throw new IllegalArgumentException("Only a DDSBufferedImage can be handed to DDSImageComponent2D");
+		}
 	}
 
+	/**
+	 * Use a special Retained handler
+	 */
 	@Override
 	void createRetained()
 	{

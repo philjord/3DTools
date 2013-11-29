@@ -16,7 +16,7 @@ import javax.media.j3d.TransparencyAttributes;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector4f;
 
-import tools.ddstexture.DDSToTexture;
+import tools.ddstexture.DDSTextureLoader;
 
 public class Sea extends BranchGroup
 {
@@ -55,7 +55,7 @@ public class Sea extends BranchGroup
 
 		app.setTexCoordGeneration(texGen);
 		// TODO: just a stupid temp for now
-		Texture tex = DDSToTexture.getTexture(new File("E:/game media/Oblivion/Textures/clutter/gems/sapphire1.dds"));
+		Texture tex = DDSTextureLoader.getTexture(new File("E:/game media/Oblivion/Textures/clutter/gems/sapphire1.dds"));
 		app.setTexture(tex);
 
 		PolygonAttributes ta = new PolygonAttributes();
