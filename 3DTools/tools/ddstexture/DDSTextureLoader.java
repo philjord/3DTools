@@ -27,9 +27,9 @@ import javax.media.j3d.Texture2D;
  * {@code DDSImageComponentRetained}; a new subclass for ImageComponent2DRetained
  * 
  * The following DDS loading classes
- * {@code DDSTextureLoader}, {@code DDSBufferedImage} and {@code DxtFlipper}
+ * {@code DDSTextureLoader}, {@code DDSBufferedImage}, {@code DDSImage} and {@code DxtFlipper}
  * 
- * Also some helpful utils (not needed to use DXT textures)
+ * Also some helpful utils for debug (not needed to use DXT textures)
  * {@code DSSTextureLoaderTester}, {@code DDSDecompressor}, {@code Color24} and {@code MiniFloat}
  */
 public class DDSTextureLoader
@@ -62,7 +62,7 @@ public class DDSTextureLoader
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -90,18 +90,14 @@ public class DDSTextureLoader
 					return null;
 				}
 
-				int imageComponentFormat = ImageComponent.FORMAT_RGBA;
-				int textureFormat = Texture.RGBA;
-
 				int levels = ddsImage.getNumMipMaps();
-				// now check how big it should be! sometime these things run out with 0width or 0height size images
+				// now check how big it should be! sometime these things run out with 0 width or 0 height size images
 				int levels2 = Math.min(computeLog(ddsImage.getWidth()), computeLog(ddsImage.getHeight())) + 1;
+				// use the lower of the two, to avoid 0 sizes going to the driver
 				levels = levels > levels2 ? levels2 : levels;
 
-				Texture2D tex = new Texture2D(
-
-				ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP, textureFormat, ddsImage.getWidth(),
-						ddsImage.getHeight());
+				Texture2D tex = new Texture2D(ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP,
+						Texture.RGBA, ddsImage.getWidth(), ddsImage.getHeight());
 
 				tex.setName(filename);
 				tex.setBaseLevel(0);
@@ -117,7 +113,7 @@ public class DDSTextureLoader
 				for (int i = 0; i < levels; i++)
 				{
 					BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
-					tex.setImage(i, new DDSImageComponent2D(imageComponentFormat, image));
+					tex.setImage(i, new DDSImageComponent2D(ImageComponent.FORMAT_RGBA, image));
 				}
 
 				loadedTextures.put(filename, tex);

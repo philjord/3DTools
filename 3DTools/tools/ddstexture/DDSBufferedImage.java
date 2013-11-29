@@ -35,6 +35,7 @@ public class DDSBufferedImage extends BufferedImage
 	private String imageName = "";
 
 	/**
+	 * see {@code DDSTextureLoader} for example usage
 	 * @param ddsImage
 	 * @param mipNumber
 	 * @param imageName

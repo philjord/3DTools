@@ -10,6 +10,12 @@ import javax.media.opengl.GL;
 import tools.ddstexture.DDSBufferedImage;
 import tools.ddstexture.DDSImage;
 
+/**
+ * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that
+ * gets them loaded compressed
+ * @author philip
+ *
+ */
 public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 {
 	DDSBufferedImage _byRefImage;
@@ -17,24 +23,24 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 	public DDSImageComponent2DRetained()
 	{
 	}
-	
+
 	@Override
 	ImageData createRenderedImageDataObject(RenderedImage byRefImage)
 	{
 		if (byRefImage instanceof DDSBufferedImage)
 		{
 			this._byRefImage = (DDSBufferedImage) byRefImage;
-			return new ImageData2(ImageDataType.TYPE_BYTE_BUFFER, width, height, byRefImage);
+			return new DDSImageData(ImageDataType.TYPE_BYTE_BUFFER, width, height, _byRefImage);
 		}
 		else
 		{
 			throw new UnsupportedOperationException();
 		}
-
 	}
 
 	/**
-	 * Note this does NOT return a 
+	 * Note this does NOT return a ImageComponentRetained enum value
+	 * But teh value returned does find its way into the pipeline and cause the compressed image load call.
 	 * @param powerOfTwoData
 	 * @return
 	 */
@@ -61,11 +67,11 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		{
 			//not yet supported
 		}
-		System.out.println("bad format for now! " + ddsImage.getPixelFormat() + " in " + _byRefImage.getImageName());
+		System.out.println("Bad DXT format (for now) " + ddsImage.getPixelFormat() + " in " + _byRefImage.getImageName());
 		return -1;
 	}
 
-	class ImageData2 extends ImageData
+	class DDSImageData extends ImageData
 	{
 		private BufferedImage bi;
 
@@ -73,35 +79,29 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 
 		private int dataWidth, dataHeight;
 
-		ImageData2(ImageDataType imageDataType, int dataWidth, int dataHeight, RenderedImage byRefImage)
+		DDSImageData(ImageDataType imageDataType, int dataWidth, int dataHeight, DDSBufferedImage byRefImage)
 		{
 			// no impact super constructor
 			super(imageDataType, 0, 0, 0);
 			this.imageDataType = imageDataType;
 			this.dataWidth = dataWidth;
 			this.dataHeight = dataHeight;
-			bi = (BufferedImage) byRefImage;
+			bi = byRefImage;
 		}
 
 		/**
 		* Returns the type of this DataBuffer.
 		*/
+		@Override
 		ImageDataType getType()
 		{
 			return imageDataType;
 		}
 
 		/**
-		 * Returns the number of elements in this DataBuffer.
-		 */
-		int length()
-		{
-			throw new UnsupportedOperationException();
-		}
-
-		/**
 		 * Returns the width of this DataBuffer.
 		 */
+		@Override
 		int getWidth()
 		{
 			return dataWidth;
@@ -116,82 +116,69 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		}
 
 		/**
-		 * Returns this DataBuffer as an Object.
-		 */
-		Object get()
-		{
-
-			//This is the critical part, this call is optomised to rebuild less often
-			//return ((DDSBufferedImage) bi).getInts();
-
-			if (_byRefImage instanceof DDSBufferedImage)
-			{
-				DDSImage ddsImage = ((DDSBufferedImage) _byRefImage).ddsImage;
-				if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1//
-						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3//
-						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
-				{
-					return ((DDSBufferedImage) bi).getBuffer();
-				}
-				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
-				{
-				}
-				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
-				{
-				}
-				else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
-				{
-				}
-				else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
-				{
-				}
-				System.out.println("Bad format for now! " + ((DDSBufferedImage) _byRefImage).getImageName() + "; "
-						+ ddsImage.getPixelFormat());
-				return null;
-			}
-			else
-			{
-				throw new UnsupportedOperationException();
-				//return ((DataBufferInt) bi.getRaster().getDataBuffer()).getData();
-			}
-
-		}
-
-		/**
-		 * Returns is this data is byRef. No internal data is made.
-		 */
+		* Returns is this data is byRef. No internal data is made.
+		*/
 		boolean isDataByRef()
 		{
 			return true;
 		}
 
 		/**
-		 * Returns this DataBuffer as a byte array.
+		 * Returns this DataBuffer as an Object.
 		 */
+		@Override
+		Object get()
+		{
+
+			DDSImage ddsImage = _byRefImage.ddsImage;
+			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1//
+					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3//
+					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+			{
+				return ((DDSBufferedImage) bi).getBuffer();
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)
+			{
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+			{
+			}
+			System.out.println("Bad format for now! " + _byRefImage.getImageName() + "; " + ddsImage.getPixelFormat());
+			return null;
+
+		}
+
+		@Override
+		int length()
+		{
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
 		byte[] getAsByteArray()
 		{
 			throw new UnsupportedOperationException();
 		}
 
-		/**
-		 * Returns this DataBuffer as an int array.
-		 */
+		@Override
 		int[] getAsIntArray()
 		{
 			throw new UnsupportedOperationException();
 		}
 
-		/**
-		 * Returns this DataBuffer as an nio ByteBuffer.
-		 */
+		@Override
 		ByteBuffer getAsByteBuffer()
 		{
 			throw new UnsupportedOperationException();
 		}
 
-		/**
-		 * Returns this DataBuffer as an nio IntBuffer.
-		 */
+		@Override
 		IntBuffer getAsIntBuffer()
 		{
 			throw new UnsupportedOperationException();

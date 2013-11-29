@@ -5,8 +5,11 @@ import java.awt.image.RenderedImage;
 import tools.ddstexture.DDSBufferedImage;
 
 /**
+ * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that
+ * gets them loaded compressed
  * This class extends a core class, the jars for java3d must not be sealed
  * This means java3d (e.g. 1.5.2) installed in lib\ext will cause a crash
+ * You must try to detect this and alter install to avoid.
  * 
  * @author philip
  *
@@ -35,7 +38,7 @@ public class DDSImageComponent2D extends ImageComponent2D
 	}
 
 	/**
-	 * Use a special Retained handler
+	 * Use a special Retained
 	 */
 	@Override
 	void createRetained()

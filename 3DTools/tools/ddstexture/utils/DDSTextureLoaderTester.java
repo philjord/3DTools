@@ -18,12 +18,16 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import tools.ddstexture.DDSImage;
 import tools.ddstexture.DDSTextureLoader;
-import tools.ddstexture.DDSImage.ImageInfo;
 import tools.swing.DetailsFileChooser;
 
+/**
+ * dds image loading tester, note this use teh decompress to buffered image util system
+ * not the jogl compressed call
+ * @author philip
+ *
+ */
 public class DDSTextureLoaderTester
 {
-
 	private static Preferences prefs;
 
 	public static void main(String[] args)
