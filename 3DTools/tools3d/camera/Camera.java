@@ -16,7 +16,7 @@ public class Camera extends Viewer
 
 	public static float BACK_CLIP = 5000f;
 
-	private double FOV = 65;
+	private double FOV = 80;
 
 	private JOALMixer mixer = null;
 

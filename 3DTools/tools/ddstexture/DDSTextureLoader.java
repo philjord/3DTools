@@ -103,12 +103,24 @@ public class DDSTextureLoader
 				tex.setBaseLevel(0);
 				tex.setMaximumLevel(levels - 1);
 
+				tex.setBoundaryModeS(Texture.WRAP);
+				tex.setBoundaryModeT(Texture.WRAP);
+
 				// better to let machine decide
 				tex.setMinFilter(Texture.NICEST);
 				tex.setMagFilter(Texture.NICEST);
 
-				tex.setBoundaryModeS(Texture.WRAP);
-				tex.setBoundaryModeT(Texture.WRAP);
+				//TODO: allow blur! how does this work?
+				//tex.setMinFilter(Texture.FILTER4);
+				//tex.setMagFilter(Texture.FILTER4);
+				//tex.setFilter4Func(new float[]
+				//{ 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,//
+				//		0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, //
+				//		0.5f });
+
+				//TODO: make this configurable!
+				tex.setAnisotropicFilterMode(Texture.ANISOTROPIC_SINGLE_VALUE);
+				tex.setAnisotropicFilterDegree(4);
 
 				for (int i = 0; i < levels; i++)
 				{

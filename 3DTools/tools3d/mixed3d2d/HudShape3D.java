@@ -27,7 +27,7 @@ import javax.vecmath.Point3d;
 
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
-//TODO: hud has stopped updating?
+
 public class HudShape3D extends BranchGroup implements Updater, ComponentListener
 {
 	public static int SHAPE_TEX_WIDTH = 1024;
@@ -43,6 +43,8 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	private Shape3D hudShape = new Shape3D();
 
 	private Appearance hudShapeApp = new Appearance();
+
+	private Texture2D tex;
 
 	private ImageComponent2D hudShapeIc2d;
 
@@ -101,24 +103,24 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			double opp = distFromEye * Math.tan(halfFov);
 			//System.out.println("opp " + opp);
 			SHAPE_WIDTH = (float) (opp * 2f);
-			//System.out.println("shapeWidth " + shapeWidth);
+			//System.out.println("shapeWidth " + SHAPE_WIDTH);
 			SHAPE_HEIGHT = (float) (SHAPE_WIDTH / aspectRatio);
-			//System.out.println("shapeHeight " + shapeHeight);
+			//System.out.println("shapeHeight " + SHAPE_HEIGHT);
 
 			hudShape.setGeometry(createGeometry(SHAPE_WIDTH, SHAPE_HEIGHT, SHAPE_Z));
 
 			SHAPE_TEX_WIDTH = 1024;
 			SHAPE_TEX_HEIGHT = (int) (SHAPE_TEX_WIDTH / aspectRatio);
-			//System.out.println("TEX_WIDTH " + TEX_WIDTH);
-			//System.out.println("TEX_HEIGHT " + TEX_HEIGHT);
+			//System.out.println("SHAPE_TEX_WIDTH " + SHAPE_TEX_WIDTH);
+			//System.out.println("SHAPE_TEX_HEIGHT " + SHAPE_TEX_HEIGHT);
 
 			BufferedImage hudShapeBufferedImage = new BufferedImage(SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT, BufferedImage.TYPE_4BYTE_ABGR);
 
-			Texture2D tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT);
+			tex = new Texture2D(Texture.BASE_LEVEL, Texture.RGBA, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT);
 			tex.setBoundaryModeS(Texture.WRAP);
 			tex.setBoundaryModeT(Texture.WRAP);
-			tex.setMagFilter(Texture.FASTEST);//Texture.BASE_LEVEL_LINEAR);//
-			tex.setMinFilter(Texture.FASTEST);//Texture.BASE_LEVEL_LINEAR);//
+			tex.setMagFilter(Texture.LINEAR_SHARPEN_RGB);//Texture.BASE_LEVEL_LINEAR);
+			tex.setMinFilter(Texture.BASE_LEVEL_LINEAR);
 
 			hudShapeIc2d = new ImageComponent2D(ImageComponent.FORMAT_RGBA, hudShapeBufferedImage, true, true);
 			hudShapeIc2d.setCapability(ImageComponent.ALLOW_IMAGE_READ);
@@ -138,24 +140,25 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	@Override
 	public void updateData(ImageComponent2D imageComponent, int x, int y, int width, int height)
 	{
-		//This method will only be called when we are attached to a scene graph, i.e. fixedBG.isLive()==true
-		// so these hudelements won't be drawn as overlays
-		Graphics2D g = imageComponent.getImage().createGraphics();
-		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear REct to work
 
-		//TODO: I'd be way better off clearing the individual hud elements littel squares worth
+		//This method will only be called when we are attached to a scene graph, i.e. this.isLive()==true
+		// so these hudelements won't be drawn as overlays
+		Graphics2D g = hudShapeIc2d.getImage().createGraphics();
+		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
+
+		//I'm  way better off clearing the individual hud elements little squares worth
 		//g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOT fillRect doesn't work
 
 		// Enable to help place hud elements
 		//g.drawRect(2, 2, SHAPE_TEX_WIDTH - 4, SHAPE_TEX_HEIGHT - 4);
 
-		//ok I've got it, the hud sizes are for screen coords, but for hud shape
+		//ok I've got it, the hud sizes are for screen coords, but for hud shape texture
 		// I've got a fixed width of 1024, so the draws need to account for that properly
 
 		float hW = (float) SHAPE_TEX_WIDTH / (float) canvas.getWidth();
 		float hH = (float) SHAPE_TEX_HEIGHT / (float) canvas.getHeight();
-		//System.out.println("hW " + hW + " " + TEX_WIDTH + "/" + this.getWidth());
-		//	System.out.println("hH " + hH + " " + TEX_HEIGHT + "/" + this.getHeight());
+		//System.out.println("hW " + hW + " = " + SHAPE_TEX_WIDTH + "/" + canvas.getWidth());
+		//	System.out.println("hH " + hH + " = " + SHAPE_TEX_HEIGHT + "/" + canvas.getHeight());
 
 		//do all clears first in case of overlapping elements
 		synchronized (canvas.getHudElements())
@@ -207,11 +210,12 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			}
 		}
 
+		// must reset so the image displays, before TextureRetained mip level fix this wasn't needed
+		hudShapeApp.setTexture(tex);
 	}
 
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
 	{
-
 		float hW = rectWidth / 2f;
 		float hH = rectHeight / 2f;
 
