@@ -739,7 +739,11 @@ public class DDSImage
 	{
 		fis = new FileInputStream(file);
 		chan = fis.getChannel();
-		ByteBuffer b = chan.map(FileChannel.MapMode.READ_ONLY, 0, (int) file.length());
+		//ByteBuffer b = chan.map(FileChannel.MapMode.READ_ONLY, 0, (int) file.length());
+		//Eed to flip later can't use file mapping
+		ByteBuffer b = ByteBuffer.allocateDirect((int) file.length());
+		chan.read(b);
+		b.rewind();
 		readFromBuffer(b);
 	}
 
