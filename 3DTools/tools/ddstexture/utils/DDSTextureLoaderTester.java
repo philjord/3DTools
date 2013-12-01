@@ -158,7 +158,7 @@ public class DDSTextureLoaderTester
 		int width = 0;
 		for (int i = 0; i < infos.length; i++)
 		{
-			DDSDecompressor image = new DDSDecompressor(ddsImage, i, filename);
+			BufferedImage image = new DDSDecompressor(ddsImage, i, filename).convertImage();
 			if (image != null)
 			{
 				if (height == -1)// height of first big one only
@@ -169,7 +169,7 @@ public class DDSTextureLoaderTester
 				AffineTransform tx = AffineTransform.getScaleInstance(1, -1);
 				tx.translate(0, -image.getHeight());
 				BufferedImage mine = new BufferedImage(image.getWidth(), image.getHeight(), image.getType());
-				((Graphics2D) mine.getGraphics()).drawImage(image.convertImage(), tx, null);
+				((Graphics2D) mine.getGraphics()).drawImage(image, tx, null);
 
 				ImageIcon icon = new ImageIcon(mine);
 				f.getContentPane().add(new JLabel(icon));
@@ -235,7 +235,7 @@ public class DDSTextureLoaderTester
 
 		canvas3D.getView().setSceneAntialiasingEnable(gs.isAaRequired());
 		DDSTextureLoader.setAnisotropicFilterDegree(gs.getAnisotropicFilterDegree());
-		
+
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
 		//su.addBranchGraph(fps.getBehaviorBranchGroup());

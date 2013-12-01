@@ -1201,7 +1201,7 @@ abstract class TextureRetained extends NodeComponentRetained
 			for (int j = 0; j < numFaces; j++)
 			{
 				//PJPJDXTfor (int i = 0; i < maxLevels; i++)
-				for (int i = 0; i < maximumLevel; i++)
+				for (int i = 0; i <= maximumLevel; i++)
 				{
 					images[j][i].clearLive(refCount);
 					images[j][i].removeUser(mirror);

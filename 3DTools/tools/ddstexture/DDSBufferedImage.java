@@ -14,9 +14,11 @@ import java.nio.ByteBuffer;
 import java.util.Vector;
 
 /**
- * This class must hide as a BufferedImage inside the Texture and ImageComponent worlds to be manipulated 
- * and finally arrive at the gl.glCompressedTexImage2D call in JoglPipeline.updateTexture2DImage
- * It must be given to a DDSImageComponent2D constructor
+ * This is NOT A bufferedImage! you can't use it as one. If you get UnsupportedOperationException then you 
+ * are trying to use it as a BufferedImage, do not. You might need {@code DDSDecompressor}.
+ * This class hides as a BufferedImage inside the Texture and ImageComponent worlds to be manipulated 
+ * and finally arrive at the gl.glCompressedTexImage2D call in JoglPipeline.updateTexture2DImage.
+ * It is what the DDSImageComponent2D constructor requires.
  */
 public class DDSBufferedImage extends BufferedImage
 {
@@ -138,19 +140,19 @@ public class DDSBufferedImage extends BufferedImage
 		return height;
 	}
 
+	//Below are Unsupported BufferedImage methods********
 	@Override
 	public ColorModel getColorModel()
 	{
-		return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getColorModel();
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public SampleModel getSampleModel()
 	{
-		return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getSampleModel();
+		throw new UnsupportedOperationException();
 	}
 
-	//Below are Unsupported BufferedImage methods********
 	@Override
 	public int getMinX()
 	{
