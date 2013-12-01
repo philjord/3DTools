@@ -10,7 +10,6 @@ import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.swing.JPanel;
 
 import tools3d.mixed3d2d.Canvas3D2D;
-import tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.universe.VisualPhysicalUniverse;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;
@@ -158,6 +157,15 @@ public class CameraPanel extends JPanel
 	public Dolly getCurrentDolly()
 	{
 		return currentDolly;
+	}
+
+	public void setSceneAntialiasingEnable(boolean aaRequired)
+	{
+		if (canvas3D2D != null && canvas3D2D.getView() != null)
+		{
+			System.out.println("setSceneAntialiasingEnable " + aaRequired);
+			canvas3D2D.getView().setSceneAntialiasingEnable(aaRequired);
+		}
 	}
 
 }

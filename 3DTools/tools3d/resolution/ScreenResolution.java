@@ -25,7 +25,7 @@ public class ScreenResolution
 	 *  javax.media.j3d.IllegalRenderingStateException: Java 3D ERROR : OpenGL 1.2 or better is required (GL_VERSION=1.1)
 	 * Run check java to discover installed version, uninstalling java 7 or forcibly using jre6 are teh only solutions
 	 * Programmatic solution is...
-	 * add the canvas3d on screen early, just before this method call
+	 * add the canvas3d on screen early, just before this method call the method
 	 * cameraPanel.startRendering();
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)

@@ -36,6 +36,15 @@ public class DDSTextureLoader
 {
 	public static final int BLOCK_SIZE = 4;
 
+	private static int anisotropicFilterDegree = 0;
+
+	//TODO: use this in the graphcs config settings
+	public static void setAnisotropicFilterDegree(int d)
+	{
+		System.out.println("setAnisotropicFilterDegree=" + d);
+		anisotropicFilterDegree = d;
+	}
+
 	/**
 	 * A hashmap of the loaded {@code Texture2D} instances. Weak so that we can discard them if they are not
 	 * in use by at least one Appearence node in the scene graph
@@ -118,9 +127,12 @@ public class DDSTextureLoader
 				//		0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, //
 				//		0.5f });
 
-				//TODO: make this configurable!
-				tex.setAnisotropicFilterMode(Texture.ANISOTROPIC_SINGLE_VALUE);
-				tex.setAnisotropicFilterDegree(4);
+				//defaults to Texture.ANISOTROPIC_NONE
+				if (anisotropicFilterDegree > 0)
+				{
+					tex.setAnisotropicFilterMode(Texture.ANISOTROPIC_SINGLE_VALUE);
+					tex.setAnisotropicFilterDegree(anisotropicFilterDegree);
+				}
 
 				for (int i = 0; i < levels; i++)
 				{
