@@ -105,13 +105,16 @@ public class DDSTextureLoader
 				// use the lower of the two, to avoid 0 sizes going to the driver
 				levels = levels > levels2 ? levels2 : levels;
 
+				// always 1 level
+				levels = levels == 0 ? 1 : levels;
+
 				Texture2D tex = new Texture2D(ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP,
 						Texture.RGBA, ddsImage.getWidth(), ddsImage.getHeight());
 
 				tex.setName(filename);
+
 				tex.setBaseLevel(0);
-				if (ddsImage.getNumMipMaps() > 1)
-					tex.setMaximumLevel(levels - 1);
+				tex.setMaximumLevel(levels - 1);
 
 				tex.setBoundaryModeS(Texture.WRAP);
 				tex.setBoundaryModeT(Texture.WRAP);
