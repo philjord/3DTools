@@ -110,7 +110,8 @@ public class DDSTextureLoader
 
 				tex.setName(filename);
 				tex.setBaseLevel(0);
-				tex.setMaximumLevel(levels - 1);
+				if (ddsImage.getNumMipMaps() > 1)
+					tex.setMaximumLevel(levels - 1);
 
 				tex.setBoundaryModeS(Texture.WRAP);
 				tex.setBoundaryModeT(Texture.WRAP);

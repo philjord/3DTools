@@ -138,19 +138,19 @@ public class DDSBufferedImage extends BufferedImage
 		return height;
 	}
 
-	//Below are Unsupported BufferedImage methods********
 	@Override
 	public ColorModel getColorModel()
 	{
-		throw new UnsupportedOperationException();
+		return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getColorModel();
 	}
 
 	@Override
 	public SampleModel getSampleModel()
 	{
-		throw new UnsupportedOperationException();
+		return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getSampleModel();
 	}
 
+	//Below are Unsupported BufferedImage methods********
 	@Override
 	public int getMinX()
 	{

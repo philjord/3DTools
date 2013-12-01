@@ -18,6 +18,8 @@ public class GraphicsSettings
 
 	private boolean cancelled = false;
 
+	private boolean valid = true;
+
 	public GraphicsSettings()
 	{
 
@@ -84,7 +86,7 @@ public class GraphicsSettings
 
 	public int getAnisotropicFilterDegree()
 	{
-		return (int) Math.pow(2, anisotropicFilterDegree-1);
+		return (int) Math.pow(2, anisotropicFilterDegree - 1);
 	}
 
 	/**
@@ -124,16 +126,37 @@ public class GraphicsSettings
 		return prefStr;
 	}
 
+	/**
+	 * isValid set false if the prefs String doesn't load properly
+	 * @param prefStr
+	 
+	 */
 	public void fromPrefString(String prefStr)
 	{
-		String[] prefs = prefStr.split(":");
-		originalDisplayMode = new DisplayMode(Integer.parseInt(prefs[0]), Integer.parseInt(prefs[1]), Integer.parseInt(prefs[2]),
-				Integer.parseInt(prefs[3]));
-		desiredDisplayMode = new DisplayMode(Integer.parseInt(prefs[4]), Integer.parseInt(prefs[5]), Integer.parseInt(prefs[6]),
-				Integer.parseInt(prefs[7]));
-		runFullscreen = Boolean.parseBoolean(prefs[8]);
-		aaRequired = Boolean.parseBoolean(prefs[9]);
-		anisotropicFilterDegree = Integer.parseInt(prefs[10]);
-		cancelled = Boolean.parseBoolean(prefs[11]);
+		try
+		{
+			String[] prefs = prefStr.split(":");
+			originalDisplayMode = new DisplayMode(Integer.parseInt(prefs[0]), Integer.parseInt(prefs[1]), Integer.parseInt(prefs[2]),
+					Integer.parseInt(prefs[3]));
+			desiredDisplayMode = new DisplayMode(Integer.parseInt(prefs[4]), Integer.parseInt(prefs[5]), Integer.parseInt(prefs[6]),
+					Integer.parseInt(prefs[7]));
+			runFullscreen = Boolean.parseBoolean(prefs[8]);
+			aaRequired = Boolean.parseBoolean(prefs[9]);
+			anisotropicFilterDegree = Integer.parseInt(prefs[10]);
+			cancelled = Boolean.parseBoolean(prefs[11]);
+			valid = true;
+
+		}
+		catch (Exception e)
+		{
+			//oh well maybe next time...
+			valid = false;
+		}
+
+	}
+
+	public boolean isValid()
+	{
+		return valid;
 	}
 }

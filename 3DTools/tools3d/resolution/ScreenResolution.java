@@ -61,7 +61,7 @@ public class ScreenResolution
 			}
 		}
 
-		if (gs == null || gs.isCancelled())
+		if (gs == null || !gs.isValid())
 		{
 			gs = new GraphicsSettings();
 			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true);
@@ -156,7 +156,7 @@ public class ScreenResolution
 			}
 		}
 
-		if (gs == null || gs.isCancelled())
+		if (gs == null || !gs.isValid())
 		{
 			gs = new GraphicsSettings();
 			DisplayDialog dlg = new DisplayDialog(null, initMinRes, false);
