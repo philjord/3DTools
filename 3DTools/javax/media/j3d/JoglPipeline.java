@@ -5874,6 +5874,11 @@ class JoglPipeline extends Pipeline
 				case GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 					internalFormat = GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 					break;
+				case GL2.GL_RGBA_S3TC:
+					internalFormat = GL2.GL_RGBA_S3TC;
+					format = GL.GL_RGBA;
+					
+					break;
 				///////////////////////////////////////////////////PJPJPJ////////////////////
 				case ImageComponentRetained.TYPE_USHORT_GRAY:
 				case ImageComponentRetained.TYPE_INT_BGR:
@@ -5898,7 +5903,7 @@ class JoglPipeline extends Pipeline
 						|| internalFormat == GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
 				{
 					//DXT
-					ByteBuffer bb = (ByteBuffer) data;					
+					ByteBuffer bb = (ByteBuffer) data;
 					gl.glCompressedTexImage2D(target, level, internalFormat, width, height, boundaryWidth, bb.capacity(), bb);
 				}
 				else

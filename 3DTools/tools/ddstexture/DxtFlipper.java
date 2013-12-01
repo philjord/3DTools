@@ -109,8 +109,9 @@ public class DxtFlipper
 
 	public static void flip(DDSImage ddsImage, ImageInfo imageInfo)
 	{
-		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 || ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3
-				|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
 		{
 			ByteBuffer buffer = imageInfo.getData();
 
@@ -125,7 +126,7 @@ public class DxtFlipper
 
 			//TODO: I could halve this requirement by copying the bottom half out
 			//then flipping downward to half then flipping from here down
-			
+
 			byte[] pixels = new byte[nBytes];
 
 			// Flip & copy to actual pixel buffer
@@ -170,6 +171,34 @@ public class DxtFlipper
 
 			// byte buffer for dds image is one big shared buffer, copy into position
 			System.arraycopy(pixels, 0, buffer.array(), buffer.arrayOffset(), pixels.length);
+		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
+				ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+		{
+			ByteBuffer buffer = imageInfo.getData();
+
+			int w = imageInfo.getWidth();
+			int h = imageInfo.getHeight();
+
+			int widBytes = w
+					* (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 ? 3
+							: ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F ? 8 : 4);
+
+			byte[] s = buffer.array();
+			byte[] d = new byte[buffer.limit()];
+			int sp = buffer.arrayOffset();
+			int dp = d.length;// ready for first wind back
+			for (int j = 0; j < h; j++)
+			{
+				dp -= widBytes; // put d ready for copy into
+				System.arraycopy(s, sp, d, dp, widBytes);
+				sp += widBytes;
+			}
+
+			// byte buffer for dds image is one big shared buffer, copy into position
+			System.arraycopy(d, 0, buffer.array(), buffer.arrayOffset(), d.length);
 		}
 
 	}

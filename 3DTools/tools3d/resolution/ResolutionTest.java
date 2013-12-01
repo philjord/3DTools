@@ -6,6 +6,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+
 import java3d.nativelinker.Java3dLinker2;
 
 import javax.media.j3d.Alpha;
@@ -26,6 +27,8 @@ import javax.swing.WindowConstants;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
+
+import tools.ddstexture.DDSTextureLoader;
 
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
@@ -56,7 +59,7 @@ public final class ResolutionTest
 		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 
-		GraphicsSettings dlg = ScreenResolution.organiseResolution(null, win, false, true, true);
+		GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, true, true);
 
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
@@ -74,7 +77,8 @@ public final class ResolutionTest
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph());
 
-		canvas3D.getView().setSceneAntialiasingEnable(dlg.isAaRequired());
+		canvas3D.getView().setSceneAntialiasingEnable(gs.isAaRequired());
+		DDSTextureLoader.setAnisotropicFilterDegree(gs.getAnisotropicFilterDegree());
 
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();

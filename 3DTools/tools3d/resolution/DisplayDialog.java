@@ -12,16 +12,20 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSlider;
 import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 import javax.swing.border.CompoundBorder;
@@ -57,6 +61,8 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 	private final JComboBox modesDropDown = new JComboBox();
 
+	private JSlider anisotropicFilterDegree;
+
 	private static EmptyBorder border5 = new EmptyBorder(5, 5, 5, 5);
 
 	private static final int DONT_CARE = -1;
@@ -89,10 +95,11 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 		JPanel mainPanel = new JPanel(new BorderLayout());
 
-		GridLayout centerPanelLayout = new GridLayout(1, 1);
+		GridLayout centerPanelLayout = new GridLayout(2, 1);
 		JPanel centerPanel = new JPanel(centerPanelLayout);
 		mainPanel.add("Center", centerPanel);
 		centerPanel.add(buildResolutionPanel(initMinRes));
+		centerPanel.add(buildAnisoSlider());
 
 		JPanel southPanel = new JPanel(new GridLayout(2, 1));
 		JPanel southPanelChecks = new JPanel(new GridBagLayout());
@@ -115,6 +122,30 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		setLocation((int) (size.getWidth() - getWidth()) >> 1, (int) (size.getHeight() - getHeight()) >> 1);
 		setAlwaysOnTop(true);
 
+	}
+
+	private JPanel buildAnisoSlider()
+	{
+		//TODO: check if card supports 16 or less
+		JPanel anisoPanel = new JPanel(new GridBagLayout());
+		anisoPanel
+				.setBorder(new CompoundBorder(new TitledBorder(null, "Anisotropic Filter", TitledBorder.LEFT, TitledBorder.TOP), border5));
+
+		anisotropicFilterDegree = new JSlider(0, 5, 0);
+		Hashtable labels = anisotropicFilterDegree.createStandardLabels(1, 0);
+		Enumeration e = labels.keys();
+
+		while (e.hasMoreElements())
+		{
+			Integer i = (Integer) e.nextElement();
+			JLabel label = (JLabel) labels.get(i);
+			label.setText(i == 0 ? "Off" : ("" + (int) Math.pow(2, i-1)));
+		}
+		anisotropicFilterDegree.setLabelTable(labels);
+		anisotropicFilterDegree.setPaintLabels(true);
+		anisotropicFilterDegree.setSnapToTicks(true);
+		anisoPanel.add(anisotropicFilterDegree);
+		return anisoPanel;
 	}
 
 	/**
@@ -208,6 +239,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		graphicsSettings.setDesiredDisplayMode(availableDisplayModes.get(modesDropDown.getSelectedItem()));
 		graphicsSettings.setRunFullscreen(fullscreenCheckbox.isSelected());
 		graphicsSettings.setAaRequired(aaCheckbox.isSelected());
+		graphicsSettings.setAnisotropicFilterDegree(anisotropicFilterDegree.getValue());
 
 		dispose();
 	}

@@ -14,6 +14,8 @@ public class GraphicsSettings
 
 	private boolean aaRequired = false;
 
+	private int anisotropicFilterDegree = 0;
+
 	private boolean cancelled = false;
 
 	public GraphicsSettings()
@@ -80,6 +82,20 @@ public class GraphicsSettings
 		this.aaRequired = aaRequired;
 	}
 
+	public int getAnisotropicFilterDegree()
+	{
+		return (int) Math.pow(2, anisotropicFilterDegree-1);
+	}
+
+	/**
+	 * Set as a power figure n , but returned as the 2^n 
+	 * @param anisotropicFilterDegree
+	 */
+	public void setAnisotropicFilterDegree(int anisotropicFilterDegree)
+	{
+		this.anisotropicFilterDegree = anisotropicFilterDegree;
+	}
+
 	public boolean isCancelled()
 	{
 		return cancelled;
@@ -102,6 +118,7 @@ public class GraphicsSettings
 				desiredDisplayMode.getRefreshRate() + ":" + //				
 				runFullscreen + ":" + //
 				aaRequired + ":" + //
+				anisotropicFilterDegree + ":" + //
 				cancelled;
 
 		return prefStr;
@@ -116,7 +133,7 @@ public class GraphicsSettings
 				Integer.parseInt(prefs[7]));
 		runFullscreen = Boolean.parseBoolean(prefs[8]);
 		aaRequired = Boolean.parseBoolean(prefs[9]);
-		cancelled = Boolean.parseBoolean(prefs[10]);
+		anisotropicFilterDegree = Integer.parseInt(prefs[10]);
+		cancelled = Boolean.parseBoolean(prefs[11]);
 	}
-
 }

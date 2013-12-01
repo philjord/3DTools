@@ -6,6 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
 import tools.ddstexture.DDSBufferedImage;
 import tools.ddstexture.DDSImage;
@@ -60,8 +61,11 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		{
 			return GL.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+		{
+			return GL2.GL_RGBA_S3TC;
+		}
 		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
-				ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
 				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
 				ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
 		{
@@ -137,10 +141,11 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 			{
 				return ((DDSBufferedImage) bi).getBuffer();
 			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
-			{
-			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8)
+			{
+				return ((DDSBufferedImage) bi).getBuffer();// byte buffer madness
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
 			{
 			}
 			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8)

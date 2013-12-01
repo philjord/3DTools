@@ -42,7 +42,7 @@ public class ScreenResolution
 	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
 	{
-		System.out.println("organising Resolution...");
+		System.out.println("organising resolution...");
 
 		// warn about Java 7
 		if (System.getProperty("java.version").indexOf("1.7.") != -1)

@@ -39,15 +39,14 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
-import javax.vecmath.TexCoord3f;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import tools.ddstexture.DDSImage;
 import tools.ddstexture.DDSTextureLoader;
 import tools.swing.DetailsFileChooser;
 import tools3d.resolution.GraphicsSettings;
 import tools3d.resolution.ScreenResolution;
+
+import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * dds image loading tester, note this use teh decompress to buffered image util system
@@ -199,7 +198,6 @@ public class DDSTextureLoaderTester
 		t.start();
 	}
 
-	
 	//Method to show teh DXT texture method in a 3d scene
 	public static void showImageInShape(String filename, InputStream inputStream)
 	{
@@ -217,7 +215,7 @@ public class DDSTextureLoaderTester
 		Canvas3D canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 
-		GraphicsSettings dlg = ScreenResolution.organiseResolution(null, win, false, true, true);
+		GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, true, true);
 
 		canvas3D.addKeyListener(new KeyAdapter()
 		{
@@ -235,8 +233,9 @@ public class DDSTextureLoaderTester
 		su.getViewingPlatform().setNominalViewingTransform(); // back away from object a little
 		su.addBranchGraph(createSceneGraph(filename, inputStream));
 
-		canvas3D.getView().setSceneAntialiasingEnable(dlg.isAaRequired());
-
+		canvas3D.getView().setSceneAntialiasingEnable(gs.isAaRequired());
+		DDSTextureLoader.setAnisotropicFilterDegree(gs.getAnisotropicFilterDegree());
+		
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
 		//su.addBranchGraph(fps.getBehaviorBranchGroup());
