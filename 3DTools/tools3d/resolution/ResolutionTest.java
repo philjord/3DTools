@@ -7,8 +7,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-import java3d.nativelinker.Java3dLinker2;
-
 import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
@@ -139,7 +137,7 @@ public final class ResolutionTest
 	{
 
 		//load up the native dlls!		 
-		new Java3dLinker2();
+		//new Java3dLinker2();
 
 		new ResolutionTest();
 

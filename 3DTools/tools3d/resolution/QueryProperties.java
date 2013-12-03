@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import java3d.nativelinker.Java3dLinker2;
-
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.VirtualUniverse;
@@ -192,7 +190,7 @@ public class QueryProperties extends JFrame
 	 */
 	public static void main(String args[])
 	{
-		new Java3dLinker2();
+		//new Java3dLinker2();
 		EventQueue.invokeLater(new Runnable()
 		{
 			public void run()
