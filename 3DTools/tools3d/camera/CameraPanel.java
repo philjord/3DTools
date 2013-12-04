@@ -120,10 +120,10 @@ public class CameraPanel extends JPanel
 	public void stopRendering()
 	{
 		System.out.println("NEVER CALL THIS METHOD DAMN IT! it is a major memory leak; find a solution!");
-		new Exception("called by").printStackTrace();
+		//new Exception("called by").printStackTrace();
 
 		// maybe try Canvas3D.stopRenderer()
-		// canvas3D2D.stopRenderer();
+		canvas3D2D.stopRenderer();
 
 		// stop rendering by removing the canvas
 		if (this.isAncestorOf(canvas3D2D))
@@ -137,10 +137,15 @@ public class CameraPanel extends JPanel
 	{
 		if (!isRendering)
 		{
-			// start rendering by adding the canvas
-			add(canvas3D2D);
+			if (canvas3D2D.getParent() != this)
+			{
+				// start rendering by adding the canvas
+				add(canvas3D2D);
+				validate();
+			}
+
 			isRendering = true;
-			validate();
+			canvas3D2D.startRenderer();
 		}
 	}
 

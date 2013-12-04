@@ -42,15 +42,21 @@ public abstract class VaryingLODBehaviour extends Behavior
 	static final double EPSILON = 1.0e-6;
 
 	/**
+	 * if node is null this will be used for distance check
 	 * Dists must be 3 floats! 40,120,280 is fine
 	 *TODO: like knots add frames and dist arrays 
 	 * @param node
 	 */
 	public VaryingLODBehaviour(Node node, float[] dists)
 	{
-		node.setCapability(Node.ALLOW_LOCAL_TO_VWORLD_READ);
+
 		this.node = node;
 		this.dists = dists;
+
+		if (this.node == null)
+			this.node = this;
+
+		this.node.setCapability(Node.ALLOW_LOCAL_TO_VWORLD_READ);
 	}
 
 	/**
