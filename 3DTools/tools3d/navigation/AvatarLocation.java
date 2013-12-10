@@ -71,8 +71,8 @@ public class AvatarLocation
 		if (!Float.isNaN(trans.x) && !Float.isNaN(rot.x))
 		{
 			//epsilon equals is a "as similar as this" system
-			if (!rot.epsilonEquals(rotation, 0.0001f) || !trans.epsilonEquals(translation, 0.001f))
-			{
+			if (!rot.epsilonEquals(rotation, 0.0001f) || !trans.epsilonEquals(translation, 0.005f))
+			{				
 				rotation.set(rot);
 				translation.set(trans);
 

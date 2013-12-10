@@ -116,26 +116,35 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 
 	private void recenterMouse()
 	{
-		if (canvas != null && robot != null && hasFocus)
+		if (canvas != null && robot != null)
 		{
+			// work out where the mouse should be
 			centerLocation.x = canvas.getWidth() / 2;
 			centerLocation.y = canvas.getHeight() / 2;
 			SwingUtilities.convertPointToScreen(centerLocation, canvas);
-			isRecentering = true;
-
-			// NOTE: this mechanism assumes than when a mouse move is fired from inside a current
-			// mouse move event then the next mouse move event to be called from the event queue
-			// will be the fired event. That is to say the event system cannot stack up 5 or 6 mouse moves in the AWT
-			// event
-			// queue, if it does this code will assume the next mouse move event is the one from the robot call
-			// and ignore it. Then when the robot called mouse move comes down the wire it will be processed like a
-			// normal call
-			// this is basically chaos time. simple experiments have shown the robot call is always the next event on
-			// the queue.
-			robot.mouseMove(centerLocation.x, centerLocation.y);
+			
+			
 			previousMouseLocation.x = centerLocation.x;
 			previousMouseLocation.y = centerLocation.y;
 			SwingUtilities.convertPointFromScreen(previousMouseLocation, canvas);
+			
+			// only send a camera move if we are focused
+			if (hasFocus)
+			{
+				isRecentering = true;
+
+				// NOTE: this mechanism assumes than when a mouse move is fired from inside a current
+				// mouse move event then the next mouse move event to be called from the event queue
+				// will be the fired event. That is to say the event system cannot stack up 5 or 6 mouse moves in the AWT
+				// event
+				// queue, if it does this code will assume the next mouse move event is the one from the robot call
+				// and ignore it. Then when the robot called mouse move comes down the wire it will be processed like a
+				// normal call
+				// this is basically chaos time. simple experiments have shown the robot call is always the next event on
+				// the queue.
+				robot.mouseMove(centerLocation.x, centerLocation.y);
+			}
+
 		}
 	}
 
