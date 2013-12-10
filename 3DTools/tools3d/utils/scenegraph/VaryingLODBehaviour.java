@@ -6,7 +6,6 @@ import javax.media.j3d.Behavior;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 
@@ -79,7 +78,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	{
 		process();
 
-		if (node == null || dists == null)
+		if (node == null || dists == null || !node.isLive() || this.getView() == null)
 		{
 			//System.out.println("somefing null");
 			wakeupOn(wakeupFrame20);
@@ -87,14 +86,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		}
 
 		//  get viewplatforms's location in virutal world
-		View v = this.getView();
-		if (v == null)
-		{
-			//System.out.println("view null");
-			wakeupOn(wakeupFrame20);
-			return;
-		}
-		Canvas3D canvas = v.getCanvas3D(0);
+		Canvas3D canvas = this.getView().getCanvas3D(0);
 
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);

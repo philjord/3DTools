@@ -182,13 +182,18 @@ public class SimpleCameraHandler extends BranchGroup
 					dir.set(up);
 					dir.negate();
 				}
+				else
+				{
+					dir.set(0, 0, 0);
+				}
 
 				viewTransform.get(loc);
 				loc.add(dir);
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+				if (parentFrame != null)
+					parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 
 		});
@@ -295,6 +300,7 @@ public class SimpleCameraHandler extends BranchGroup
 			}
 			else
 			{
+				eye.y = 10;
 				System.out.println("boundingSphere.getRadius() " + boundingSphere.getRadius() + " ignored");
 			}
 			setView(eye, center);
