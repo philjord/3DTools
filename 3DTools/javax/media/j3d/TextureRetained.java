@@ -43,6 +43,7 @@ import javax.vecmath.Tuple3f;
  * objects must be created as either a Texture2D object or a
  * Texture3D object.
  */
+@SuppressWarnings("all") 
 abstract class TextureRetained extends NodeComponentRetained
 {
 	// A list of pre-defined bits to indicate which component

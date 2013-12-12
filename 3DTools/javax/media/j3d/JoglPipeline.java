@@ -84,6 +84,7 @@ import com.jogamp.opengl.FBObject;
  * Concrete implementation of Pipeline class for the JOGL rendering
  * pipeline.
  */
+@SuppressWarnings("all") 
 class JoglPipeline extends Pipeline
 {
 	// Currently prints for entry points not yet implemented
