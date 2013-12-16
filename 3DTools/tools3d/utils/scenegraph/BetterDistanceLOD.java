@@ -17,13 +17,13 @@ import javax.vecmath.Point3d;
 // I also notice that shared grup appear to be massively inefficient
 //allows a transition zone of fadness sent out to 2 nodes attached
 
-//TODO: if there is a scale transform node above this one then teh view distance is scaled and wrong
+//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
 // see bloated float sign
 public class BetterDistanceLOD extends Behavior
 {
-	private float FADE_RANGE = 3f; //TODO: better as a percent of min dist?
+	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
-	private WakeupOnElapsedFrames wakeupFrame = new WakeupOnElapsedFrames(10, true);
+	private WakeupOnElapsedFrames wakeupFrame = new WakeupOnElapsedFrames(5, true);
 
 	private int prevIndex = -1;
 
@@ -77,7 +77,6 @@ public class BetterDistanceLOD extends Behavior
 	@SuppressWarnings("rawtypes")
 	public void processStimulus(Enumeration criteria)
 	{
-
 		if (parent == null)
 		{
 			//System.out.println("somefing null");
@@ -134,7 +133,7 @@ public class BetterDistanceLOD extends Behavior
 			}
 		}
 
-		// have we change indexes
+		// have we changed indexes
 		if (newIndex != prevIndex)
 		{
 			//remove prev and it's neighbour if added
@@ -150,8 +149,9 @@ public class BetterDistanceLOD extends Behavior
 			prevIndex = newIndex;
 		}
 
+		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / 15f));
 		//simple case not near interface, just for a plain model
-		if (distDiff > FADE_RANGE)
+		if (distDiff > fadeRange)
 		{
 			// ensure no fade for new index
 			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
@@ -169,7 +169,7 @@ public class BetterDistanceLOD extends Behavior
 		}
 		else
 		{
-			float fade = (float) (distDiff / FADE_RANGE);
+			float fade = (float) (distDiff / fadeRange);
 
 			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
 			{

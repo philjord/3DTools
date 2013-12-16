@@ -13,7 +13,6 @@ public class PhysAppearance extends Appearance
 		polyAtt.setPolygonOffset(0.1f);
 		setPolygonAttributes(polyAtt);
 		LineAttributes lineAtt = new LineAttributes(1, LineAttributes.PATTERN_SOLID, false);
-
 		setLineAttributes(lineAtt);
 		setTexture(null);
 		setMaterial(null);

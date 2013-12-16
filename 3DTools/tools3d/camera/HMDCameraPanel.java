@@ -15,11 +15,12 @@ import tools3d.universe.VisualPhysicalUniverse;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class CameraPanel extends JPanel
+public class HMDCameraPanel extends JPanel
 {
 	private VisualPhysicalUniverse universe;
 
 	private Canvas3D2D canvas3D2D;
+	private Canvas3D2D canvas3D2Db;
 
 	private Camera camera;
 
@@ -27,11 +28,11 @@ public class CameraPanel extends JPanel
 
 	private boolean isRendering = false;
 
-	public CameraPanel(VisualPhysicalUniverse universe)
+	public HMDCameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
 
-		setLayout(new GridLayout(1, 1));
+		setLayout(new GridLayout(1, 1));//1,2
 
 		//This stuff has to be in synch with the ScreenResolution class
 		// I must do this in order to enable the stencil buffer
@@ -52,6 +53,13 @@ public class CameraPanel extends JPanel
 		canvas3D2D = new Canvas3D2D(config);
 
 		camera = new Camera(canvas3D2D);
+		
+		//TODO: stereo gear?
+		//canvas3D2D.setStereoEnable(true);
+		//canvas3D2D.getView().setViewPolicy(View.HMD_VIEW);
+		
+		//canvas3D2Db = new Canvas3D2D(config);
+		//canvas3D2D.getView().addCanvas3D(canvas3D2Db);
 
 	}
 
@@ -130,6 +138,7 @@ public class CameraPanel extends JPanel
 		if (this.isAncestorOf(canvas3D2D))
 		{
 			remove(canvas3D2D);
+			//remove(canvas3D2Db);
 			isRendering = false;
 		}
 	}
@@ -140,14 +149,16 @@ public class CameraPanel extends JPanel
 		{
 			if (canvas3D2D.getParent() != this)
 			{
-
+				 
 				// start rendering by adding the canvas
 				add(canvas3D2D);
+				//add(canvas3D2Db);
 				validate();
 			}
 
 			isRendering = true;
 			canvas3D2D.startRenderer();
+			//canvas3D2Db.startRenderer();
 		}
 	}
 

@@ -126,11 +126,11 @@ public class SimpleCameraHandler extends BranchGroup
 			{
 				if (e.getWheelRotation() < 0)
 				{
-					up();
+					forward();
 				}
 				else
 				{
-					down();
+					back();
 				}
 			}
 		});
@@ -148,12 +148,12 @@ public class SimpleCameraHandler extends BranchGroup
 					moveAmount = defaultMove * 5;
 				}
 
-				Vector3d up = new Vector3d(0, 1, 0);
-				Vector3d dir = new Vector3d(0, 0, -1);
+				Vector3d left = new Vector3d(0, 0, -1);
+				Vector3d forward = new Vector3d(0, 1, 0);
 				//trasnform only rotates vectors?
 
-				viewTransform.transform(dir);
-				dir.scale(moveAmount);
+				viewTransform.transform(forward);
+				forward.scale(moveAmount);
 				//dir.negate();
 
 				if (e.getKeyCode() == KeyEvent.VK_W)
@@ -162,33 +162,34 @@ public class SimpleCameraHandler extends BranchGroup
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_S)
 				{
-					dir.negate();
+					forward.negate();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_A)
 				{
-					dir.cross(up, dir);
+					forward.set(left);
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_D)
 				{
-					dir.cross(up, dir);
-					dir.negate();
+					forward.set(left);
+					forward.negate();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_Q)
 				{
-					dir.set(up);
+					forward.cross(left, forward);
+
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_Z)
 				{
-					dir.set(up);
-					dir.negate();
+					forward.cross(left, forward);
+					forward.negate();
 				}
 				else
 				{
-					dir.set(0, 0, 0);
+					forward.set(0, 0, 0);
 				}
 
 				viewTransform.get(loc);
-				loc.add(dir);
+				loc.add(forward);
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
@@ -205,18 +206,18 @@ public class SimpleCameraHandler extends BranchGroup
 
 	}
 
-	private void up()
+	private void forward()
 	{
 		viewTransform.get(loc);
-		loc.y += 1.0;
+		loc.z += 1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
 	}
 
-	private void down()
+	private void back()
 	{
 		viewTransform.get(loc);
-		loc.y += -1.0;
+		loc.z += -1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
 
@@ -264,7 +265,7 @@ public class SimpleCameraHandler extends BranchGroup
 			result.getClosestIntersectionPoint().get(intPoint);
 			intPoint.get(center);
 			intPoint.get(eye);
-			//eye.y += 5;
+			//eye.z += 5;
 			setView(eye, center);
 		}
 	}
@@ -273,9 +274,9 @@ public class SimpleCameraHandler extends BranchGroup
 	{
 		Transform3D t = new Transform3D();
 		Vector3d up = new Vector3d(0, 1, 0);
-		if (eye.x == center.x && eye.z == center.z)
+		if (eye.x == center.x && eye.y == center.y)
 		{
-			center.z += 0.01;
+			center.y += 0.01;
 		}
 
 		t.lookAt(eye, center, up);
@@ -296,12 +297,12 @@ public class SimpleCameraHandler extends BranchGroup
 			// some time radius is -1 or a massive number, ignore those
 			if (boundingSphere.getRadius() < 50000 && boundingSphere.getRadius() > 0)
 			{
-				eye.y = boundingSphere.getRadius() * 4d;
+				eye.z = boundingSphere.getRadius() * 4d;
 			}
 			else
 			{
-				eye.y = 10;
-				System.out.println("boundingSphere.getRadius() " + boundingSphere.getRadius() + " ignored");
+				eye.z = 10;
+				System.out.println("boundingSphere.getRadius() " + boundingSphere.getRadius());
 			}
 			setView(eye, center);
 		}
