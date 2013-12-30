@@ -84,7 +84,7 @@ import com.jogamp.opengl.FBObject;
  * Concrete implementation of Pipeline class for the JOGL rendering
  * pipeline.
  */
-@SuppressWarnings("all") 
+@SuppressWarnings("all")
 class JoglPipeline extends Pipeline
 {
 	// Currently prints for entry points not yet implemented
@@ -5878,7 +5878,7 @@ class JoglPipeline extends Pipeline
 				case GL2.GL_RGBA_S3TC:
 					internalFormat = GL2.GL_RGBA_S3TC;
 					format = GL.GL_RGBA;
-					
+
 					break;
 				///////////////////////////////////////////////////PJPJPJ////////////////////
 				case ImageComponentRetained.TYPE_USHORT_GRAY:
@@ -9101,11 +9101,18 @@ class JoglPipeline extends Pipeline
 	//
 
 	// Helper used everywhere
-	GLContext context(Context ctx)
+	//PJPJPJPJ
+	public GLContext context(Context ctx)
 	{
 		if (ctx == null)
 			return null;
 		return ((JoglContext) ctx).getGLContext();
+	}
+
+	//PJPJPJPJ
+	public static Pipeline getPipeline()
+	{
+		return Pipeline.getPipeline();
 	}
 
 	// Helper used everywhere
