@@ -109,9 +109,10 @@ public class DxtFlipper
 
 	public static void flip(DDSImage ddsImage, ImageInfo imageInfo)
 	{
-		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 || //
-				ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3 || //
-				ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+		int pixelFormat = ddsImage.getPixelFormat();
+		if (pixelFormat == DDSImage.D3DFMT_DXT1 || //
+				pixelFormat == DDSImage.D3DFMT_DXT3 || //
+				pixelFormat == DDSImage.D3DFMT_DXT5)
 		{
 			ByteBuffer buffer = imageInfo.getData();
 
@@ -119,7 +120,7 @@ public class DxtFlipper
 			int h = imageInfo.getHeight();
 
 			// Block size default
-			int blockSize = ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 ? 8 : 16;
+			int blockSize = pixelFormat == DDSImage.D3DFMT_DXT1 ? 8 : 16;
 
 			// Number of pixels DXTx
 			int nBytes = ((w + 3) / 4) * ((h + 3) / 4) * blockSize;
@@ -148,17 +149,17 @@ public class DxtFlipper
 
 				for (k = 0; k < (widBytes / blockSize); k++)
 				{
-					if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1)
+					if (pixelFormat == DDSImage.D3DFMT_DXT1)
 					{
 						FlipDXT1BlockFull(d, dp);
 						dp += 8;
 					}
-					else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3)
+					else if (pixelFormat == DDSImage.D3DFMT_DXT3)
 					{
 						FlipDXT3BlockFull(d, dp);
 						dp += 16;
 					}
-					else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+					else if (pixelFormat == DDSImage.D3DFMT_DXT5)
 					{
 						FlipDXT5BlockFull(d, dp);
 						dp += 16;
@@ -172,19 +173,17 @@ public class DxtFlipper
 			// byte buffer for dds image is one big shared buffer, copy into position
 			System.arraycopy(pixels, 0, buffer.array(), buffer.arrayOffset(), pixels.length);
 		}
-		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
-				ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
-				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
-				ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
+		else if (pixelFormat == DDSImage.D3DFMT_R8G8B8 || //
+				pixelFormat == DDSImage.D3DFMT_A8R8G8B8 || //
+				pixelFormat == DDSImage.D3DFMT_X8R8G8B8 || //
+				pixelFormat == DDSImage.DDS_A16B16G16R16F)
 		{
 			ByteBuffer buffer = imageInfo.getData();
 
 			int w = imageInfo.getWidth();
 			int h = imageInfo.getHeight();
 
-			int widBytes = w
-					* (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 ? 3
-							: ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F ? 8 : 4);
+			int widBytes = w * (pixelFormat == DDSImage.D3DFMT_R8G8B8 ? 3 : pixelFormat == DDSImage.DDS_A16B16G16R16F ? 8 : 4);
 
 			byte[] s = buffer.array();
 			byte[] d = new byte[buffer.limit()];
