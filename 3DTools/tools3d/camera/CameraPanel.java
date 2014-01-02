@@ -7,7 +7,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 
 import javax.media.j3d.GraphicsConfigTemplate3D;
-import javax.media.j3d.View;
 import javax.swing.JPanel;
 
 import tools3d.mixed3d2d.Canvas3D2D;
@@ -17,16 +16,20 @@ import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class CameraPanel extends JPanel
 {
-	private VisualPhysicalUniverse universe;
+	protected VisualPhysicalUniverse universe;
 
-	private Canvas3D2D canvas3D2D;
+	protected Canvas3D2D canvas3D2D;
 
-	private Camera camera;
+	protected Camera camera;
 
 	private Dolly currentDolly;
 
 	private boolean isRendering = false;
 
+	/**
+	 * mono not HMD
+	 * @param universe
+	 */
 	public CameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
@@ -46,13 +49,19 @@ public class CameraPanel extends JPanel
 
 		// antialiasing REQUIRED is good to have
 		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
+		//template.setStereo(GraphicsConfigTemplate.PREFERRED);
 
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
 
 		canvas3D2D = new Canvas3D2D(config);
-
 		camera = new Camera(canvas3D2D);
+	}
 
+	/**
+	 * HMD only
+	 */
+	protected CameraPanel()
+	{
 	}
 
 	public void setPhysicalsVisible(boolean visible)
@@ -120,17 +129,20 @@ public class CameraPanel extends JPanel
 
 	public void stopRendering()
 	{
-		System.out.println("NEVER CALL THIS METHOD DAMN IT! it is a major memory leak; find a solution!");
-		//new Exception("called by").printStackTrace();
-
-		// maybe try Canvas3D.stopRenderer()
-		canvas3D2D.stopRenderer();
-
-		// stop rendering by removing the canvas
-		if (this.isAncestorOf(canvas3D2D))
+		if (canvas3D2D.isRendererRunning())
 		{
-			remove(canvas3D2D);
-			isRendering = false;
+			System.out.println("NEVER CALL THIS METHOD DAMN IT! it is a major memory leak; find a solution!");
+			//new Exception("called by").printStackTrace();
+
+			// maybe try Canvas3D.stopRenderer()
+			canvas3D2D.stopRenderer();
+
+			// stop rendering by removing the canvas
+			if (this.isAncestorOf(canvas3D2D))
+			{
+				remove(canvas3D2D);
+				isRendering = false;
+			}
 		}
 	}
 

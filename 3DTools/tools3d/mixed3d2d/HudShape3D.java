@@ -134,7 +134,8 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	public void updateHudShapeTexture()
 	{
-		hudShapeIc2d.updateData(this, 0, 0, hudShapeIc2d.getWidth(), hudShapeIc2d.getHeight());
+		if (hudShapeIc2d != null)
+			hudShapeIc2d.updateData(this, 0, 0, hudShapeIc2d.getWidth(), hudShapeIc2d.getHeight());
 	}
 
 	@Override

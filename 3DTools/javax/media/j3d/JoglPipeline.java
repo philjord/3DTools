@@ -8771,6 +8771,16 @@ class JoglPipeline extends Pipeline
 
 		// !! these chosen caps are not final as long as the corresponding context is made current
 		GLCapabilities chosenCaps = (GLCapabilities) awtConfig.getChosenCapabilities();
+		
+		
+		
+		//PJPJPJPJPJ
+		// graphics configs never return setero capability so say yes if asked for 
+		// nOte if we say required the graph config disables AA for some reason
+		chosenCaps.setStereo((gct.getStereo() == GraphicsConfigTemplate.PREFERRED));
+		 
+		
+		
 		//System.out.println("getBestConfiguration chosenCaps = " + chosenCaps);
 		// Index isn't used anymore
 		JoglGraphicsConfiguration bestGC = new JoglGraphicsConfiguration(chosenCaps, -1, device);
@@ -9101,16 +9111,14 @@ class JoglPipeline extends Pipeline
 	//
 
 	// Helper used everywhere
-	//PJPJPJPJ
-	public GLContext context(Context ctx)
+	GLContext context(Context ctx)
 	{
 		if (ctx == null)
 			return null;
 		return ((JoglContext) ctx).getGLContext();
 	}
 
-	//PJPJPJPJ
-	public static Pipeline getPipeline()
+	static Pipeline getPipeline()
 	{
 		return Pipeline.getPipeline();
 	}

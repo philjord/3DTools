@@ -154,5 +154,24 @@ public class Canvas3D2D extends Canvas3D
 	{
 		return panel3ds;
 	}
+	
+	@Override
+	public void preRender()
+	{
+	
+	}
+	
 
+ 
+	@Override
+	public void renderField(int fieldDesc)
+	{
+		//TODO: right and left barrel
+		//HOWEVER! poosibly now is too late to set left eye up?
+		// but the transparent pass is after so the whole thing may be pointless
+		 
+	}
+	 
+		
+	 
 }
