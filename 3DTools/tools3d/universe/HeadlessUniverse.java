@@ -24,6 +24,9 @@ public class HeadlessUniverse extends SimpleUniverse
 		// NOTE: the size, physical width, and physical height of the associated Screen3D must be set explicitly prior
 		// to rendering.
 		// Failure to do so will result in an exception.
+		
+		//NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! this screen is literally the same device as ALL other universes and canvas etc.
+		// so dicking with it here changes tehm to, ha, so off screen is not being understood
 		c3D.getScreen3D().setSize(16, 16);
 		c3D.getScreen3D().setPhysicalScreenWidth(0.1);
 		c3D.getScreen3D().setPhysicalScreenHeight(0.1);

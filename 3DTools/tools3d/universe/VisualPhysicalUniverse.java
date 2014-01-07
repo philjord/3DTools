@@ -7,8 +7,6 @@ import javax.media.j3d.View;
 import javax.media.j3d.ViewSpecificGroup;
 import javax.media.j3d.VirtualUniverse;
 
-import com.sun.j3d.utils.universe.ViewingPlatform;
-
 /**
  * 
  */
@@ -72,12 +70,12 @@ public class VisualPhysicalUniverse extends VirtualUniverse
 		theLocale.addBranchGraph(bgRoot);
 	}
 
-	public void addViewingPlatform(ViewingPlatform viewingPlatform)
+	public void addViewingPlatform(BranchGroup viewingPlatform)
 	{
 		theLocale.addBranchGraph(viewingPlatform);
 	}
 
-	public void removeViewingPlatform(ViewingPlatform viewingPlatform)
+	public void removeViewingPlatform(BranchGroup viewingPlatform)
 	{
 		theLocale.removeBranchGraph(viewingPlatform);
 	}

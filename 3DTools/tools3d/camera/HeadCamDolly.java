@@ -46,6 +46,7 @@ public class HeadCamDolly extends Dolly
 		{
 			currentAvartarHeadPoint.set(trans);
 			currentAvartarHeadPoint.y += avatarCollisionInfo.getCameraAbovePelvisHeight();
+
 			tempTransform.set(rot, currentAvartarHeadPoint, 1f);
 			if ((tempTransform.getType() & Transform3D.CONGRUENT) == 0)
 			{

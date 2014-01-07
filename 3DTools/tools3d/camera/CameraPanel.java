@@ -14,7 +14,7 @@ import tools3d.universe.VisualPhysicalUniverse;
 
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
-public class CameraPanel extends JPanel
+public class CameraPanel extends JPanel implements ICameraPanel
 {
 	protected VisualPhysicalUniverse universe;
 
