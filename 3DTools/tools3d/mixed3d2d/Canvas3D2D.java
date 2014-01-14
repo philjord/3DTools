@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.J3DGraphics2D;
+import javax.media.j3d.J3dUtil;
 import javax.media.j3d.Shape3D;
 
 import tools3d.mixed3d2d.hud.HUDElement;
@@ -102,12 +103,22 @@ public class Canvas3D2D extends Canvas3D
 			panel3ds.remove(panel3D);
 		}
 	}
+	
+	@Override
+	public void preRender()
+	{
+		 
+	}
 
 	// For reseting the texture binding in the pipeline (trust me)
 	private static Shape3D trivialShape = new Cube(0.01f);
 
+	public float distortionOffset = 0.25f;
+
 	public void postRender()
 	{
+		J3dUtil.postProcessFrameBuffer(distortionOffset);
+
 		// we only draw if the hud is not in the scene live or any panel3d exists
 		if (!hudShapeBG.isLive())
 		{
@@ -154,24 +165,20 @@ public class Canvas3D2D extends Canvas3D
 	{
 		return panel3ds;
 	}
-	
-	@Override
-	public void preRender()
-	{
-	
-	}
-	
 
- 
+	
 	@Override
 	public void renderField(int fieldDesc)
 	{
 		//TODO: right and left barrel
 		//HOWEVER! poosibly now is too late to set left eye up?
 		// but the transparent pass is after so the whole thing may be pointless
-		 
+		//http://www.conitec.net/shaders/shader_work5.htm
+		//http://forum.jogamp.org/Java3D-stereo-td4029914.html 
+		//also GraphicsContext3D does cool stuff
+
+		//Pipeline.getPipeline().readRaster
+		//https://github.com/ixd-hof/Processing/tree/master/Examples/Oculus%20Rift/OculusRift_Basic/data
 	}
-	 
-		
-	 
+
 }

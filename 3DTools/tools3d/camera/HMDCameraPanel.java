@@ -10,13 +10,16 @@ import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.PhysicalBody;
 import javax.media.j3d.PhysicalEnvironment;
+import javax.media.j3d.Transform3D;
 import javax.media.j3d.View;
 import javax.swing.JPanel;
 import javax.vecmath.Point3d;
+import javax.vecmath.Vector3f;
 
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.universe.VisualPhysicalUniverse;
+import de.fruitfly.ovr.HMDInfo;
 
 public class HMDCameraPanel extends JPanel implements ICameraPanel
 {
@@ -26,7 +29,9 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 	protected VisualPhysicalUniverse universe;
 
-	private double FOV = 80;
+	//private double FOV = 80;
+
+	private float xfov = (float) (125f * Math.PI / 180.0);
 
 	private JOALMixer mixer = null;
 
@@ -46,12 +51,14 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 	private HMDCamDolly currentDolly;// viewPlatform
 
+	private HMDInfo hmd;
+
 	private boolean isRendering = false;
 
 	public HMDCameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
-
+		hmd = HMDCamDolly.getOculusRift().getHMDInfo();
 		setLayout(new GridLayout(1, 2));
 		physicalBody = new PhysicalBody(new Point3d(-0.033, 0, 0), new Point3d(0.033, 0, 0));
 		physicalEnvironment = new PhysicalEnvironment();
@@ -73,16 +80,34 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
 
 		leftCanvas3D2D = new Canvas3D2D(config);
-		leftCanvas3D2D.setMonoscopicViewPolicy(View.CYCLOPEAN_EYE_VIEW);
+		leftCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
 
 		rightCanvas3D2D = new Canvas3D2D(config);
-		rightCanvas3D2D.setMonoscopicViewPolicy(View.CYCLOPEAN_EYE_VIEW);
+		rightCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
 
 		leftView = createView(leftCanvas3D2D);
+		setProjectionMatrix(leftView, true);
 		rightView = createView(rightCanvas3D2D);
+		setProjectionMatrix(rightView, false);
 
-		//	leftCanvas3D2D.getScreen3D().setPhysicalScreenHeight(0.1);
-		//	leftCanvas3D2D.getScreen3D().setPhysicalScreenWidth(0.1);
+		//doesn't work but same screen
+		//	leftCanvas3D2D.getScreen3D().setPhysicalScreenHeight(hmd.VScreenSize);
+		//	leftCanvas3D2D.getScreen3D().setPhysicalScreenWidth(hmd.HScreenSize * 0.5f);
+
+		// non shared ctx causes texture cock ups
+		if (System.getProperty("j3d.sharedctx") == null)
+		{
+			System.out.println("Don't forget -Dj3d.sharedctx=true! otherwise texture oddities");
+		}
+
+		//TODO:
+		// Oculus head rotate
+		// mouse over
+		// hud output
+		// back ground projection
+		// check fog
+		// turn on shaders again
+		// post process on FBO
 
 	}
 
@@ -104,9 +129,15 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?
 		// COD4 on 4:3 screen uses 65 but on 16:9 uses 81
-		System.out.println("FOV set to  " + FOV);
-		double fov = FOV * Math.PI / 180.0;
-		view.setFieldOfView(fov);
+		//FOV = 125;
+		//double fov = FOV * Math.PI / 180.0;
+		//view.setFieldOfView(fov);
+		//System.out.println("FOV set to  " + fov);
+
+		float halfScreenDistanceH = (hmd.HScreenSize / 2);
+		xfov = (float) (2.0f * Math.atan(halfScreenDistanceH / hmd.EyeToScreenDistance));
+		view.setFieldOfView(xfov);
+		System.out.println("FOV set to  " + xfov);
 
 		//other wise restricted access exception
 		if (view.getUserHeadToVworldEnable())
@@ -161,8 +192,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		}
 	}
 
-	
-
 	public void setPhysicalsVisible(boolean visible)
 	{
 		if (visible)
@@ -190,8 +219,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 	}
 
-		
-
 	public boolean isRendering()
 	{
 		return isRendering;
@@ -202,8 +229,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		return leftCanvas3D2D;
 	}
 
-	
-
 	public void setSceneAntialiasingEnable(boolean aaRequired)
 	{
 		if (leftView != null)
@@ -212,6 +237,48 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 			leftView.setSceneAntialiasingEnable(aaRequired);
 			rightView.setSceneAntialiasingEnable(aaRequired);
 		}
+	}
+
+	private void setProjectionMatrix(View view, boolean left)
+	{
+		// Compute Aspect Ratio. Stereo mode cuts width in half.
+		float aspectRatio = (hmd.HResolution * 0.5f) / hmd.VResolution;
+		//System.out.println("aspectRatio " + aspectRatio);
+		// Compute Vertical FOV based on distance.
+		//float halfScreenDistance = (hmd.VScreenSize * 0.5f);
+		//System.out.println("halfScreenDistance " + halfScreenDistance);
+		//float yfov = (float) (2.0f * Math.atan(halfScreenDistance / hmd.EyeToScreenDistance));
+		//System.out.println("yfov " + yfov);
+		// Compute Horizontal FOV based on distance.
+		float halfHalfScreenDistanceH = (hmd.HScreenSize * 0.5f * 0.5f); //for one screen not both
+		//System.out.println("halfHalfScreenDistanceH " + halfHalfScreenDistanceH);
+		xfov = (float) (2.0f * Math.atan(halfHalfScreenDistanceH / hmd.EyeToScreenDistance));
+		//System.out.println("xfov " + xfov);
+		// Post-projection viewport coordinates range from (-1.0, 1.0), with the
+		// center of the left viewport falling at (1/4) of horizontal screen size.
+		// We need to shift this projection center to match with the lens center.
+		// We compute this shift in physical units (meters) to correct
+		// for different screen sizes and then rescale to viewport coordinates.
+		float viewCenter = hmd.HScreenSize * 0.25f;
+		//System.out.println("viewCenter " + viewCenter);
+		float eyeProjectionShift = viewCenter - (hmd.LensSeparationDistance * 0.5f);
+		//System.out.println("eyeProjectionShift " + eyeProjectionShift);
+		float projectionCenterOffset = (4.0f * eyeProjectionShift) / hmd.HScreenSize;
+		//System.out.println("projectionCenterOffset " + projectionCenterOffset);
+		// Projection matrix for the "center eye", which the left/right matrices are based on.
+		Transform3D projCenter = new Transform3D();
+		projCenter.perspective(xfov, aspectRatio, 0.1f, 5000.0f);
+		Transform3D projLeft = new Transform3D();
+		projLeft.setTranslation(new Vector3f(projectionCenterOffset, 0, 0));
+		projLeft.mul(projCenter);
+		Transform3D projRight = new Transform3D();
+		projRight.setTranslation(new Vector3f(-projectionCenterOffset, 0, 0));
+		projRight.mul(projCenter);
+
+		//ViewInfo has getFieldOfViewOffset()
+
+		view.setCompatibilityModeEnable(true);
+		view.setLeftProjection(left ? projLeft : projRight);
 	}
 
 }

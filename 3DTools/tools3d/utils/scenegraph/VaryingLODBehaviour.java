@@ -90,7 +90,15 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);
-		canvas.getImagePlateToVworld(xform); // xform is imagePlateToLocal
+		// transform the points to the Billboard's space
+		if (this.getView().getCompatibilityModeEnable())
+		{
+			this.getView().getViewPlatform().getLocalToVworld(xform);
+		}
+		else
+		{
+			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+		}
 		xform.transform(viewPosition);
 
 		node.getLocalToVworld(xform);

@@ -14,16 +14,20 @@ import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 
 //OH MY GOD! switches pointing to links don't refresh properly!
-// I also notice that shared grup appear to be massively inefficient
+// I also notice that shared group appear to be massively inefficient
 //allows a transition zone of fadness sent out to 2 nodes attached
 
-//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
-// see bloated float sign
 public class BetterDistanceLOD extends Behavior
 {
 	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
-	private WakeupOnElapsedFrames wakeupFrame = new WakeupOnElapsedFrames(5, true);
+	private WakeupOnElapsedFrames wakeupFrame1 = new WakeupOnElapsedFrames(1, true);
+
+	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(2, true);
+
+	private WakeupOnElapsedFrames wakeupFrame5 = new WakeupOnElapsedFrames(5, true);
+
+	private WakeupOnElapsedFrames wakeupFrame10 = new WakeupOnElapsedFrames(10, true);
 
 	private int prevIndex = -1;
 
@@ -65,7 +69,7 @@ public class BetterDistanceLOD extends Behavior
 	@Override
 	public void initialize()
 	{
-		wakeupOn(wakeupFrame);
+		wakeupOn(wakeupFrame1);
 
 	}
 
@@ -80,7 +84,7 @@ public class BetterDistanceLOD extends Behavior
 		if (parent == null)
 		{
 			//System.out.println("somefing null");
-			wakeupOn(wakeupFrame);
+			wakeupOn(wakeupFrame10);
 			return;
 		}
 
@@ -89,14 +93,22 @@ public class BetterDistanceLOD extends Behavior
 		if (v == null)
 		{
 			//System.out.println("view null");
-			wakeupOn(wakeupFrame);
+			wakeupOn(wakeupFrame10);
 			return;
 		}
-		Canvas3D canvas = v.getCanvas3D(0);
 
+		Canvas3D canvas = v.getCanvas3D(0);
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);
-		canvas.getImagePlateToVworld(xform); // xform is imagePlateToLocal
+		// transform the points to the Billboard's space
+		if (v.getCompatibilityModeEnable())
+		{
+			v.getViewPlatform().getLocalToVworld(xform);
+		}
+		else
+		{
+			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+		}
 		xform.transform(viewPosition);
 
 		parent.getLocalToVworld(xform);
@@ -107,10 +119,14 @@ public class BetterDistanceLOD extends Behavior
 		xform.transform(viewPosition);
 
 		// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
-		// so let's just use the length for setting the wakeup
+		// so let's just use the length 
 		double viewDistance = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y)
 				+ (viewPosition.z * viewPosition.z));
-		//System.out.println("viewDistance" + viewDistance);
+
+		//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
+		// see bloated float sign, test
+		viewDistance = viewDistance / xform.getScale();
+		//System.out.println("viewDistance " + viewDistance);
 
 		int newIndex = distances.length; // viewDistance > distances[n-1]
 		double distDiff = 999; // nothing happens beyond the last switch, - is beyond cut off
@@ -150,6 +166,7 @@ public class BetterDistanceLOD extends Behavior
 		}
 
 		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / 15f));
+		//System.out.println("viewDistance " + viewDistance + ": distDiff " + distDiff + ": fadeRange " + fadeRange);
 		//simple case not near interface, just for a plain model
 		if (distDiff > fadeRange)
 		{
@@ -170,7 +187,7 @@ public class BetterDistanceLOD extends Behavior
 		else
 		{
 			float fade = (float) (distDiff / fadeRange);
-
+		//	System.out.println("fade " + fade);
 			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
 			{
 				((Fadable) roots.get(newIndex)).fade(1f - fade);
@@ -186,8 +203,15 @@ public class BetterDistanceLOD extends Behavior
 			}
 		}
 
-		// Insert wakeup condition into queue
-		wakeupOn(wakeupFrame);
+		// Insert wakeup condition into queueif based on proximity to interesting ness
+		if (distDiff < 1.5)
+			wakeupOn(wakeupFrame1);
+		else if (distDiff < 5)
+			wakeupOn(wakeupFrame2);
+		else if (distDiff < 12)
+			wakeupOn(wakeupFrame5);
+		else
+			wakeupOn(wakeupFrame10);
 	}
 
 	private void ensureAdded(int idx, boolean removeFade)

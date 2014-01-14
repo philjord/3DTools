@@ -3007,6 +3007,13 @@ class JoglPipeline extends Pipeline
 
 	}
 
+	//PJPJPJPJPJPJPJ
+	//BarrelDistort postPostcessFrambuffer
+	public void postProcessFrameBuffer(float distortionOffset)
+	{
+
+	}
+
 	// ---------------------------------------------------------------------
 
 	//
@@ -8771,16 +8778,12 @@ class JoglPipeline extends Pipeline
 
 		// !! these chosen caps are not final as long as the corresponding context is made current
 		GLCapabilities chosenCaps = (GLCapabilities) awtConfig.getChosenCapabilities();
-		
-		
-		
+
 		//PJPJPJPJPJ
 		// graphics configs never return setero capability so say yes if asked for 
 		// nOte if we say required the graph config disables AA for some reason
 		chosenCaps.setStereo((gct.getStereo() == GraphicsConfigTemplate.PREFERRED));
-		 
-		
-		
+
 		//System.out.println("getBestConfiguration chosenCaps = " + chosenCaps);
 		// Index isn't used anymore
 		JoglGraphicsConfiguration bestGC = new JoglGraphicsConfiguration(chosenCaps, -1, device);

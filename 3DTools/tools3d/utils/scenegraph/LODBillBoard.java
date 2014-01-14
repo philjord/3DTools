@@ -316,7 +316,15 @@ public class LODBillBoard extends Behavior
 		if (mode == ROTATE_ABOUT_AXIS)
 		{ // rotate about axis
 			canvas.getCenterEyeInImagePlate(viewPosition);
-			canvas.getImagePlateToVworld(xform); // xform is imagePlateToLocal
+			// transform the points to the Billboard's space
+			if (v.getCompatibilityModeEnable())
+			{
+				v.getViewPlatform().getLocalToVworld(xform);
+			}
+			else
+			{
+				canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+			}
 			xform.transform(viewPosition);
 
 			// get billboard's transform
@@ -418,7 +426,14 @@ public class LODBillBoard extends Behavior
 			yUpPoint.y += 0.01; // one cm in Physical space
 
 			// transform the points to the Billboard's space
-			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+			if (v.getCompatibilityModeEnable())
+			{
+				v.getViewPlatform().getLocalToVworld(xform);
+			}
+			else
+			{
+				canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+			}
 
 			xform.transform(viewPosition);
 			xform.transform(yUpPoint);
@@ -564,7 +579,7 @@ public class LODBillBoard extends Behavior
 		//		Insert wakeup condition into queue
 		if (dist < 40)
 		{
-			wakeupOn(wakeupFrameFast);			
+			wakeupOn(wakeupFrameFast);
 		}
 		else if (dist < 120)
 		{
