@@ -76,6 +76,11 @@ public class OculusRift implements IOculusRift
 		return _getRoll();
 	}
 
+	public void reset()
+	{
+		_reset();
+	}
+
 	public void destroy()
 	{
 		destroySubsystem();
@@ -84,6 +89,8 @@ public class OculusRift implements IOculusRift
 	private native boolean initSubsystem();
 
 	private native void pollSubsystem();
+
+	private native void _reset();
 
 	private native void destroySubsystem();
 

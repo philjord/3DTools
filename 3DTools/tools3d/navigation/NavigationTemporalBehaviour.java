@@ -50,7 +50,6 @@ public class NavigationTemporalBehaviour extends Behavior
 		long frameDuration = (timeNow - previousFrameEndTime) / 1000000;
 		for (NavigationProcessorInterface np : navigationProcessors)
 		{
-
 			if (np.isActive())
 			{
 				long start = System.currentTimeMillis();

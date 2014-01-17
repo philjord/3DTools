@@ -35,7 +35,7 @@ public class CanvasPickRayGen //extends PickTool
 	public CanvasPickRayGen(Canvas3D c)
 	{
 		canvas = c;
-		
+
 	}
 
 	/** Inquire the canvas to be used for picking operations.
@@ -127,7 +127,14 @@ public class CanvasPickRayGen //extends PickTool
 		double distancePtToDelta = ptToDelta.length();
 		distancePtToDelta *= tolerance;
 
-		canvas.getImagePlateToVworld(motion);
+		if (!canvas.getView().getCompatibilityModeEnable())
+		{
+			canvas.getImagePlateToVworld(motion);
+		}
+		else
+		{
+			canvas.getView().getViewPlatform().getLocalToVworld(motion);
+		}
 
 		/*
 		System.out.println("mouse position " + xpos + " " + ypos);

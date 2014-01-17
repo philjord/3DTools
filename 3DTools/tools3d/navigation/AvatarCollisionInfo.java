@@ -15,7 +15,7 @@ public class AvatarCollisionInfo
 
 	private float avatarYStepOverHeight = DEFAULT_AVATAR_Y_STEP_OVER_HEIGHT;
 
-	private float cameraAbovePelvisHeight = (DEFAULT_AVATAR_Y_HEIGHT/2) - 0.1f;
+	private float cameraAbovePelvisHeight = (DEFAULT_AVATAR_Y_HEIGHT / 2) - 0.1f;
 
 	//this is just a convinietn transport machanism for now
 	private AvatarLocation avatarLocation;
@@ -61,6 +61,12 @@ public class AvatarCollisionInfo
 	public float getAvatarYHeight()
 	{
 		return avatarYHeight;
+	}
+
+	public void setAvatarYHeight(float avatarYHeight)
+	{
+		this.avatarYHeight = avatarYHeight;
+		cameraAbovePelvisHeight = (avatarYHeight / 2) - 0.1f;
 	}
 
 	public float getAvatarYStepOverHeight()

@@ -39,8 +39,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 	private Canvas3D2D rightCanvas3D2D;
 
-	private OcculusRift occ = new OcculusRift();
-
 	private PhysicalBody physicalBody = null;
 
 	private PhysicalEnvironment physicalEnvironment = null;
@@ -101,14 +99,15 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		}
 
 		//TODO:
-		// Oculus head rotate
-		// mouse over
-		// hud output
+		// mouse over		
 		// back ground projection
-		// check fog
 		// turn on shaders again
 		// post process on FBO
+		// dear god I need a keyboard and screen camera on this bad boy
+		// add interacting dahsboard hud shape above my head in a no oculus position
 
+		
+		//CanvasViewCache doInfinite is teh background render step things like doComputeDerivedData
 	}
 
 	private View createView(Canvas3D c)
@@ -124,7 +123,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setFrontClipPolicy(View.VIRTUAL_EYE);
 		view.setBackClipDistance(BACK_CLIP);
 		view.setFrontClipDistance(FRONT_CLIP);
-		view.setMinimumFrameCycleTime(15);// max 66fps
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?
@@ -274,8 +272,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		Transform3D projRight = new Transform3D();
 		projRight.setTranslation(new Vector3f(-projectionCenterOffset, 0, 0));
 		projRight.mul(projCenter);
-
-		//ViewInfo has getFieldOfViewOffset()
 
 		view.setCompatibilityModeEnable(true);
 		view.setLeftProjection(left ? projLeft : projRight);

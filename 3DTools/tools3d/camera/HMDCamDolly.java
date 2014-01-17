@@ -1,8 +1,5 @@
 package tools3d.camera;
 
-//do new dolly for hmd non pivot round left eye
-// sort out why eye aren't pointing straight?
-
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
@@ -22,9 +19,15 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 {
 	private AvatarCollisionInfo avatarCollisionInfo;
 
+	private TransformGroup bodyNeckGroup = new TransformGroup();
+
+	private TransformGroup oculusGroup = new TransformGroup();
+
 	private TransformGroup leftVPTransformGroup = new TransformGroup();
 
 	private TransformGroup rightVPTransformGroup = new TransformGroup();
+
+	private TransformGroup hudTransformGroup = new TransformGroup();
 
 	private ViewPlatform leftViewPlatform = new ViewPlatform();
 
@@ -34,15 +37,19 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 
 	private Transform3D rightEyeTransform = new Transform3D();
 
-	private static OculusRift or = new OculusRift();
+	private Transform3D hudTransform = new Transform3D();
 
 	private Transform3D oculusTransform = new Transform3D();
 
-	private Vector3f currentAvartarHeadPoint = new Vector3f();
+	private Transform3D bodyNeckTransform = new Transform3D();
 
 	private Quat4f currentRot = new Quat4f();
 
 	private Vector3f currentTrans = new Vector3f();
+
+	private float halfIPD = 0.032f;
+
+	private static OculusRift or = new OculusRift();
 
 	public static OculusRift getOculusRift()
 	{
@@ -54,50 +61,52 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 
 	public HMDCamDolly(AvatarCollisionInfo avatarCollisionInfo)
 	{
-		setCapability(Group.ALLOW_CHILDREN_WRITE);
-		setCapability(Group.ALLOW_CHILDREN_EXTEND);
+		this.avatarCollisionInfo = avatarCollisionInfo;
+
 		setCapability(BranchGroup.ALLOW_DETACH);
 		leftViewPlatform.setActivationRadius(62f);
 		rightViewPlatform.setActivationRadius(62f);
 
-		addChild(leftVPTransformGroup);
-		leftVPTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		addChild(bodyNeckGroup);
+		bodyNeckGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+
+		bodyNeckGroup.addChild(oculusGroup);
+		oculusGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+
+		oculusGroup.addChild(leftVPTransformGroup);
 		leftVPTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		leftVPTransformGroup.addChild(leftViewPlatform);
 
-		addChild(rightVPTransformGroup);
-		rightVPTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		oculusGroup.addChild(rightVPTransformGroup);
 		rightVPTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 		rightVPTransformGroup.addChild(rightViewPlatform);
 
-		// create the viewingplatfrom with 4 transforms (lc, yaw, headpos, pitch)
-		setAvatarCollisionInfo(avatarCollisionInfo);
+		oculusGroup.addChild(hudTransformGroup);
+		hudTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
-		HMDInfo hmdInfo = or.getHMDInfo();
-		System.out.println(hmdInfo);
+		System.out.println(or.getHMDInfo());
+		setIPD(or.getHMDInfo().InterpupillaryDistance * 0.5f);
 
-		//float viewCenter = hmdInfo.HScreenSize * 0.25f;
-		// View transformation translation in world units.
-		float halfIPD2 = hmdInfo.InterpupillaryDistance * 0.5f;
-		//Matrix4f viewLeft = Matrix4f::Translation(halfIPD, 0, 0) * viewCenter;
-		//Matrix4f viewRight= Matrix4f::Translation(-halfIPD, 0, 0) * viewCenter;
-
-		leftEyeTransform.set(new Vector3f(-halfIPD2, 0f, 0f));
-		rightEyeTransform.set(new Vector3f(halfIPD2, 0f, 0f));
+		hudTransform.set(new Vector3f(0.17f, -0.38f, -0.10f));
+		hudTransformGroup.setTransform(hudTransform);
 
 	}
-
-	float halfIPD = 0.033f;
 
 	public void changeIPD(float mult)
 	{
 		halfIPD *= mult;
+		setIPD(halfIPD);
+	}
 
-		leftEyeTransform.set(new Vector3f(-halfIPD, 0f, 0f));
-		rightEyeTransform.set(new Vector3f(halfIPD, 0f, 0f));
+	private void setIPD(float ipd)
+	{
+		halfIPD = ipd;
 		System.out.println("halfIPD = " + halfIPD);
 
-		update();
+		leftEyeTransform.set(new Vector3f(-halfIPD, 0f, -0.05f));// a bit forward
+		leftVPTransformGroup.setTransform(leftEyeTransform);
+		rightEyeTransform.set(new Vector3f(halfIPD, 0f, -0.05f));// a bit forward
+		rightVPTransformGroup.setTransform(rightEyeTransform);
 	}
 
 	public void setAvatarCollisionInfo(AvatarCollisionInfo avatarCollisionInfo)
@@ -106,7 +115,7 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 	}
 
 	// deburner
-	private Transform3D tempTransform = new Transform3D();
+	private Vector3f neckPoint = new Vector3f();
 
 	public void locationUpdated(Quat4f rot, Vector3f trans)
 	{
@@ -114,33 +123,15 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 		// only update if new things have happened
 		if (!currentRot.epsilonEquals(rot, 0.0001f) || !currentTrans.epsilonEquals(trans, 0.005f))
 		{
-			update();
+			neckPoint.set(currentTrans);
+			neckPoint.y += avatarCollisionInfo.getCameraAbovePelvisHeight();
+
+			bodyNeckTransform.set(currentRot, neckPoint, 1f);
+			bodyNeckGroup.setTransform(bodyNeckTransform);
 			//recall for next iter
 			currentRot.set(rot);
 			currentTrans.set(trans);
 		}
-	}
-
-	private void update()
-	{
-		currentAvartarHeadPoint.set(currentTrans);
-		currentAvartarHeadPoint.y += avatarCollisionInfo.getCameraAbovePelvisHeight() + 0.7f; //TODO: get this right for oblivion
-		tempTransform.set(currentRot, currentAvartarHeadPoint, 1f);
-		if ((tempTransform.getType() & Transform3D.CONGRUENT) == 0)
-		{
-			System.out.println("bad trans for YawPitchCamDolly, check on headcam for difference");
-		}
-		else
-		{
-			tempTransform.mul(oculusTransform);
-			tempTransform.mul(leftEyeTransform);
-			leftVPTransformGroup.setTransform(tempTransform);
-			tempTransform.set(currentRot, currentAvartarHeadPoint, 1f);
-			tempTransform.mul(oculusTransform);
-			tempTransform.mul(rightEyeTransform);
-			rightVPTransformGroup.setTransform(tempTransform);
-		}
-
 	}
 
 	public ViewPlatform getLeftViewPlatform()
@@ -160,9 +151,15 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 		{
 			or.poll();
 			oculusTransform.setEuler(new Vector3d(or.getPitch(), or.getYaw(), or.getRoll()));
-			update();
+			oculusGroup.setTransform(oculusTransform);
 			//System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
 		}
+	}
+
+	public void reset()
+	{
+		or.reset();
+		setIPD(or.getHMDInfo().InterpupillaryDistance * 0.5f);
 	}
 
 	@Override
@@ -205,6 +202,12 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 	public void setYChange(float verticalRate)
 	{
 		throw new UnsupportedOperationException();
+	}
+
+	public void setHudShape(BranchGroup hudShapeRoot)
+	{
+		// make sure it's up in front of the ld eyes in all
+		hudTransformGroup.addChild(hudShapeRoot);
 	}
 
 }
