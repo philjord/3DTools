@@ -4,6 +4,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
+import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
@@ -50,6 +51,10 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 	private float halfIPD = 0.032f;
 
 	private static OculusRift or = new OculusRift();
+
+	private View leftView;
+
+	private View rightView;
 
 	public static OculusRift getOculusRift()
 	{
@@ -134,14 +139,13 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 		}
 	}
 
-	public ViewPlatform getLeftViewPlatform()
+	public void attachViews(View _leftView, View _rightView)
 	{
-		return leftViewPlatform;
-	}
+		this.leftView = _leftView;
+		this.rightView = _rightView;
+		leftView.attachViewPlatform(leftViewPlatform);
+		rightView.attachViewPlatform(rightViewPlatform);
 
-	public ViewPlatform getRightViewPlatform()
-	{
-		return rightViewPlatform;
 	}
 
 	@Override
@@ -149,7 +153,7 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 	{
 		if (or.isInitialized())
 		{
-			or.poll();
+			or.poll(leftView.getLastFrameDuration() / 1000f);
 			oculusTransform.setEuler(new Vector3d(or.getPitch(), or.getYaw(), or.getRoll()));
 			oculusGroup.setTransform(oculusTransform);
 			//System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());

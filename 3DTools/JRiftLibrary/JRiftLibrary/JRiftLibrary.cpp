@@ -94,6 +94,15 @@ JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift_pollSubsystem(JNIEnv *, j
 	quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
 }
 
+JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift_pollSubsystemDT(JNIEnv *, jobject, jfloat dt) {
+	if (!Initialized) return;
+	if (!pSensor) return;
+
+	//quaternion = pFusionResult->GetOrientation();
+	quaternion = pFusionResult->GetPredictedOrientation(dt);
+	quaternion.GetEulerAngles<Axis_Y, Axis_X, Axis_Z>(&yaw, &pitch, &roll);
+}
+
 JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift__1reset(JNIEnv *, jobject) {
 	if (!Initialized) return;
 	if (!pSensor) return;

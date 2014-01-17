@@ -51,6 +51,11 @@ public class OculusRift implements IOculusRift
 		pollSubsystem();
 	}
 
+	public void poll(float deltaTime)
+	{
+		pollSubsystemDT(deltaTime);
+	}
+
 	public HMDInfo getHMDInfo()
 	{
 		return hmdInfo;
@@ -89,6 +94,8 @@ public class OculusRift implements IOculusRift
 	private native boolean initSubsystem();
 
 	private native void pollSubsystem();
+
+	private native void pollSubsystemDT(float deltaTime);
 
 	private native void _reset();
 

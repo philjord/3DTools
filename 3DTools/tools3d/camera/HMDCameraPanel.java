@@ -106,7 +106,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		// dear god I need a keyboard and screen camera on this bad boy
 		// add interacting dahsboard hud shape above my head in a no oculus position
 
-		
 		//CanvasViewCache doInfinite is teh background render step things like doComputeDerivedData
 	}
 
@@ -123,14 +122,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setFrontClipPolicy(View.VIRTUAL_EYE);
 		view.setBackClipDistance(BACK_CLIP);
 		view.setFrontClipDistance(FRONT_CLIP);
-
-		// default in View = double fov = 45.0 * Math.PI / 180.0;
-		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?
-		// COD4 on 4:3 screen uses 65 but on 16:9 uses 81
-		//FOV = 125;
-		//double fov = FOV * Math.PI / 180.0;
-		//view.setFieldOfView(fov);
-		//System.out.println("FOV set to  " + fov);
 
 		float halfScreenDistanceH = (hmd.HScreenSize / 2);
 		xfov = (float) (2.0f * Math.atan(halfScreenDistanceH / hmd.EyeToScreenDistance));
@@ -211,9 +202,8 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		currentDolly = headCamDolly;
 		universe.addViewingPlatform(currentDolly);
 		// it is assumed to be added to the scene graph itself
-		// universe.addViewingPlatform(currentDolly);		 
-		leftView.attachViewPlatform(currentDolly.getLeftViewPlatform());
-		rightView.attachViewPlatform(currentDolly.getRightViewPlatform());
+		// universe.addViewingPlatform(currentDolly);
+		currentDolly.attachViews(leftView, rightView);
 
 	}
 

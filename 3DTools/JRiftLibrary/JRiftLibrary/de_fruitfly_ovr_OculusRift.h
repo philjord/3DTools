@@ -23,6 +23,8 @@ JNIEXPORT jboolean JNICALL Java_de_fruitfly_ovr_OculusRift_initSubsystem
 JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift_pollSubsystem
   (JNIEnv *, jobject);
 
+JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift_pollSubsystemDT
+	(JNIEnv *, jobject, jfloat dt);
 
 JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift__1reset
 	(JNIEnv *, jobject);
