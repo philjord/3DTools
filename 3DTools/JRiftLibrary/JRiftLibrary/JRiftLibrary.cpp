@@ -73,7 +73,8 @@ JNIEXPORT jboolean JNICALL Java_de_fruitfly_ovr_OculusRift_initSubsystem(JNIEnv 
 		printf(" DistortionK[1]: %f\n", Info.DistortionK[1]);
 		printf(" DistortionK[2]: %f\n", Info.DistortionK[2]);
 	}
-
+	//flush the output to force writing
+	fflush(stdout);
 	return Initialized;
 }
 

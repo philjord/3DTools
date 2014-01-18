@@ -104,7 +104,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		// post process on FBO
 		// dear god I need a keyboard and screen camera on this bad boy
 		// add interacting dahsboard hud shape above my head in a no oculus position
-		// dll comms only come through on destory?
 
 	}
 

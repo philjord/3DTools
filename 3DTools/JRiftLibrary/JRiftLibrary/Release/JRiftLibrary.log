@@ -1,4 +1,4 @@
-﻿Build started 19/01/2014 12:33:27 a.m..
+﻿Build started 19/01/2014 12:47:08 a.m..
      1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Creating "Release\JRiftLibrary.unsuccessfulbuild" because "AlwaysCreate" was specified.
@@ -20,4 +20,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.31
+Time Elapsed 00:00:01.25
