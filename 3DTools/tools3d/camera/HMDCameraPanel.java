@@ -99,14 +99,12 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		}
 
 		//TODO:
-		// mouse over		
-		// back ground projection
+		// mouse over, appears to point off to the right maybe?
 		// turn on shaders again
 		// post process on FBO
 		// dear god I need a keyboard and screen camera on this bad boy
 		// add interacting dahsboard hud shape above my head in a no oculus position
 
-		//CanvasViewCache doInfinite is teh background render step things like doComputeDerivedData
 	}
 
 	private View createView(Canvas3D c)
