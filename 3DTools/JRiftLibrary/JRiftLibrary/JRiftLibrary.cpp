@@ -46,7 +46,7 @@ JNIEXPORT jboolean JNICALL Java_de_fruitfly_ovr_OculusRift_initSubsystem(JNIEnv 
 		pSensor = *pHMD->GetSensor();
 		if (pSensor)
 		{
-			pFusionResult->AttachToSensor(pSensor);
+			pFusionResult->AttachToSensor(pSensor);			
 		}
 		Initialized = InfoLoaded && pSensor;
 		printf("Oculus Rift Device Interface initialized.\n");
