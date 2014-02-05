@@ -101,7 +101,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		//TODO:
 		// mouse over, appears to point off to the right maybe?
 		// turn on shaders again
-		// post process on FBO
+		// post process on FBO, joglPipeline postProcessFrameBuffer
 		// dear god I need a keyboard and screen camera on this bad boy
 		// add interacting dahsboard hud shape above my head in a no oculus position
 

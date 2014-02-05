@@ -3007,13 +3007,6 @@ class JoglPipeline extends Pipeline
 
 	}
 
-	//PJPJPJPJPJPJPJ
-	//BarrelDistort postPostcessFrambuffer
-	public void postProcessFrameBuffer(float distortionOffset)
-	{
-
-	}
-
 	// ---------------------------------------------------------------------
 
 	//
@@ -9663,5 +9656,132 @@ class JoglPipeline extends Pipeline
 				}
 			}
 		}
+	}
+
+	//PJPJPJPJPJPJPJ
+	//BarrelDistort postPostcessFrambuffer
+	public void postProcessFrameBuffer(float distortionOffset, Canvas3D cv)
+	{
+		int cvWidth = cv.getWidth();
+		int cvHeight = cv.getHeight();
+
+		JoglDrawable joglDrawable = (JoglDrawable) cv.drawable;
+
+		int newWidth = Math.max(1, cvWidth);
+		int newHeight = Math.max(1, cvHeight);
+
+		GLDrawable glDrawble = joglDrawable.getGLDrawable();
+		GLContext glContext = ((JoglContext) cv.ctx).getGLContext();
+
+		// Assuming glContext != null
+
+		final NativeSurface surface = glDrawble.getNativeSurface();
+		final ProxySurface proxySurface = (surface instanceof ProxySurface) ? (ProxySurface) surface : null;
+
+		final int lockRes = surface.lockSurface();
+
+		try
+		{
+			// propagate new size - seems not relevant here
+			if (proxySurface != null)
+			{
+				final UpstreamSurfaceHook ush = proxySurface.getUpstreamSurfaceHook();
+				if (ush instanceof UpstreamSurfaceHook.MutableSize)
+				{
+					((UpstreamSurfaceHook.MutableSize) ush).setSize(newWidth, newHeight);
+				}
+			}
+			/*else if(DEBUG) { // we have to assume surface contains the new size already, hence size check @ bottom
+			      System.err.println("GLDrawableHelper.resizeOffscreenDrawable: Drawable's offscreen surface n.a. ProxySurface, but "+ns.getClass().getName()+": "+ns);
+			}*/
+
+			GL2 gl = glContext.getGL().getGL2();
+
+			//generate framebufferobject
+			int mFrameBufferTextureID = generateTexID(cv.ctx);
+			gl.glBindTexture(gl.GL_TEXTURE_2D, mFrameBufferTextureID);
+			gl.glTexParameteri(gl.GL_TEXTURE_2D, gl.GL_TEXTURE_MIN_FILTER, gl.GL_LINEAR);
+			gl.glTexImage2D(gl.GL_TEXTURE_2D, 0, gl.GL_RGBA8, cv.getWidth(), cv.getHeight(), 0, gl.GL_RGBA, gl.GL_UNSIGNED_BYTE, null);
+			//allocate the framebuffer object ...
+			int[] result = new int[1];
+			gl.glGenFramebuffers(1, result, 0);
+			int mFrameBufferObjectID = result[0];
+			gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, mFrameBufferObjectID);
+			gl.glFramebufferTexture2D(gl.GL_FRAMEBUFFER, gl.GL_COLOR_ATTACHMENT0, gl.GL_TEXTURE_2D, mFrameBufferTextureID, 0);
+			gl.glBindFramebuffer(gl.GL_FRAMEBUFFER, 0);
+
+			//createNewContext is the thing that decides if FBO or plain
+			//// cv.drawable != null, set in 'createOffScreenBuffer'
+			
+			// FBO : should be the default case on Mac OS X
+			if (glDrawble instanceof GLFBODrawable)
+			{
+
+				// Resize GLFBODrawable
+				// TODO msaa gets lost
+				//				((GLFBODrawable)glDrawble).resetSize(gl);
+
+				// Alternative: resize GL_BACK FBObject directly,
+				// if multisampled the FBO sink (GL_FRONT) will be resized before the swap is executed
+				int numSamples = ((GLFBODrawable) glDrawble).getChosenGLCapabilities().getNumSamples();
+				FBObject fboObjectBack = ((GLFBODrawable) glDrawble).getFBObject(GL.GL_BACK);
+				fboObjectBack.reset(gl, newWidth, newHeight, numSamples, false); // false = don't reset SamplingSinkFBO immediately
+				fboObjectBack.bind(gl);
+
+				// If double buffered without antialiasing the GL_FRONT FBObject
+				// will be resized by glDrawble after the next swap-call
+			}
+			// pbuffer - not tested because Mac OS X 10.7+ supports FBO
+			else
+			{
+				// Create new GLDrawable (pbuffer) and update the coresponding GLContext
+
+				final GLContext currentContext = GLContext.getCurrent();
+				final GLDrawableFactory factory = glDrawble.getFactory();
+
+				// Ensure to sync GL command stream
+				if (currentContext != glContext)
+				{
+					glContext.makeCurrent();
+				}
+				gl.glFinish();
+				glContext.release();
+
+				if (proxySurface != null)
+				{
+					proxySurface.enableUpstreamSurfaceHookLifecycle(false);
+				}
+
+				try
+				{
+					glDrawble.setRealized(false);
+					// New GLDrawable
+					glDrawble = factory.createGLDrawable(surface);
+					glDrawble.setRealized(true);
+
+					joglDrawable.setGLDrawable(glDrawble);
+				}
+				finally
+				{
+					if (proxySurface != null)
+					{
+						proxySurface.enableUpstreamSurfaceHookLifecycle(true);
+					}
+				}
+
+				glContext.setGLDrawable(glDrawble, true); // re-association
+
+				// make current last current context
+				if (currentContext != null)
+				{
+					currentContext.makeCurrent();
+				}
+			}
+		}
+		finally
+		{
+			surface.unlockSurface();
+		}
+
 	}
 }
