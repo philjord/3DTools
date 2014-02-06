@@ -1,13 +1,10 @@
 package tools3d.camera;
 
-import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
-
-import com.sun.j3d.utils.universe.PlatformGeometry;
 
 public class HeadCamDolly extends Dolly
 {
@@ -19,10 +16,6 @@ public class HeadCamDolly extends Dolly
 		super(1);
 		setAvatarCollisionInfo(avatarCollisionInfo);
 
-		PlatformGeometry pg = new PlatformGeometry();
-		pg.setCapability(Group.ALLOW_CHILDREN_EXTEND);
-		pg.setCapability(Group.ALLOW_CHILDREN_WRITE);
-		setPlatformGeometry(pg);
 	}
 
 	public void setAvatarCollisionInfo(AvatarCollisionInfo avatarCollisionInfo)
@@ -56,11 +49,13 @@ public class HeadCamDolly extends Dolly
 			{
 				getViewPlatformTransform().setTransform(tempTransform);
 			}
-			
+
 			//recall for next iter
 			prevRot.set(rot);
 			prevTrans.set(trans);
 		}
 	}
+
+	
 
 }

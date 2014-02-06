@@ -102,7 +102,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		// mouse over, appears to point off to the right maybe?
 		// turn on shaders again
 		// post process on FBO, joglPipeline postProcessFrameBuffer
-		// dear god I need a keyboard and screen camera on this bad boy
 		// add interacting dahsboard hud shape above my head in a no oculus position
 
 	}
@@ -143,17 +142,17 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		return view;
 	}
 
+	@Override
 	public void stopRendering()
 	{
 		if (leftCanvas3D2D.isRendererRunning())
 		{
-			leftCanvas3D2D.stopRenderer();
+			//leftCanvas3D2D.stopRenderer();
 			if (this.isAncestorOf(leftCanvas3D2D))
 			{
 				remove(leftCanvas3D2D);
-
 			}
-			rightCanvas3D2D.stopRenderer();
+			//rightCanvas3D2D.stopRenderer();
 			if (this.isAncestorOf(rightCanvas3D2D))
 			{
 				remove(rightCanvas3D2D);
@@ -191,13 +190,13 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		}
 	}
 
-	public void setHMDCamDolly(HMDCamDolly headCamDolly)
+	private void setHMDCamDolly(HMDCamDolly hmdCamDolly)
 	{
 		if (currentDolly != null)
 		{
 			universe.removeViewingPlatform(currentDolly);
 		}
-		currentDolly = headCamDolly;
+		currentDolly = hmdCamDolly;
 		universe.addViewingPlatform(currentDolly);
 		// it is assumed to be added to the scene graph itself
 		// universe.addViewingPlatform(currentDolly);
@@ -210,11 +209,13 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		return isRendering;
 	}
 
+	@Override
 	public Canvas3D2D getCanvas3D2D()
 	{
 		return leftCanvas3D2D;
 	}
 
+	@Override
 	public void setSceneAntialiasingEnable(boolean aaRequired)
 	{
 		if (leftView != null)
@@ -223,6 +224,18 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 			leftView.setSceneAntialiasingEnable(aaRequired);
 			rightView.setSceneAntialiasingEnable(aaRequired);
 		}
+	}
+
+	@Override
+	public IDolly getDolly()
+	{
+		return currentDolly;
+	}
+
+	@Override
+	public void setDolly(IDolly dolly)
+	{
+		setHMDCamDolly((HMDCamDolly) dolly);
 	}
 
 	private void setProjectionMatrix(View view, boolean left)

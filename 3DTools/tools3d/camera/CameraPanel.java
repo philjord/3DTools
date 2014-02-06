@@ -92,13 +92,18 @@ public class CameraPanel extends JPanel implements ICameraPanel
 
 	}
 
-	public void setDolly(Dolly newDolly)
+	/**
+	 * Must be a dolly
+	 * @see tools3d.camera.ICameraPanel#setDolly(tools3d.camera.IDolly)
+	 */
+	@Override
+	public void setDolly(IDolly newDolly)
 	{
 		if (currentDolly != null)
 		{
 			universe.removeViewingPlatform(currentDolly);
 		}
-		currentDolly = newDolly;
+		currentDolly = (Dolly) newDolly;
 		universe.addViewingPlatform(currentDolly);
 		camera.setAvatar(null);
 		camera.setViewingPlatform(currentDolly);
@@ -135,7 +140,7 @@ public class CameraPanel extends JPanel implements ICameraPanel
 			//new Exception("called by").printStackTrace();
 
 			// maybe try Canvas3D.stopRenderer()
-			canvas3D2D.stopRenderer();
+			//canvas3D2D.stopRenderer();
 
 			// stop rendering by removing the canvas
 			if (this.isAncestorOf(canvas3D2D))
@@ -173,11 +178,6 @@ public class CameraPanel extends JPanel implements ICameraPanel
 		return canvas3D2D;
 	}
 
-	public Dolly getCurrentDolly()
-	{
-		return currentDolly;
-	}
-
 	public void setSceneAntialiasingEnable(boolean aaRequired)
 	{
 		if (canvas3D2D != null && canvas3D2D.getView() != null)
@@ -187,4 +187,9 @@ public class CameraPanel extends JPanel implements ICameraPanel
 		}
 	}
 
+	@Override
+	public IDolly getDolly()
+	{
+		return currentDolly;
+	}
 }

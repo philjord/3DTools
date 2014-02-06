@@ -6991,17 +6991,20 @@ class JoglPipeline extends Pipeline
 
 		JoglDrawable joglDrawable = (JoglDrawable) drawable;
 		GLContext context = context(ctx);
-
-		if (GLContext.getCurrent() == context)
+		//PJPJPJPJPJPJ using shared ctx and 2 canvases cause NPE here on destroy
+		if (joglDrawable != null)
 		{
-			context.release();
+			if (GLContext.getCurrent() == context)
+			{
+				context.release();
+			}
+			context.destroy();
+
+			// assuming this is the right point at which to make this call
+			joglDrawable.getGLDrawable().setRealized(false);
+
+			joglDrawable.destroyNativeWindow();
 		}
-		context.destroy();
-
-		// assuming this is the right point at which to make this call
-		joglDrawable.getGLDrawable().setRealized(false);
-
-		joglDrawable.destroyNativeWindow();
 	}
 
 	// This is the native method for doing accumulation.
@@ -9712,7 +9715,7 @@ class JoglPipeline extends Pipeline
 
 			//createNewContext is the thing that decides if FBO or plain
 			//// cv.drawable != null, set in 'createOffScreenBuffer'
-			
+
 			// FBO : should be the default case on Mac OS X
 			if (glDrawble instanceof GLFBODrawable)
 			{

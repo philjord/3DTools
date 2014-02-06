@@ -55,6 +55,8 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 	private final JCheckBox aaCheckbox = new JCheckBox("AntiAlias");
 
+	private final JCheckBox ovCheckbox = new JCheckBox("OculusView");
+
 	private final GraphicsDevice graphicsDevice;
 
 	private final Map<String, DisplayMode> availableDisplayModes = new HashMap<String, DisplayMode>(100);
@@ -109,6 +111,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		if (allowFullScreen)
 			southPanelChecks.add(fullscreenCheckbox);
 		southPanelChecks.add(aaCheckbox);
+		southPanelChecks.add(ovCheckbox);
 		southPanelButts.add(okay);
 		southPanelButts.add(cancel);
 		southPanelButts.add(props);
@@ -139,7 +142,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		{
 			Integer i = (Integer) e.nextElement();
 			JLabel label = (JLabel) labels.get(i);
-			label.setText(i == 0 ? "Off" : ("" + (int) Math.pow(2, i-1)));
+			label.setText(i == 0 ? "Off" : ("" + (int) Math.pow(2, i - 1)));
 		}
 		anisotropicFilterDegree.setLabelTable(labels);
 		anisotropicFilterDegree.setPaintLabels(true);
@@ -179,25 +182,29 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		for (DisplayMode mode : modes)
 		{
 			if (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400 //
-					&& mode.getRefreshRate() % 5 == 0)// might be too restrictive
+					&& mode.getRefreshRate() == 60)// might be too restrictive LCD only
 			{
 				String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth()
 						+ " bpp";
-				availableDisplayModes.put(strMode, mode);
-				modesDropDown.addItem(strMode);
-				// select it if it's the current
-				if (initMinRes)
+				// only if it's not there but...
+				if (availableDisplayModes.get(strMode) == null)
 				{
-					if (lowestMode == null || isLower(lowestMode, mode))
+					availableDisplayModes.put(strMode, mode);
+					modesDropDown.addItem(strMode);
+					// select it if it's the current
+					if (initMinRes)
 					{
-						lowestMode = mode;
+						if (lowestMode == null || isLower(lowestMode, mode))
+						{
+							lowestMode = mode;
+						}
 					}
-				}
-				else
-				{
-					if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
+					else
 					{
-						modesDropDown.setSelectedItem(strMode);
+						if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
+						{
+							modesDropDown.setSelectedItem(strMode);
+						}
 					}
 				}
 			}
@@ -239,6 +246,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		graphicsSettings.setDesiredDisplayMode(availableDisplayModes.get(modesDropDown.getSelectedItem()));
 		graphicsSettings.setRunFullscreen(fullscreenCheckbox.isSelected());
 		graphicsSettings.setAaRequired(aaCheckbox.isSelected());
+		graphicsSettings.setOculusView(ovCheckbox.isSelected());
 		graphicsSettings.setAnisotropicFilterDegree(anisotropicFilterDegree.getValue());
 
 		dispose();

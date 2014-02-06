@@ -54,6 +54,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	{
 		this.canvas = canvas;
 
+		this.setCapability(BranchGroup.ALLOW_DETACH);
 		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_READ);
 		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
 
@@ -78,7 +79,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		addChild(hudTextureBehave);
 		hudTextureBehave.setEnable(true);
 
-		canvas.addComponentListener(this);		
+		canvas.addComponentListener(this);
 	}
 
 	public void screenResized()

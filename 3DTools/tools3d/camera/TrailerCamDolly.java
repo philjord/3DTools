@@ -3,7 +3,6 @@ package tools3d.camera;
 import java.util.Enumeration;
 
 import javax.media.j3d.Behavior;
-import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
@@ -13,8 +12,6 @@ import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.utils.Utils3D;
-
-import com.sun.j3d.utils.universe.PlatformGeometry;
 
 public class TrailerCamDolly extends Dolly
 {
@@ -45,14 +42,9 @@ public class TrailerCamDolly extends Dolly
 
 	public TrailerCamDolly(AvatarCollisionInfo avatarCollisionInfo, TrailorCamCollider trailorCamCollider)
 	{
-		super(1);
+
 		this.trailorCamCollider = trailorCamCollider;
 		setAvatarCollisionInfo(avatarCollisionInfo);
-
-		PlatformGeometry pg = new PlatformGeometry();
-		pg.setCapability(Group.ALLOW_CHILDREN_EXTEND);
-		pg.setCapability(Group.ALLOW_CHILDREN_WRITE);
-		setPlatformGeometry(pg);
 
 		// add the picking timer to the universe
 		timer.setSchedulingBounds(Utils3D.defaultBounds);

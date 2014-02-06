@@ -14,6 +14,8 @@ public class GraphicsSettings
 
 	private boolean aaRequired = false;
 
+	private boolean oculusView = false;
+
 	private int anisotropicFilterDegree = 0;
 
 	private boolean cancelled = false;
@@ -84,6 +86,16 @@ public class GraphicsSettings
 		this.aaRequired = aaRequired;
 	}
 
+	public boolean isOculusView()
+	{
+		return oculusView;
+	}
+
+	public void setOculusView(boolean oculusView)
+	{
+		this.oculusView = oculusView;
+	}
+
 	public int getAnisotropicFilterDegree()
 	{
 		return (int) Math.pow(2, anisotropicFilterDegree - 1);
@@ -120,6 +132,7 @@ public class GraphicsSettings
 				desiredDisplayMode.getRefreshRate() + ":" + //				
 				runFullscreen + ":" + //
 				aaRequired + ":" + //
+				oculusView + ":" + //
 				anisotropicFilterDegree + ":" + //
 				cancelled;
 
@@ -142,8 +155,9 @@ public class GraphicsSettings
 					Integer.parseInt(prefs[7]));
 			runFullscreen = Boolean.parseBoolean(prefs[8]);
 			aaRequired = Boolean.parseBoolean(prefs[9]);
-			anisotropicFilterDegree = Integer.parseInt(prefs[10]);
-			cancelled = Boolean.parseBoolean(prefs[11]);
+			oculusView = Boolean.parseBoolean(prefs[10]);
+			anisotropicFilterDegree = Integer.parseInt(prefs[11]);
+			cancelled = Boolean.parseBoolean(prefs[12]);
 			valid = true;
 
 		}

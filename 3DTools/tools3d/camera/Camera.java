@@ -18,7 +18,7 @@ public class Camera extends Viewer
 
 	private double FOV = 80;
 
-	private JOALMixer mixer = null;
+	public static JOALMixer mixer = null;
 
 	public Camera(Canvas3D canvas3D)
 	{
@@ -41,10 +41,11 @@ public class Camera extends Viewer
 		getView().setFieldOfView(fov);
 
 		//other wise restricted access exception
-		if (getView().getUserHeadToVworldEnable())
+		if (mixer == null && getView().getUserHeadToVworldEnable())
 		{
 			// create and adds a joalmixer as the audio device
 			mixer = new JOALMixer(getPhysicalEnvironment());
+
 			boolean success = mixer.initialize();
 
 			if (!success)

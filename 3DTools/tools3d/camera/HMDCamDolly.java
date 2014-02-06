@@ -12,11 +12,9 @@ import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.navigation.NavigationProcessorInterface;
-import tools3d.utils.scenegraph.LocationUpdateListener;
-import de.fruitfly.ovr.HMDInfo;
 import de.fruitfly.ovr.OculusRift;
 
-public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, NavigationProcessorInterface
+public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProcessorInterface
 {
 	private AvatarCollisionInfo avatarCollisionInfo;
 
@@ -87,6 +85,8 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 		rightVPTransformGroup.addChild(rightViewPlatform);
 
 		oculusGroup.addChild(hudTransformGroup);
+		hudTransformGroup.setCapability(Group.ALLOW_CHILDREN_WRITE);
+		hudTransformGroup.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		hudTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
 		System.out.println(or.getHMDInfo());
@@ -148,15 +148,26 @@ public class HMDCamDolly extends BranchGroup implements LocationUpdateListener, 
 
 	}
 
+	public static float lastFramePortionToPredict = 0.5f;
+
+	private Vector3d newTrans = new Vector3d();
+
+	private Vector3d lastTrans = new Vector3d();
+
 	@Override
 	public void process(long frameDuration)
 	{
 		if (or.isInitialized())
 		{
-			or.poll(leftView.getLastFrameDuration() / 1000f);
-			oculusTransform.setEuler(new Vector3d(or.getPitch(), or.getYaw(), or.getRoll()));
-			oculusGroup.setTransform(oculusTransform);
-			//System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
+			or.poll((leftView.getLastFrameDuration() / 1000f) * lastFramePortionToPredict);
+			newTrans.set(or.getPitch(), or.getYaw(), or.getRoll());
+			if (!newTrans.epsilonEquals(lastTrans, 0.0001f))
+			{
+				oculusTransform.setEuler(newTrans);
+				oculusGroup.setTransform(oculusTransform);
+				//System.out.println("Yaw: " + or.getYaw() + " Pitch: " + or.getPitch() + " Roll: " + or.getRoll());
+				lastTrans.set(newTrans);
+			}
 		}
 	}
 
