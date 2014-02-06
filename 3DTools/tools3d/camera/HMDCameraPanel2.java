@@ -12,6 +12,7 @@ import javax.media.j3d.PhysicalEnvironment;
 import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 
+import de.fruitfly.ovr.OculusRift;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.universe.VisualPhysicalUniverse;
 
@@ -19,7 +20,7 @@ public class HMDCameraPanel2 extends CameraPanel
 {
 	private Canvas3D2D canvas3D2Db;
 
-	private OcculusRift occ = new OcculusRift();
+	private OculusRift occ = new OculusRift();
 
 	public HMDCameraPanel2(VisualPhysicalUniverse universe)
 	{
@@ -73,9 +74,9 @@ public class HMDCameraPanel2 extends CameraPanel
 		view.setUserHeadToVworldEnable(true);
 		view.addCanvas3D(canvas3D2Db);
 		PhysicalEnvironment pe = view.getPhysicalEnvironment();
-		occ.initialize();
-		pe.addInputDevice(occ);
-		pe.setSensor(0, occ.getSensor(0)); // added at 0 which is head tracking index, so tracking availible = true
+		occ.init();
+	//	pe.addInputDevice(occ);
+	//	pe.setSensor(0, occ.getSensor(0)); // added at 0 which is head tracking index, so tracking availible = true
 		//pe.setCoexistenceCenterInPworldPolicy(View.NOMINAL_HEAD);
 		//pe.setCoexistenceToTrackerBase(t);
 		//CanvasViewCache computeView() vworldToTrackerBase is fulled with maness

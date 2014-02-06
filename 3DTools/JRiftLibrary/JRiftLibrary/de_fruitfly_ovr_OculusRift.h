@@ -38,6 +38,21 @@ JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift__1reset
 JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift_destroySubsystem
   (JNIEnv *, jobject);
 
+
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getDisplayDeviceName(JNIEnv *env, jobject);
+
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getProductName(JNIEnv *env, jobject);
+
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getManufacturer(JNIEnv *env, jobject);
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getVersion(JNIEnv *, jobject);
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getDesktopX(JNIEnv *, jobject);
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getDesktopY(JNIEnv *, jobject);
+
+JNIEXPORT jlong JNICALL Java_de_fruitfly_ovr_OculusRift__1getDisplayId(JNIEnv *, jobject);
+
 /*
  * Class:     de_fruitfly_ovr_OculusRift
  * Method:    _getHResolution

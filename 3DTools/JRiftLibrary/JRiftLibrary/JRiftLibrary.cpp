@@ -61,6 +61,9 @@ JNIEXPORT jboolean JNICALL Java_de_fruitfly_ovr_OculusRift_initSubsystem(JNIEnv 
 		printf(" ProductName: %s\n", Info.ProductName);
 		printf(" Manufacturer: %s\n", Info.Manufacturer);
 		printf(" Version: %i\n", Info.Version); // seems to be an int now with 0.2.2
+		printf(" DesktopX: %i\n", Info.DesktopX);
+		printf(" DesktopY: %i\n", Info.DesktopY);	
+		printf(" DisplayId: %i\n", Info.DisplayId);
 		printf(" HResolution: %i\n", Info.HResolution);
 		printf(" VResolution: %i\n", Info.VResolution);
 		printf(" HScreenSize: %f\n", Info.HScreenSize);
@@ -72,6 +75,9 @@ JNIEXPORT jboolean JNICALL Java_de_fruitfly_ovr_OculusRift_initSubsystem(JNIEnv 
 		printf(" DistortionK[0]: %f\n", Info.DistortionK[0]);
 		printf(" DistortionK[1]: %f\n", Info.DistortionK[1]);
 		printf(" DistortionK[2]: %f\n", Info.DistortionK[2]);
+
+		
+
 	}
 	//flush the output to force writing
 	fflush(stdout);
@@ -110,7 +116,41 @@ JNIEXPORT void JNICALL Java_de_fruitfly_ovr_OculusRift__1reset(JNIEnv *, jobject
 	pFusionResult->Reset();	
 }
 
- 
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getDisplayDeviceName(JNIEnv *env, jobject) {
+	if (!Initialized) return env->NewStringUTF(""); 
+	return env->NewStringUTF(Info.DisplayDeviceName);
+
+}
+
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getProductName(JNIEnv *env, jobject) {
+	if (!Initialized) return env->NewStringUTF(""); 
+	return env->NewStringUTF(Info.ProductName);
+}
+
+JNIEXPORT jstring JNICALL Java_de_fruitfly_ovr_OculusRift__1getManufacturer(JNIEnv *env, jobject) {
+	if (!Initialized) return env->NewStringUTF(""); 
+	return env->NewStringUTF(Info.Manufacturer);
+}
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getVersion(JNIEnv *, jobject) {
+	if (!Initialized) return 0;
+	return Info.Version;
+}
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getDesktopX(JNIEnv *, jobject) {
+	if (!Initialized) return 0;
+	return Info.DesktopX;
+}
+
+JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getDesktopY(JNIEnv *, jobject) {
+	if (!Initialized) return 0;
+	return Info.DesktopY;
+}
+
+JNIEXPORT jlong JNICALL Java_de_fruitfly_ovr_OculusRift__1getDisplayId(JNIEnv *, jobject) {
+	if (!Initialized) return 0;
+	return Info.DisplayId;
+}
 
 JNIEXPORT jint JNICALL Java_de_fruitfly_ovr_OculusRift__1getHResolution(JNIEnv *, jobject) {
 	if (!Initialized) return 0;

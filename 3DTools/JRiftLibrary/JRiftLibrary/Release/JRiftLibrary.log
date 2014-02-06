@@ -1,7 +1,7 @@
-﻿Build started 19/01/2014 12:47:08 a.m..
+﻿Build started 7/02/2014 1:53:49 a.m..
      1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Release\JRiftLibrary.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Release\JRiftLibrary.unsuccessfulbuild".
        ClCompile:
          C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\temp\ovr_sdk_win_0.2.5c\OculusSDK\LibOVR\Include /I"C:\Program Files\Java\jdk1.6.0_45\include" /I"C:\Program Files\Java\jdk1.6.0_45\include\win32" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D JRIFTLIBRARY_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt JRiftLibrary.cpp
          JRiftLibrary.cpp
@@ -20,4 +20,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:01.25
+Time Elapsed 00:00:01.52

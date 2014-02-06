@@ -19,6 +19,13 @@ public class OculusRift implements IOculusRift
 			if (initSubsystem())
 			{
 				initialized = true;
+				hmdInfo.DisplayDeviceName = _getDisplayDeviceName();
+				hmdInfo.ProductName = _getProductName();
+				hmdInfo.Manufacturer = _getManufacturer();
+				hmdInfo.Version = _getVersion();
+				hmdInfo.DesktopX = _getDesktopX();
+				hmdInfo.DesktopY = _getDesktopY();
+				hmdInfo.DisplayId = _getDisplayId();
 				hmdInfo.HResolution = _getHResolution();
 				hmdInfo.VResolution = _getVResolution();
 				hmdInfo.HScreenSize = _getHScreenSize();
@@ -100,6 +107,20 @@ public class OculusRift implements IOculusRift
 	private native void _reset();
 
 	private native void destroySubsystem();
+
+	private native String _getDisplayDeviceName();
+
+	private native String _getProductName();
+
+	private native String _getManufacturer();
+
+	private native int _getVersion();
+
+	private native int _getDesktopX();
+
+	private native int _getDesktopY();
+
+	private native long _getDisplayId();
 
 	private native int _getHResolution();
 

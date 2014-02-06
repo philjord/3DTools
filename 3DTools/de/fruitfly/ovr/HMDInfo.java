@@ -57,21 +57,29 @@ public class HMDInfo
 	public float[] DistortionK = new float[]
 	{ 1.0f, 0.22f, 0.24f, 0.0f };
 
-	public int DesktopX; // Not queried from OVR AP yet
+	public int DesktopX = -1;
 
-	public int DesktopY; // Not queried from OVR API yet
+	public int DesktopY = -1;
 
-	public String DisplayDeviceName = "Oculus Rift"; // Not queried from OVR API yet
+	public String DisplayDeviceName = "Unknown";
 
-	public long DisplayId = 0; // Not queried from OVR API yet
+	public long DisplayId = -1;
+
+	public int Version = -1;
+
+	public String Manufacturer = "Unknown";
+
+	public String ProductName = "Unknown";
 
 	@Override
 	public String toString()
 	{
-		return "HMDInfo [HResolution=" + HResolution + ", VResolution=" + VResolution + ", HScreenSize=" + HScreenSize + ", VScreenSize="
-				+ VScreenSize + ", VScreenCenter=" + VScreenCenter + ", EyeToScreenDistance=" + EyeToScreenDistance
-				+ ", LensSeparationDistance=" + LensSeparationDistance + ", InterpupillaryDistance=" + InterpupillaryDistance
-				+ ", DistortionK=" + Arrays.toString(DistortionK) + ", DesktopX=" + DesktopX + ", DesktopY=" + DesktopY
+		return "HMDInfo [ HResolution=" + HResolution + ", VResolution=" + VResolution //
+				+ ", HScreenSize=" + HScreenSize + ", VScreenSize=" + VScreenSize //
+				+ ", VScreenCenter=" + VScreenCenter + ", EyeToScreenDistance=" + EyeToScreenDistance //
+				+ ", LensSeparationDistance=" + LensSeparationDistance + ", InterpupillaryDistance=" + InterpupillaryDistance //
+				+ ", DistortionK=" + Arrays.toString(DistortionK)//
+				+ ", DesktopX=" + DesktopX + ", DesktopY=" + DesktopY//
 				+ ", DisplayDeviceName=" + DisplayDeviceName + ", DisplayId=" + DisplayId + "]";
 	}
 }

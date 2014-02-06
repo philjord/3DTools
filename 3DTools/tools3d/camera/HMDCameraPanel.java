@@ -102,7 +102,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		// mouse over, appears to point off to the right maybe?
 		// turn on shaders again
 		// post process on FBO, joglPipeline postProcessFrameBuffer
-		// add interacting dahsboard hud shape above my head in a no oculus position
+		// add interacting dashboard hud shape above my head in a no oculus position
 
 	}
 

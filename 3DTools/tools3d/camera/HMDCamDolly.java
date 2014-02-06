@@ -1,11 +1,16 @@
 package tools3d.camera;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Window;
+
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
 import javax.media.j3d.ViewPlatform;
+import javax.swing.SwingUtilities;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
@@ -175,6 +180,23 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 	{
 		or.reset();
 		setIPD(or.getHMDInfo().InterpupillaryDistance * 0.5f);
+	}
+
+	public void sendToRift()
+	{
+		//TODO:...
+		System.out.println("looking for " + or.getHMDInfo().DisplayDeviceName);
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		for (GraphicsDevice gd : ge.getScreenDevices())
+		{
+			System.out.println("I've got " + gd.getIDstring());
+			System.out.println(" " + gd.toString());
+		}
+
+		//using desktop location instead
+
+		Window w = SwingUtilities.getWindowAncestor(leftView.getCanvas3D(0));
+		w.setLocation(or.getHMDInfo().DesktopX, or.getHMDInfo().DesktopY);
 	}
 
 	@Override
