@@ -13,6 +13,8 @@ import javax.media.j3d.View;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 
+import tools3d.camera.LocatableViewPlatform;
+
 //OH MY GOD! switches pointing to links don't refresh properly!
 // I also notice that shared group appear to be massively inefficient
 //allows a transition zone of fadness sent out to 2 nodes attached
@@ -101,7 +103,11 @@ public class BetterDistanceLOD extends Behavior
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);
 		// transform the points to the Billboard's space
-		if (v.getCompatibilityModeEnable())
+		if ( v.getViewPlatform() instanceof LocatableViewPlatform)
+		{
+			((LocatableViewPlatform) v.getViewPlatform()).getShortCutGroup().getTransform(xform);
+		}
+		else if (v.getCompatibilityModeEnable())
 		{
 			v.getViewPlatform().getLocalToVworld(xform);
 		}
@@ -187,7 +193,7 @@ public class BetterDistanceLOD extends Behavior
 		else
 		{
 			float fade = (float) (distDiff / fadeRange);
-		//	System.out.println("fade " + fade);
+			//	System.out.println("fade " + fade);
 			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
 			{
 				((Fadable) roots.get(newIndex)).fade(1f - fade);
@@ -212,6 +218,9 @@ public class BetterDistanceLOD extends Behavior
 			wakeupOn(wakeupFrame5);
 		else
 			wakeupOn(wakeupFrame10);
+
+		//FIXME: debug
+		//wakeupOn(new WakeupOnElapsedFrames(100, true)); 
 	}
 
 	private void ensureAdded(int idx, boolean removeFade)

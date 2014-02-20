@@ -33,9 +33,9 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 
 	private TransformGroup hudTransformGroup = new TransformGroup();
 
-	private ViewPlatform leftViewPlatform = new ViewPlatform();
+	private LocatableViewPlatform leftViewPlatform = new LocatableViewPlatform();
 
-	private ViewPlatform rightViewPlatform = new ViewPlatform();
+	private LocatableViewPlatform rightViewPlatform = new LocatableViewPlatform();
 
 	private Transform3D leftEyeTransform = new Transform3D();
 
@@ -76,7 +76,12 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 		rightViewPlatform.setActivationRadius(62f);
 
 		addChild(bodyNeckGroup);
+	
 		bodyNeckGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
+		
+		bodyNeckGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
+		leftViewPlatform.setShortCutGroup(bodyNeckGroup);
+		rightViewPlatform.setShortCutGroup(bodyNeckGroup);
 
 		bodyNeckGroup.addChild(oculusGroup);
 		oculusGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -162,9 +167,16 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 	@Override
 	public void process(long frameDuration)
 	{
+		//System.out.println("leftView.getLastFrameDuration() " +leftView.getLastFrameDuration());
+
+		//NOTE frameDuration appears to be crap
+		// leftView.getLastFrameDuration() is a small number based on GL calls only
+		// we use about as much again in general java code per frame  , and we are doing 2 renders per behavior
+		// hence the whole thing x4
 		if (or.isInitialized())
 		{
-			or.poll((leftView.getLastFrameDuration() / 1000f) * lastFramePortionToPredict);
+			or.poll(((leftView.getLastFrameDuration() / 1000f) * lastFramePortionToPredict) * 4);
+			//-System.out.println("poll with " + (((leftView.getLastFrameDuration() / 1000f) * lastFramePortionToPredict) * 4));
 			newTrans.set(or.getPitch(), or.getYaw(), or.getRoll());
 			if (!newTrans.epsilonEquals(lastTrans, 0.0001f))
 			{
@@ -181,9 +193,18 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 		or.reset();
 		setIPD(or.getHMDInfo().InterpupillaryDistance * 0.5f);
 	}
-
+	
+	/**
+	Press F9 or F11 to switch rendering to the Oculus Rift.
+F9 - Switches to hardware full-screen mode. This will give best possible latency, but may blink
+monitors as the operating system changes display settings. If no image shows up in the Rift, then press
+F9 again to cycle to the next monitor.
+F11 - Instantly switches the rendering window to the Rift portion of the desktop. This mode has higher
+latency and no vsync, but is convenient for development.
+Note that the Linux version of OculusWorldDemo currently supports
+	*/
 	public void sendToRift()
-	{
+	{ 
 		//TODO:...
 		System.out.println("looking for " + or.getHMDInfo().DisplayDeviceName);
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();

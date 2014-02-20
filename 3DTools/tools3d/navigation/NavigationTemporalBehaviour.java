@@ -45,9 +45,14 @@ public class NavigationTemporalBehaviour extends Behavior
 	}
 
 	private void process()
-	{
+	{		 
 		long timeNow = System.nanoTime();
 		long frameDuration = (timeNow - previousFrameEndTime) / 1000000;
+		//TODO: this appears to give 2ms durations some times
+	//	System.out.println("timeNow " +timeNow);
+	//	System.out.println("previousFrameEndTime " +previousFrameEndTime);
+	//	System.out.println("frameDuration " +frameDuration);
+		
 		for (NavigationProcessorInterface np : navigationProcessors)
 		{
 			if (np.isActive())

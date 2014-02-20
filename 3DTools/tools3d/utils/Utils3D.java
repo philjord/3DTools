@@ -128,20 +128,6 @@ public class Utils3D
 		return angle;
 	}
 
-	public static TransformGroup makeBillBoard(Node bg)
-	{
-		TransformGroup billTrans = new TransformGroup();
-		billTrans.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		billTrans.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
-		billTrans.addChild(bg);
-
-		Billboard billBehave = new Billboard(billTrans);
-		billBehave.setSchedulingBounds(Utils3D.defaultBounds);
-		billBehave.setEnable(true);
-		billTrans.addChild(billBehave);
-		return billTrans;
-	}
-
 	public static String outputTransform(Transform3D t2)
 	{
 		if (t2 != null)

@@ -76,6 +76,11 @@ public abstract class VaryingLODBehaviour extends Behavior
 	{ "unchecked", "rawtypes" })
 	public void processStimulus(Enumeration criteria)
 	{
+		
+		 
+			
+		 
+		
 		process();
 
 		if (node == null || dists == null || !node.isLive() || this.getView() == null)
@@ -130,6 +135,8 @@ public abstract class VaryingLODBehaviour extends Behavior
 			wakeupOn(wakeupFrame20);
 		}
 
+		//FIXME: debug
+		//wakeupOn(new WakeupOnElapsedFrames(100, true)); 
 	}
 
 	protected abstract void process();

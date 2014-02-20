@@ -1,12 +1,22 @@
 package tools3d.mixed3d2d;
 
+import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.Rectangle;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
+import javax.media.j3d.ImageComponent;
+import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.J3DGraphics2D;
+import javax.media.j3d.Raster;
 import javax.media.j3d.Shape3D;
+import javax.vecmath.Point3f;
+import javax.vecmath.Tuple2f;
+import javax.vecmath.Vector2f;
 
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
@@ -103,19 +113,14 @@ public class Canvas3D2D extends Canvas3D
 		}
 	}
 
-	@Override
-	public void preRender()
-	{
-
-	}
-
 	// For reseting the texture binding in the pipeline (trust me)
 	private static Shape3D trivialShape = new Cube(0.01f);
 
-	public float distortionOffset = 0.25f;
-
+	@Override
 	public void postRender()
 	{
+		applyPostEffect();
+
 		//	J3dUtil.postProcessFrameBuffer(distortionOffset, this);
 
 		// we only draw if the hud is not in the scene live or any panel3d exists
@@ -165,18 +170,130 @@ public class Canvas3D2D extends Canvas3D
 		return panel3ds;
 	}
 
-	@Override
-	public void renderField(int fieldDesc)
-	{
-		//TODO: right and left barrel
-		//HOWEVER! poosibly now is too late to set left eye up?
-		// but the transparent pass is after so the whole thing may be pointless
-		//http://www.conitec.net/shaders/shader_work5.htm
-		//http://forum.jogamp.org/Java3D-stereo-td4029914.html 
-		//also GraphicsContext3D does cool stuff
+	public static boolean applyPostEffect = false;
 
-		//Pipeline.getPipeline().readRaster
-		//https://github.com/ixd-hof/Processing/tree/master/Examples/Oculus%20Rift/OculusRift_Basic/data
+	public float distortionOffset = 0.25f;
+
+	private BufferedImage img = null;
+
+	private BufferedImage img2 = null;
+
+	private BufferedImage img3 = null;
+
+	private Raster ras = null;
+
+	private AffineTransform tx = null;
+
+	public void applyPostEffect()
+	{
+		if (applyPostEffect)
+		{
+			if (img == null)
+			{
+
+				Rectangle rect = this.getBounds();				
+				img = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
+				img2 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
+				img3 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
+
+				tx = new AffineTransform();
+				tx.setToScale(1, -1);
+				tx.translate(0, -img.getHeight(null));
+
+				//((Graphics2D) img2.getGraphics()).setTransform(af);
+
+				ImageComponent2D comp = new ImageComponent2D(ImageComponent.FORMAT_RGB, img, true, true);
+
+				// The raster components need all be set!
+				ras = new Raster(new Point3f(-1.0f, -1.0f, -1.0f), Raster.RASTER_COLOR, 0, 0, rect.width, rect.height, comp, null);
+			}
+
+			getGraphicsContext3D().readRaster(ras);
+			((Graphics2D) img2.getGraphics()).drawImage(img, tx, null);
+
+			float LensOffset = 0.1453f;//see docs based on physicals sizes
+			//TODO: chekc if left/right are swapped somehow?
+			if (isLeft)
+			{
+				LensCenterLocation.set(-LensOffset, 0.0f);
+			}
+			else
+			{
+				LensCenterLocation.set(+LensOffset, 0.0f);
+			}
+
+			Vector2f texIn = new Vector2f();
+			for (int x = 0; x < img2.getWidth(); x++)
+			{
+				for (int y = 0; y < img2.getHeight(); y++)
+				{
+					texIn.set((float) x / (float) img2.getWidth(), (float) y / (float) img2.getHeight());
+					Tuple2f tc = HmdWarp(texIn);
+					if (x == 0 && y == 0&& false)
+					{
+						System.out.println("x " + ((float) x / (float) img2.getWidth()) + " y " + ((float) y / (float) img2.getHeight()));
+						System.out.println(" tc.x " + tc.x + " tc.y " + tc.y);
+					}
+					tc.x *= img2.getWidth();
+					tc.y *= img2.getHeight();
+					if ((int) tc.x >= 0 && (int) tc.x < img3.getWidth() && (int) tc.y >= 0 && (int) tc.y < img3.getHeight())
+					{
+						img3.setRGB(x, y, img2.getRGB((int) tc.x, (int) tc.y));
+					}
+
+				}
+			}
+
+			getGraphics2D().drawAndFlushImage(img3, 0, 0, null);
+		}
 	}
+
+	public boolean isLeft = true;
+
+	private Vector2f theta = new Vector2f();
+
+	private Tuple2f HmdWarp(Tuple2f texIn)
+	{
+		theta.set(texIn);// range 0 to 1
+		
+		theta.x -= 0.5;
+		theta.y -= 0.5;//range now -0.5 to 0.5
+
+		theta.scale(2);//range now -1 to 1
+		
+		theta.y /= 1.25; // y over size remove
+		
+		theta.add(LensCenterLocation); // add lens offset
+
+		float rSq = (theta.x * theta.x) + (theta.y * theta.y);
+		float distort = K0 + //
+				(K1 * rSq) + //
+				(K2 * rSq * rSq);//
+		//+	 (K3 * rSq * rSq * rSq);		
+		theta.scale(distort);
+		theta.sub(LensCenterLocation);//remove lens offset
+		
+		theta.y *= 1.25; // y over size remove
+		
+		theta.scale(0.5f);//range now -0.5 to 0.5
+
+		theta.x += 0.5;
+		theta.y += 0.5;//range 0 to 1
+		
+
+		//now scale back up to full screen???
+
+		return theta;
+	}
+
+	public static float K0 = 1.0f;
+
+	public static float K1 = 0.22f;
+
+	public static float K2 = 0.24f;
+
+	public static float K3 = 0.0f;
+
+	private Tuple2f LensCenterLocation = new Vector2f(0f, 0f);
 
 }

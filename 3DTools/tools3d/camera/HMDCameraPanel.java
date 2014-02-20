@@ -82,6 +82,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 		rightCanvas3D2D = new Canvas3D2D(config);
 		rightCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
+		rightCanvas3D2D.isLeft=false;
 
 		leftView = createView(leftCanvas3D2D);
 		setProjectionMatrix(leftView, true);
@@ -209,6 +210,10 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		return isRendering;
 	}
 
+	/**
+	 * Note only left canvas is handed back 
+	 * @see tools3d.camera.ICameraPanel#getCanvas3D2D()
+	 */
 	@Override
 	public Canvas3D2D getCanvas3D2D()
 	{
@@ -278,4 +283,5 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setLeftProjection(left ? projLeft : projRight);
 	}
 
+	
 }
