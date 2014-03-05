@@ -3,7 +3,6 @@ package tools3d.utils;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Billboard;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Material;
@@ -76,6 +75,7 @@ public class Utils3D
 		Vector3f returnVector = new Vector3f(trans);
 		node.getLocalToVworld(t);
 		t.get(q);
+		Utils3D.safeGetQuat(t, q);
 		q.conjugate();
 		t.setZero();
 		t.set(q);
@@ -168,5 +168,65 @@ public class Utils3D
 		{
 			return "null";
 		}
+	}
+	
+	/**
+	 * This exists because if teh ww figure below is actually slightly negative(due to bad interpolated quats)
+	 * Then teh output quat is just NaNs
+	 * @param t1
+	 * @param q1
+	 */
+	public static void safeGetQuat(Transform3D t1, Quat4f q1)
+	{
+
+		float[] mat = new float[16];
+		t1.get(mat);
+		float[] rot = new float[9];
+		rot[0] = mat[0];
+		rot[1] = mat[1];
+		rot[2] = mat[2];
+		rot[3] = mat[4];
+		rot[4] = mat[5];
+		rot[5] = mat[6];
+		rot[6] = mat[8];
+		rot[7] = mat[9];
+		rot[8] = mat[10];
+
+		double ww = 0.25 * (1.0 + rot[0] + rot[4] + rot[8]);
+
+		// no negatives or the sqrt below starts baking Nans
+		ww = (ww < 0 ? 0 : ww);
+		if (!(ww < 1.0e-10))
+		{
+			q1.w = (float) Math.sqrt(ww);
+			ww = 0.25 / q1.w;
+			q1.x = (float) ((rot[7] - rot[5]) * ww);
+			q1.y = (float) ((rot[2] - rot[6]) * ww);
+			q1.z = (float) ((rot[3] - rot[1]) * ww);
+			return;
+		}
+
+		q1.w = 0.0f;
+		ww = -0.5 * (rot[4] + rot[8]);
+		if (!((ww < 0 ? -ww : ww) < 1.0e-10))
+		{
+			q1.x = (float) Math.sqrt(ww);
+			ww = 0.5 / q1.x;
+			q1.y = (float) (rot[3] * ww);
+			q1.z = (float) (rot[6] * ww);
+			return;
+		}
+
+		q1.x = 0.0f;
+		ww = 0.5 * (1.0 - rot[8]);
+		if (!((ww < 0 ? -ww : ww) < 1.0e-10))
+		{
+			q1.y = (float) Math.sqrt(ww);
+			q1.z = (float) (rot[7] / (2.0 * q1.y));
+			return;
+		}
+
+		q1.y = 0.0f;
+		q1.z = 1.0f;
 	}
 }

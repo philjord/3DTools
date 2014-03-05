@@ -6,6 +6,7 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import tools3d.navigation.rules.NavigationRotationRule;
+import tools3d.utils.Utils3D;
 import tools3d.utils.YawPitch;
 
 /**
@@ -100,7 +101,7 @@ public class NavigationProcessorRotation implements NavigationProcessorInterface
 			if (timeElapsedSinceLastProcess < 1000)
 			{
 				// get the rotation out
-				avatarLocation.getTransform().get(avatarRot);
+				Utils3D.safeGetQuat(avatarLocation.getTransform(), avatarRot);
 
 				// get the translation out ...
 				avatarLocation.getTransform().get(avatarTranslation);

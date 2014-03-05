@@ -19,6 +19,8 @@ import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4d;
 import javax.vecmath.Vector4f;
 
+import tools3d.utils.Utils3D;
+
 /**
  * @author Administrator
  *
@@ -252,7 +254,7 @@ public class EasyTransformGroup extends TransformGroup
 
 	public void get(Quat4f q1)
 	{
-		transform.get(q1);
+		Utils3D.safeGetQuat(transform, q1);
 	}
 
 	public double get(Quat4f q1, Vector3d t1)
