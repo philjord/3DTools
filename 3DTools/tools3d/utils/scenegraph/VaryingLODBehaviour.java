@@ -18,18 +18,17 @@ import javax.vecmath.Point3d;
  */
 public abstract class VaryingLODBehaviour extends Behavior
 {
-
 	// Wakeup condition for node
-	private WakeupOnElapsedFrames wakeupFrameFast = new WakeupOnElapsedFrames(1, true);
+	private WakeupOnElapsedFrames wakeupFrameFast;
 
-	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(2, true);
+	private WakeupOnElapsedFrames wakeupFrame2;
 
-	private WakeupOnElapsedFrames wakeupFrame8 = new WakeupOnElapsedFrames(8, true);
+	private WakeupOnElapsedFrames wakeupFrame8;
 
-	private WakeupOnElapsedFrames wakeupFrame20 = new WakeupOnElapsedFrames(20, true);
+	private WakeupOnElapsedFrames wakeupFrame20;
 
 	// Node to operate on.
-	private Node node = null;
+	protected Node node = null;
 
 	// deburners
 	private Point3d viewPosition = new Point3d();
@@ -43,12 +42,18 @@ public abstract class VaryingLODBehaviour extends Behavior
 	/**
 	 * if node is null this will be used for distance check
 	 * Dists must be 3 floats! 40,120,280 is fine
+	 * Defaults to passive=true
 	 *TODO: like knots add frames and dist arrays 
 	 * @param node
 	 */
 	public VaryingLODBehaviour(Node node, float[] dists)
 	{
+		this(node, dists, true);
 
+	}
+
+	public VaryingLODBehaviour(Node node, float[] dists, boolean passive)
+	{
 		this.node = node;
 		this.dists = dists;
 
@@ -56,6 +61,10 @@ public abstract class VaryingLODBehaviour extends Behavior
 			this.node = this;
 
 		this.node.setCapability(Node.ALLOW_LOCAL_TO_VWORLD_READ);
+		wakeupFrameFast = new WakeupOnElapsedFrames(1, passive);
+		wakeupFrame2 = new WakeupOnElapsedFrames(2, passive);
+		wakeupFrame8 = new WakeupOnElapsedFrames(8, passive);
+		wakeupFrame20 = new WakeupOnElapsedFrames(20, passive);
 	}
 
 	/**
@@ -76,11 +85,6 @@ public abstract class VaryingLODBehaviour extends Behavior
 	{ "unchecked", "rawtypes" })
 	public void processStimulus(Enumeration criteria)
 	{
-		
-		 
-			
-		 
-		
 		process();
 
 		if (node == null || dists == null || !node.isLive() || this.getView() == null)
