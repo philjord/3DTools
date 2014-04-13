@@ -6530,6 +6530,7 @@ class JoglPipeline extends Pipeline
 		{
 			// determined in 'getBestConfiguration'
 			GraphicsConfigInfo gcInf0 = Canvas3D.graphicsConfigTable.get(cv.graphicsConfiguration);
+			
 			AWTGraphicsConfiguration awtConfig = (AWTGraphicsConfiguration) gcInf0.getPrivateData();
 
 			// JAWTWindow
@@ -6546,6 +6547,7 @@ class JoglPipeline extends Pipeline
 			}
 
 			cv.drawable = new JoglDrawable(glDrawable, nativeWindow);
+
 		}
 
 		// assuming that this only gets called after addNotify has been called
@@ -6587,6 +6589,14 @@ class JoglPipeline extends Pipeline
 		GL2 gl = glContext.getGL().getGL2();
 
 		JoglContext ctx = new JoglContext(glContext);
+
+		//PJPJPJPJPJ
+		//I can't find a route to hand this back so I'm just printing it out here
+		IntBuffer buff = IntBuffer.allocate(1);
+		gl.glGetIntegerv(GL2.GL_DEPTH_BITS, buff);
+		if (buff.get(0) < Canvas3D.graphicsConfigTable.get(cv.graphicsConfiguration).getGraphicsConfigTemplate3D().getDepthSize())
+			System.out.println("Depth buffer: " + buff.get(0));  
+		//PJPJPJPJ
 
 		try
 		{
@@ -8680,7 +8690,6 @@ class JoglPipeline extends Pipeline
 		}
 
 		// Minimum values
-
 		caps.setDepthBits(gct.getDepthSize());
 		caps.setStencilBits(gct.getStencilSize());
 
@@ -8777,7 +8786,7 @@ class JoglPipeline extends Pipeline
 
 		//PJPJPJPJPJ
 		// graphics configs never return setero capability so say yes if asked for 
-		// nOte if we say required the graph config disables AA for some reason
+		// note if we say required the graph config disables AA for some reason
 		chosenCaps.setStereo((gct.getStereo() == GraphicsConfigTemplate.PREFERRED));
 
 		//System.out.println("getBestConfiguration chosenCaps = " + chosenCaps);

@@ -10,8 +10,8 @@ import com.sun.j3d.utils.universe.Viewer;
 //TODO: Camera really doesn't need to extend the utility class viewer
 public class Camera extends Viewer
 {
-	// front and back clips, should be ratio of no more than 3000 
-	//note the below  is at 50000!
+	// front and back clips, for 16bit should be ratio of no more than 3000:1 
+	// for 24 can be anything up to 50000:1
 	public static float FRONT_CLIP = 0.1f;
 
 	public static float BACK_CLIP = 5000f;
@@ -29,8 +29,8 @@ public class Camera extends Viewer
 
 		// set up the view
 		getView().setFrontClipPolicy(View.VIRTUAL_EYE);
-		getView().setBackClipDistance(BACK_CLIP);
 		getView().setFrontClipDistance(FRONT_CLIP);
+		getView().setBackClipDistance(BACK_CLIP);
 		getView().setMinimumFrameCycleTime(15);// max 66fps
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
@@ -55,6 +55,18 @@ public class Camera extends Viewer
 				getPhysicalEnvironment().setAudioDevice(null);
 			}
 		}
+
+	}
+
+	/**
+	 * Intel and mobile cards sometime provide 16bit zbuffers, so the ratio of front to back
+	 * in those case needs to be 1:1000, 24 bit can probably survive 1:100000
+	 * TODO: detect and report the zbuffer depth
+	 */
+	public void setClips(float front, float back)
+	{
+		getView().setFrontClipDistance(front);
+		getView().setBackClipDistance(back);
 
 	}
 

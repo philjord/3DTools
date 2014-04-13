@@ -51,6 +51,7 @@ public class CameraPanel extends JPanel implements ICameraPanel
 		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
 		//template.setStereo(GraphicsConfigTemplate.PREFERRED);
 
+		template.setDepthSize(24);
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
 
 		canvas3D2D = new Canvas3D2D(config);
@@ -191,5 +192,10 @@ public class CameraPanel extends JPanel implements ICameraPanel
 	public IDolly getDolly()
 	{
 		return currentDolly;
+	}
+
+	public Camera getCamera()
+	{
+		return camera;
 	}
 }
