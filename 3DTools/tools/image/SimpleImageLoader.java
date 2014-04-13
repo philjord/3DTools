@@ -105,7 +105,7 @@ public class SimpleImageLoader
 
 		if (except != null)
 		{
-			System.out.println("IOException during load image: " + imageName + " " + except.getMessage());
+			System.out.println("IOException during load image: " + imageName + " " + except + " " + except.getStackTrace()[0]);
 		}
 		else
 		{

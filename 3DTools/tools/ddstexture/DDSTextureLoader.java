@@ -67,7 +67,7 @@ public class DDSTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e.getMessage());
+			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 	}
@@ -155,7 +155,7 @@ public class DDSTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e.getMessage());
+			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 
