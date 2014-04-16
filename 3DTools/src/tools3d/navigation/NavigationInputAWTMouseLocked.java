@@ -42,7 +42,9 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 
 	boolean isRecentering = false;
 
-	private boolean hasFocus = false;
+	private boolean hasKeyFocus = false;
+
+	private boolean mouseIsOver = false;
 
 	private WeakListenerList<NavigationRotationStateListener> navigationRotationStateListeners = new WeakListenerList<NavigationRotationStateListener>();
 
@@ -97,21 +99,21 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 			recenterMouse();
 			canvas.setCursor(invisibleCursor);
 
-			hasFocus = true;
+			hasKeyFocus = true;
 			canvas.addFocusListener(this);
 		}
 	}
 
 	@Override
 	public void focusGained(FocusEvent e)
-	{
-		hasFocus = true;
+	{	
+		hasKeyFocus = true;
 	}
 
 	@Override
 	public void focusLost(FocusEvent e)
 	{
-		hasFocus = false;
+		hasKeyFocus = false;
 	}
 
 	private void recenterMouse()
@@ -122,14 +124,13 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 			centerLocation.x = canvas.getWidth() / 2;
 			centerLocation.y = canvas.getHeight() / 2;
 			SwingUtilities.convertPointToScreen(centerLocation, canvas);
-			
-			
+
 			previousMouseLocation.x = centerLocation.x;
 			previousMouseLocation.y = centerLocation.y;
 			SwingUtilities.convertPointFromScreen(previousMouseLocation, canvas);
-			
+
 			// only send a camera move if we are focused
-			if (hasFocus)
+			if (hasKeyFocus)
 			{
 				isRecentering = true;
 
@@ -153,7 +154,7 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 
 	public void mouseMoved(MouseEvent e)
 	{
-		if (hasFocus)
+		if (hasKeyFocus && mouseIsOver)
 		{
 			// this event is from the re-centering the mouse - ignore it
 			if (isRecentering)
@@ -212,7 +213,14 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	@Override
 	public void mouseExited(MouseEvent evt)
 	{
-		recenterMouse();
+		if (hasKeyFocus)
+		{
+			recenterMouse();
+		}
+		else
+		{
+			mouseIsOver = false;
+		}
 	}
 
 	@Override
@@ -235,6 +243,7 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	@Override
 	public void mouseEntered(MouseEvent evt)
 	{
+		mouseIsOver = true;
 	}
 
 	public void mouseClicked(MouseEvent evt)
