@@ -125,29 +125,29 @@ public class GraphicsSettings
 		String prefStr = "";
 		if (originalDisplayMode != null)
 		{
-			prefStr = originalDisplayMode.getWidth() + ":" + //
+			prefStr += originalDisplayMode.getWidth() + ":" + //
 					originalDisplayMode.getHeight() + ":" + //
 					originalDisplayMode.getBitDepth() + ":" + //
 					originalDisplayMode.getRefreshRate() + ":";
 		}
 		else
 		{
-			prefStr = "640:480:16:60:";
+			prefStr += "640:480:16:60:";
 		}
 
 		if (desiredDisplayMode != null)
 		{
-			prefStr = desiredDisplayMode.getWidth() + ":" + //
+			prefStr += desiredDisplayMode.getWidth() + ":" + //
 					desiredDisplayMode.getHeight() + ":" + //
 					desiredDisplayMode.getBitDepth() + ":" + //
 					desiredDisplayMode.getRefreshRate() + ":";
 		}
 		else
 		{
-			prefStr = "640:480:16:60:";
+			prefStr += "640:480:16:60:";
 		}
 
-		prefStr = runFullscreen + ":" + //
+		prefStr += runFullscreen + ":" + //
 				aaRequired + ":" + //
 				oculusView + ":" + //
 				anisotropicFilterDegree + ":" + //
