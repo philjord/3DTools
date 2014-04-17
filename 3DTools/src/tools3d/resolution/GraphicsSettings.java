@@ -122,15 +122,32 @@ public class GraphicsSettings
 
 	public String toPrefString()
 	{
-		String prefStr = originalDisplayMode.getWidth() + ":" + //
-				originalDisplayMode.getHeight() + ":" + //
-				originalDisplayMode.getBitDepth() + ":" + //
-				originalDisplayMode.getRefreshRate() + ":" + //				
-				desiredDisplayMode.getWidth() + ":" + //
-				desiredDisplayMode.getHeight() + ":" + //
-				desiredDisplayMode.getBitDepth() + ":" + //
-				desiredDisplayMode.getRefreshRate() + ":" + //				
-				runFullscreen + ":" + //
+		String prefStr = "";
+		if (originalDisplayMode != null)
+		{
+			prefStr = originalDisplayMode.getWidth() + ":" + //
+					originalDisplayMode.getHeight() + ":" + //
+					originalDisplayMode.getBitDepth() + ":" + //
+					originalDisplayMode.getRefreshRate() + ":";
+		}
+		else
+		{
+			prefStr = "640:480:16:60:";
+		}
+
+		if (desiredDisplayMode != null)
+		{
+			prefStr = desiredDisplayMode.getWidth() + ":" + //
+					desiredDisplayMode.getHeight() + ":" + //
+					desiredDisplayMode.getBitDepth() + ":" + //
+					desiredDisplayMode.getRefreshRate() + ":";
+		}
+		else
+		{
+			prefStr = "640:480:16:60:";
+		}
+
+		prefStr = runFullscreen + ":" + //
 				aaRequired + ":" + //
 				oculusView + ":" + //
 				anisotropicFilterDegree + ":" + //

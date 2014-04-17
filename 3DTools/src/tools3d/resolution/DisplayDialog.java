@@ -12,6 +12,9 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -88,6 +91,7 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 		okay.setMnemonic(KeyEvent.VK_O);
 		okay.addActionListener(this);
+		this.getRootPane().setDefaultButton(okay);
 
 		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
@@ -173,60 +177,93 @@ public final class DisplayDialog extends JDialog implements ActionListener
 	 */
 	private JPanel buildResolutionPanel(boolean initMinRes)
 	{
+		//TODO: I really should have a size, bitdepth and refresh pickers, maybe a drop down then 2 sliders
 		final DisplayMode[] modes = graphicsDevice.getDisplayModes();
 		final JPanel resolutionPanel = new JPanel(new GridBagLayout());
 		resolutionPanel.setBorder(new CompoundBorder(new TitledBorder(null, "Resolution", TitledBorder.LEFT, TitledBorder.TOP), border5));
 
+		ModeComparator modeComparator = new ModeComparator();
+		//find lowest first
 		DisplayMode lowestMode = null;
+		for (DisplayMode mode : modes)
+		{
+			if (lowestMode == null || modeComparator.compare(mode, lowestMode) == -1)
+			{
+				lowestMode = mode;
+			}
+
+		}
+
+		ArrayList<DisplayMode> modesToOffer = new ArrayList<DisplayMode>();
 
 		for (DisplayMode mode : modes)
 		{
-			if (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400 //
-					&& mode.getRefreshRate() == 60)// might be too restrictive LCD only
+			//add it if it's good enough to bother or it's the super lowest mode of all
+			if (mode == lowestMode || (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400 //
+			&& mode.getRefreshRate() >= 60))
 			{
-				String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth()
-						+ " bpp";
-				// only if it's not there but...
-				if (availableDisplayModes.get(strMode) == null)
+				modesToOffer.add(mode);
+			}
+		}
+
+		Collections.sort(modesToOffer, modeComparator);
+		for (DisplayMode mode : modesToOffer)
+		{
+			String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth() + " bpp";
+			// only if it's not there but...
+			if (availableDisplayModes.get(strMode) == null)
+			{
+				availableDisplayModes.put(strMode, mode);
+				modesDropDown.addItem(strMode);
+				// select it if it's the current, or we want the lowest
+				if ((initMinRes && mode == lowestMode) || (mode.equals(graphicsSettings.getOriginalDisplayMode())))
 				{
-					availableDisplayModes.put(strMode, mode);
-					modesDropDown.addItem(strMode);
-					// select it if it's the current
-					if (initMinRes)
-					{
-						if (lowestMode == null || isLower(lowestMode, mode))
-						{
-							lowestMode = mode;
-						}
-					}
-					else
-					{
-						if (mode.equals(graphicsSettings.getOriginalDisplayMode()))
-						{
-							modesDropDown.setSelectedItem(strMode);
-						}
-					}
+					modesDropDown.setSelectedItem(strMode);
 				}
 			}
 		}
-		if (initMinRes && lowestMode != null)
-		{
-			String strMode = lowestMode.getWidth() + "x" + lowestMode.getHeight() + " " + lowestMode.getRefreshRate() + "Hz "
-					+ lowestMode.getBitDepth() + " bpp";
-			modesDropDown.setSelectedItem(strMode);
-		}
+
 		modesDropDown.setSize(modesDropDown.getPreferredSize().width, 200);
 		resolutionPanel.add(modesDropDown);
 
 		return resolutionPanel;
 	}
 
-	private boolean isLower(DisplayMode newMode, DisplayMode oldMode)
+	private class ModeComparator implements Comparator<DisplayMode>
 	{
-
-		return newMode.getHeight() < oldMode.getHeight() && newMode.getWidth() < oldMode.getWidth()
-				&& newMode.getBitDepth() < oldMode.getBitDepth();
-	}
+		public int compare(DisplayMode newMode, DisplayMode oldMode)
+		{
+			if (newMode.getBitDepth() < oldMode.getBitDepth())
+				return -1;
+			else if (newMode.getBitDepth() > oldMode.getBitDepth())
+				return 1;
+			else
+			{
+				if (newMode.getHeight() < oldMode.getHeight())
+					return -1;
+				else if (newMode.getHeight() > oldMode.getHeight())
+					return 1;
+				else
+				{
+					if (newMode.getWidth() < oldMode.getWidth())
+						return -1;
+					else if (newMode.getWidth() > oldMode.getWidth())
+						return 1;
+					else
+					{
+						if (newMode.getRefreshRate() < oldMode.getRefreshRate())
+							return -1;
+						else if (newMode.getRefreshRate() > oldMode.getRefreshRate())
+							return 1;
+						else
+						{
+							return 0;
+						}
+					}
+				}
+			}
+		}
+	};
 
 	/**
 	 * Retrieve the display mode desired by the user
