@@ -32,7 +32,10 @@ public class TextureResourcePool extends ResourcePool
 
 	public Object loadResource(URL location)
 	{
-		return J3dSimpleImageLoader.getTexture(location.getFile());
+		String fileName = location.getFile();
+		if (fileName.startsWith("\\"))
+			fileName = fileName.substring(1);
+		return J3dSimpleImageLoader.getTexture(fileName);
 	}
 
 	public static Texture getTexture(URL location) throws ResourceLoadFailedException
