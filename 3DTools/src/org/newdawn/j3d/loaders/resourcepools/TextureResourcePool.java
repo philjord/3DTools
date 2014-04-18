@@ -1,5 +1,6 @@
 package org.newdawn.j3d.loaders.resourcepools;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -30,12 +31,14 @@ public class TextureResourcePool extends ResourcePool
 		return loadResource(location);
 	}
 
-	public Object loadResource(URL location)
+	public Object loadResource(URL location) throws ResourceLoadFailedException
 	{
 		String fileName = location.getFile();
-		if (fileName.startsWith("\\"))
-			fileName = fileName.substring(1);
-		return J3dSimpleImageLoader.getTexture(fileName);
+		if (new File(fileName).exists())
+			return J3dSimpleImageLoader.getTexture(fileName);
+		else
+			throw new ResourceLoadFailedException("TextureResourcePool.loadResource, File does not exist: " + fileName);
+
 	}
 
 	public static Texture getTexture(URL location) throws ResourceLoadFailedException

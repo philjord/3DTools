@@ -11,6 +11,8 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -62,9 +64,17 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 	private final GraphicsDevice graphicsDevice;
 
-	private final Map<String, DisplayMode> availableDisplayModes = new HashMap<String, DisplayMode>(100);
+	private final Map<String, DisplayMode> availableDisplayModes = new HashMap<String, DisplayMode>();
+
+	private ArrayList<DisplayMode> modesToOffer = new ArrayList<DisplayMode>();
+
+	private Map<String, ArrayList<DisplayMode>> displayModesByRes = new HashMap<String, ArrayList<DisplayMode>>();
 
 	private final JComboBox modesDropDown = new JComboBox();
+
+	private final JComboBox bitDepthDropDown = new JComboBox();
+
+	private final JComboBox refreshDropDown = new JComboBox();
 
 	private JSlider anisotropicFilterDegree;
 
@@ -79,15 +89,30 @@ public final class DisplayDialog extends JDialog implements ActionListener
 	 * @param frame The parent compnent for this Swing object
 	 * @param initMinRes 
 	 * @param allowFullScreen 
+	 * @param prefsGS 
 	 */
-	public DisplayDialog(Frame frame, boolean initMinRes, boolean allowFullScreen)
+	public DisplayDialog(Frame frame, boolean initMinRes, boolean allowFullScreen, GraphicsSettings prefsGS)
 	{
 		super(frame, true);
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		if (!graphicsDevice.isFullScreenSupported())
 			fullscreenCheckbox.setEnabled(false);
-		graphicsSettings.setOriginalDisplayMode(graphicsDevice.getDisplayMode());
+
+		if (prefsGS != null)
+		{
+			graphicsSettings.setOriginalDisplayMode(prefsGS.getOriginalDisplayMode());
+			graphicsSettings.setDesiredDisplayMode(prefsGS.getDesiredDisplayMode());
+			graphicsSettings.setAnisotropicFilterDegree(prefsGS.getAnisotropicFilterDegree());
+			graphicsSettings.setRunFullscreen(prefsGS.isRunFullscreen());
+			graphicsSettings.setAaRequired(prefsGS.isAaRequired());
+			graphicsSettings.setOculusView(prefsGS.isOculusView());
+		}
+		else
+		{
+			graphicsSettings.setOriginalDisplayMode(graphicsDevice.getDisplayMode());
+			graphicsSettings.setDesiredDisplayMode(graphicsDevice.getDisplayMode());
+		}
 
 		okay.setMnemonic(KeyEvent.VK_O);
 		okay.addActionListener(this);
@@ -119,6 +144,11 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		southPanelButts.add(okay);
 		southPanelButts.add(cancel);
 		southPanelButts.add(props);
+
+		if (allowFullScreen)
+			fullscreenCheckbox.setSelected(graphicsSettings.isRunFullscreen());
+		aaCheckbox.setSelected(graphicsSettings.isAaRequired());
+		ovCheckbox.setSelected(graphicsSettings.isOculusView());
 
 		mainPanel.add("South", southPanel);
 
@@ -152,6 +182,9 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		anisotropicFilterDegree.setPaintLabels(true);
 		anisotropicFilterDegree.setSnapToTicks(true);
 		anisoPanel.add(anisotropicFilterDegree);
+
+		anisotropicFilterDegree.setValue(graphicsSettings.getAnisotropicFilterDegree());
+
 		return anisoPanel;
 	}
 
@@ -191,79 +224,121 @@ public final class DisplayDialog extends JDialog implements ActionListener
 			{
 				lowestMode = mode;
 			}
-
-		}
-
-		ArrayList<DisplayMode> modesToOffer = new ArrayList<DisplayMode>();
-
-		for (DisplayMode mode : modes)
-		{
-			//add it if it's good enough to bother or it's the super lowest mode of all
-			if (mode == lowestMode || (mode.getBitDepth() > 8 && mode.getWidth() > 600 && mode.getHeight() > 400 //
-			&& mode.getRefreshRate() >= 60))
+			//add it if it's good enough to bother 
+			if ((mode.getBitDepth() > 8 && mode.getWidth() >= 800 && mode.getHeight() >= 600 //
+			&& (mode.getRefreshRate() >= 50 && mode.getRefreshRate() % 5 == 0)))
 			{
 				modesToOffer.add(mode);
 			}
 		}
 
+		//if no options add the super lowest mode of all
+		if (modesToOffer.size() == 0)
+		{
+			modesToOffer.add(lowestMode);
+		}
+
 		Collections.sort(modesToOffer, modeComparator);
+
 		for (DisplayMode mode : modesToOffer)
 		{
-			String strMode = mode.getWidth() + "x" + mode.getHeight() + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth() + " bpp";
+			String resStrMode = mode.getWidth() + "x" + mode.getHeight();
+			String fullStrMode = resStrMode + " " + mode.getRefreshRate() + "Hz " + mode.getBitDepth() + " bpp";
+
 			// only if it's not there but...
-			if (availableDisplayModes.get(strMode) == null)
+			if (availableDisplayModes.get(fullStrMode) == null)
 			{
-				availableDisplayModes.put(strMode, mode);
-				modesDropDown.addItem(strMode);
-				// select it if it's the current, or we want the lowest
-				if ((initMinRes && mode == lowestMode) || (mode.equals(graphicsSettings.getOriginalDisplayMode())))
+				availableDisplayModes.put(fullStrMode, mode);
+
+				if (!displayModesByRes.containsKey(resStrMode))
 				{
-					modesDropDown.setSelectedItem(strMode);
+					displayModesByRes.put(resStrMode, new ArrayList<DisplayMode>());
+					modesDropDown.addItem(resStrMode);
 				}
+
+				if (modesDropDown.getSelectedItem() == null)
+				{
+					modesDropDown.setSelectedItem(resStrMode);
+				}
+
+				// select it if it's the current, and we want the lowest
+				if (!initMinRes && mode.equals(graphicsSettings.getDesiredDisplayMode()))
+				{
+					modesDropDown.setSelectedItem(resStrMode);
+				}
+
+				displayModesByRes.get(resStrMode).add(mode);
 			}
+
 		}
+
+		resetBitDepthAndRefresh();
 
 		modesDropDown.setSize(modesDropDown.getPreferredSize().width, 200);
 		resolutionPanel.add(modesDropDown);
+		bitDepthDropDown.setSize(bitDepthDropDown.getPreferredSize().width, 200);
+		resolutionPanel.add(bitDepthDropDown);
+		refreshDropDown.setSize(refreshDropDown.getPreferredSize().width, 200);
+		resolutionPanel.add(refreshDropDown);
 
+		modesDropDown.addItemListener(new ItemListener()
+		{
+			@Override
+			public void itemStateChanged(ItemEvent e)
+			{
+				resetBitDepthAndRefresh();
+			}
+		});
 		return resolutionPanel;
 	}
 
-	private class ModeComparator implements Comparator<DisplayMode>
+	private void resetBitDepthAndRefresh()
 	{
-		public int compare(DisplayMode newMode, DisplayMode oldMode)
+		bitDepthDropDown.removeAllItems();
+		refreshDropDown.removeAllItems();
+
+		if (modesDropDown.getSelectedItem() != null)
 		{
-			if (newMode.getBitDepth() < oldMode.getBitDepth())
-				return -1;
-			else if (newMode.getBitDepth() > oldMode.getBitDepth())
-				return 1;
-			else
+			ArrayList<DisplayMode> modes = displayModesByRes.get(modesDropDown.getSelectedItem());
+
+			ArrayList<String> depthStrs = new ArrayList<String>();
+			for (DisplayMode mode : modes)
 			{
-				if (newMode.getHeight() < oldMode.getHeight())
-					return -1;
-				else if (newMode.getHeight() > oldMode.getHeight())
-					return 1;
-				else
+				String depthStr = mode.getBitDepth() + " bpp";
+				if (!depthStrs.contains(depthStr))
 				{
-					if (newMode.getWidth() < oldMode.getWidth())
-						return -1;
-					else if (newMode.getWidth() > oldMode.getWidth())
-						return 1;
-					else
-					{
-						if (newMode.getRefreshRate() < oldMode.getRefreshRate())
-							return -1;
-						else if (newMode.getRefreshRate() > oldMode.getRefreshRate())
-							return 1;
-						else
-						{
-							return 0;
-						}
-					}
+					depthStrs.add(depthStr);
+					bitDepthDropDown.addItem(depthStr);
 				}
 			}
+
+			//select the best
+			if (bitDepthDropDown.getItemCount() > 0)
+				bitDepthDropDown.setSelectedIndex(bitDepthDropDown.getItemCount() - 1);
+
+			ArrayList<String> refreshStrs = new ArrayList<String>();
+			for (DisplayMode mode : modes)
+			{
+				String refreshStr = mode.getRefreshRate() + "Hz";
+				if (!refreshStrs.contains(refreshStr))
+				{
+					refreshStrs.add(refreshStr);
+					refreshDropDown.addItem(refreshStr);
+				}
+			}
+			if (refreshDropDown.getItemCount() > 0)
+				refreshDropDown.setSelectedIndex(refreshDropDown.getItemCount() - 1);
+
+			//TODO: one day work this out and disable the option
+			//output if there is a missing depth/refresh combo
+			if (bitDepthDropDown.getItemCount() * refreshDropDown.getItemCount() != modes.size())
+			{
+				System.out.println("Possible missing resolution combination!");
+				System.out.println("res count " + modes.size() + ", bitdepth count " + bitDepthDropDown.getItemCount()
+						+ ", refresh rate count " + refreshDropDown.getItemCount());
+			}
 		}
-	};
+	}
 
 	/**
 	 * Retrieve the display mode desired by the user
@@ -279,14 +354,22 @@ public final class DisplayDialog extends JDialog implements ActionListener
 	 */
 	private void handleOkay()
 	{
-		graphicsSettings.setCancelled(false);
-		graphicsSettings.setDesiredDisplayMode(availableDisplayModes.get(modesDropDown.getSelectedItem()));
-		graphicsSettings.setRunFullscreen(fullscreenCheckbox.isSelected());
-		graphicsSettings.setAaRequired(aaCheckbox.isSelected());
-		graphicsSettings.setOculusView(ovCheckbox.isSelected());
-		graphicsSettings.setAnisotropicFilterDegree(anisotropicFilterDegree.getValue());
+		if (modesDropDown.getSelectedItem() != null && refreshDropDown.getSelectedItem() != null
+				&& bitDepthDropDown.getSelectedItem() != null)
+		{
+			String selectedString = modesDropDown.getSelectedItem() + " " + refreshDropDown.getSelectedItem() + " "
+					+ bitDepthDropDown.getSelectedItem();
+			DisplayMode selectedMode = availableDisplayModes.get(selectedString);
 
-		dispose();
+			graphicsSettings.setCancelled(false);
+			graphicsSettings.setDesiredDisplayMode(selectedMode);
+			graphicsSettings.setRunFullscreen(fullscreenCheckbox.isSelected());
+			graphicsSettings.setAaRequired(aaCheckbox.isSelected());
+			graphicsSettings.setOculusView(ovCheckbox.isSelected());
+			graphicsSettings.setAnisotropicFilterDegree(anisotropicFilterDegree.getValue());
+
+			dispose();
+		}
 	}
 
 	/**
@@ -343,4 +426,40 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		return null;
 	}
 
+	private class ModeComparator implements Comparator<DisplayMode>
+	{
+		@Override
+		public int compare(DisplayMode newMode, DisplayMode oldMode)
+		{
+			if (newMode.getBitDepth() < oldMode.getBitDepth())
+				return -1;
+			else if (newMode.getBitDepth() > oldMode.getBitDepth())
+				return 1;
+			else
+			{
+				if (newMode.getWidth() < oldMode.getWidth())
+					return -1;
+				else if (newMode.getWidth() > oldMode.getWidth())
+					return 1;
+				else
+				{
+					if (newMode.getHeight() < oldMode.getHeight())
+						return -1;
+					else if (newMode.getHeight() > oldMode.getHeight())
+						return 1;
+					else
+					{
+						if (newMode.getRefreshRate() < oldMode.getRefreshRate())
+							return -1;
+						else if (newMode.getRefreshRate() > oldMode.getRefreshRate())
+							return 1;
+						else
+						{
+							return 0;
+						}
+					}
+				}
+			}
+		}
+	};
 }

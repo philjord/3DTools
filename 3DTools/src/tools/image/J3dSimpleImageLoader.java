@@ -16,7 +16,7 @@ public class J3dSimpleImageLoader
 {
 
 	/**
-	 * 
+	 * Notice no exception thrown from here, make sure fileName is a good un
 	 * Return simple non mip mapped texture 2D, not for use with DDS image format
 	 * @param fileName
 	 * @return
@@ -41,7 +41,11 @@ public class J3dSimpleImageLoader
 			return tex;
 		}*/
 	}
-
+	/**
+	 * Notice no exception thrown from here, make sure fileName is a good un
+	 * @param fileName
+	 * @return
+	 */
 	public static ImageComponent2D getImageComponent2D(String fileName)
 	{
 		BufferedImage im = SimpleImageLoader.getImage(fileName);

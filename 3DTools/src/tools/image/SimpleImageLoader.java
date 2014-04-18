@@ -18,7 +18,7 @@ import tools.ddstexture.DDSTextureLoader;
 public class SimpleImageLoader
 {
 	//Notice jpg output by MSPaint are really simple, paintshop might spit out crazy complex images
-	// But you REALLY have to save as bmp then close paint then save as jpeg to celan images up for mac
+	// But you REALLY have to save as bmp then close paint then save as jpeg to clean images up for mac
 
 	// Mac wont't load some jpg files, possibly related to the color sRGB property being set? (right click file properties -> details)
 	// but also if it has a resolution set to 2 as well
@@ -51,6 +51,12 @@ public class SimpleImageLoader
 	*/
 	//JAI pure java now!
 
+	/**
+	 * Notice there is no exception throwen for a file that does not exists you MUST check for this before calling this method
+	 * In fact this method prevents all exception throwing (why?)
+	 * @param imageName
+	 * @return
+	 */
 	public static BufferedImage getImage(String imageName)
 	{
 		IOException except = null;
@@ -150,6 +156,11 @@ public class SimpleImageLoader
 
 	}
 
+	/**
+	 * IOEXception is not thrown, make sure the InputStream is super awesome.
+	 * @param imageName
+	 * @return
+	 */
 	public static BufferedImage getImage(String imageName, InputStream in)
 	{
 		if (imageName.toLowerCase().endsWith(".dds"))
@@ -157,10 +168,11 @@ public class SimpleImageLoader
 			try
 			{
 				DDSImage ddsImage = DDSImage.read(DDSTextureLoader.toByteBuffer(in));
-				new DDSBufferedImage(ddsImage, 0, imageName);
+				return new DDSBufferedImage(ddsImage, 0, imageName);
 			}
 			catch (IOException e)
 			{
+				System.out.println("IOException during load image: " + imageName);
 			}
 		}
 

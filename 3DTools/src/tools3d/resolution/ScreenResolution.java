@@ -50,24 +50,29 @@ public class ScreenResolution
 			System.out.println("Warning! Java 7 can cause crashes in java3d, uninstall it is the only answer");
 		}
 
-		GraphicsSettings gs = null;
-		if (prefs != null && !forceSelect)
+		GraphicsSettings prefsGS = null;
+		if (prefs != null)
 		{
 			String prefStr = prefs.get("GraphicsSettings", "");
 			if (prefStr != null && prefStr.length() > 0)
 			{
-				gs = new GraphicsSettings();
-				gs.fromPrefString(prefStr);
+				prefsGS = new GraphicsSettings();
+				prefsGS.fromPrefString(prefStr);
 			}
 		}
 
-		if (gs == null || !gs.isValid())
+		GraphicsSettings gs = null;
+
+		if (forceSelect || prefsGS == null || !prefsGS.isValid())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true);
-			//DisplayDialog dlg = new DisplayDialog(frame, initMinRes, true);			
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true, prefsGS);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
+		}
+		else
+		{
+			gs = prefsGS;
 		}
 
 		if (gs == null || gs.isCancelled())
@@ -144,24 +149,29 @@ public class ScreenResolution
 	public static GraphicsSettings organiseResolution(Preferences prefs, Component comp, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
 	{
-
-		GraphicsSettings gs = null;
-		if (prefs != null && !forceSelect)
+		GraphicsSettings prefsGS = null;
+		if (prefs != null)
 		{
 			String prefStr = prefs.get("GraphicsSettings", "");
 			if (prefStr != null && prefStr.length() > 0)
 			{
-				gs = new GraphicsSettings();
-				gs.fromPrefString(prefStr);
+				prefsGS = new GraphicsSettings();
+				prefsGS.fromPrefString(prefStr);
 			}
 		}
 
-		if (gs == null || !gs.isValid())
+		GraphicsSettings gs = null;
+
+		if (forceSelect || prefsGS == null || !prefsGS.isValid())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes, false);
+			DisplayDialog dlg = new DisplayDialog(null, initMinRes, false, prefsGS);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
+		}
+		else
+		{
+			gs = prefsGS;
 		}
 
 		if (gs == null || gs.isCancelled())
