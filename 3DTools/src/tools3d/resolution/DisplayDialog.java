@@ -224,9 +224,9 @@ public final class DisplayDialog extends JDialog implements ActionListener
 			{
 				lowestMode = mode;
 			}
-			//add it if it's good enough to bother 
+			//add it if it's good enough to bother (or 0 which means no info)
 			if ((mode.getBitDepth() > 8 && mode.getWidth() >= 800 && mode.getHeight() >= 600 //
-			&& (mode.getRefreshRate() >= 50 && mode.getRefreshRate() % 5 == 0)))
+					&& ((mode.getRefreshRate() >= 50 && mode.getRefreshRate() % 5 == 0)) || mode.getRefreshRate() == 0))
 			{
 				modesToOffer.add(mode);
 			}
