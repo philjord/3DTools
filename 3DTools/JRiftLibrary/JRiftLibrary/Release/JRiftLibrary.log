@@ -1,23 +1,17 @@
-﻿Build started 7/02/2014 1:53:49 a.m..
+﻿Build started 15/05/2014 7:06:45 p.m..
      1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Touching "Release\JRiftLibrary.unsuccessfulbuild".
+         Creating "Release\JRiftLibrary03.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /IC:\temp\ovr_sdk_win_0.2.5c\OculusSDK\LibOVR\Include /I"C:\Program Files\Java\jdk1.6.0_45\include" /I"C:\Program Files\Java\jdk1.6.0_45\include\win32" /Zi /nologo /W3 /WX- /O2 /Oi /Oy- /GL /D WIN32 /D NDEBUG /D _WINDOWS /D _USRDLL /D JRIFTLIBRARY_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Release\\" /Fd"Release\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt JRiftLibrary.cpp
-         JRiftLibrary.cpp
+         All outputs are up-to-date.
        Link:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\temp\ovr_sdk_win_0.2.5c\OculusSDK\LibOVR\Lib\Win32 libovr.lib Winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Release\JRiftLibrary.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.pdb" /SUBSYSTEM:WINDOWS /OPT:REF /OPT:ICF /LTCG /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.lib" /MACHINE:X86 /DLL Release\JRiftLibrary.obj
-            Creating library E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.lib and object E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.exp
-         Generating code
-         Finished generating code
-         JRiftLibrary.vcxproj -> E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.dll
-       Manifest:
-         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary.dll;#2" /manifest Release\JRiftLibrary.dll.intermediate.manifest
+         All outputs are up-to-date.
+         JRiftLibrary.vcxproj -> E:\Java\git\3DTools\3DTools\JRiftLibrary\Release\JRiftLibrary03.dll
        FinalizeBuildStatus:
-         Deleting file "Release\JRiftLibrary.unsuccessfulbuild".
-         Touching "Release\JRiftLibrary.lastbuildstate".
+         Deleting file "Release\JRiftLibrary03.unsuccessfulbuild".
+         Touching "Release\JRiftLibrary03.lastbuildstate".
      1>Done Building Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" (build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:01.52
+Time Elapsed 00:00:00.04

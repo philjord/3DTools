@@ -12,15 +12,15 @@ import javax.media.j3d.PhysicalEnvironment;
 import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 
-import de.fruitfly.ovr.OculusRift;
 import tools3d.mixed3d2d.Canvas3D2D;
+import tools3d.ovr.OculusRift03;
 import tools3d.universe.VisualPhysicalUniverse;
 
 public class HMDCameraPanel2 extends CameraPanel
 {
 	private Canvas3D2D canvas3D2Db;
 
-	private OculusRift occ = new OculusRift();
+	private OculusRift03 occ = new OculusRift03();
 
 	public HMDCameraPanel2(VisualPhysicalUniverse universe)
 	{

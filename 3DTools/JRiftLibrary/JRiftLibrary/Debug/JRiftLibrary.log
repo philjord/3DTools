@@ -1,22 +1,24 @@
-﻿Build started 13/01/2014 6:52:42 p.m..
-     1>Project "C:\temp\JRift-master\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (build target(s)).
-     1>InitializeBuildStatus:
-         Creating "Debug\JRiftLibrary.unsuccessfulbuild" because "AlwaysCreate" was specified.
+﻿Build started 15/05/2014 9:11:22 p.m..
+     1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\JRiftLibrary03.lastbuildstate".
+       InitializeBuildStatus:
+         Creating "Debug\JRiftLibrary03.unsuccessfulbuild" because "AlwaysCreate" was specified.
        ClCompile:
-         All outputs are up-to-date.
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Ie:\Java\OculusSDK\LibOVR\Include /I"C:\Program Files\Java\jdk1.6.0_45\include" /I"C:\Program Files\Java\jdk1.6.0_45\include\win32" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D JRIFTLIBRARY_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt JRiftLibrary0.3.cpp
+         JRiftLibrary0.3.cpp
        Link:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:C:\temp\ovr_sdk_win_0.2.5c\OculusSDK\LibOVR\Lib\Win32 libovrd.lib Winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\JRiftLibrary.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.lib" /MACHINE:X86 /DLL Debug\JRiftLibrary.obj
-         Debug\Tester.obj
-     1>JRiftLibrary.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-            Creating library C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.lib and object C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.exp
-         JRiftLibrary.vcxproj -> C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.dll
+         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:E:\Java\OculusSDK\LibOVR\Lib\Win32\VS2010 libovrd.lib Winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\JRiftLibrary03.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.lib" /MACHINE:X86 /DLL Debug\JRiftLibrary0.3.obj
+     1>JRiftLibrary0.3.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
+            Creating library E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.lib and object E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.exp
+         JRiftLibrary.vcxproj -> E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll
        Manifest:
-         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\temp\JRift-master\JRiftLibrary\Debug\JRiftLibrary.dll;#2" /manifest Debug\JRiftLibrary.dll.intermediate.manifest
+         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll;#2" /manifest Debug\JRiftLibrary03.dll.intermediate.manifest
        FinalizeBuildStatus:
-         Deleting file "Debug\JRiftLibrary.unsuccessfulbuild".
-         Touching "Debug\JRiftLibrary.lastbuildstate".
-     1>Done Building Project "C:\temp\JRift-master\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" (build target(s)).
+         Deleting file "Debug\JRiftLibrary03.unsuccessfulbuild".
+         Touching "Debug\JRiftLibrary03.lastbuildstate".
+     1>Done Building Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" (rebuild target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:00.40
+Time Elapsed 00:00:02.05

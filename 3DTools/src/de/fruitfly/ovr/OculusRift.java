@@ -1,6 +1,6 @@
 package de.fruitfly.ovr;
 
-public class OculusRift implements IOculusRift
+public class OculusRift
 {
 
 	private boolean initialized = false;
@@ -66,11 +66,6 @@ public class OculusRift implements IOculusRift
 	public HMDInfo getHMDInfo()
 	{
 		return hmdInfo;
-	}
-
-	public SensorInfo getSensorInfo()
-	{
-		return null;
 	}
 
 	public float getYaw()

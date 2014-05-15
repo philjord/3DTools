@@ -18,8 +18,9 @@ import javax.vecmath.Vector3f;
 
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;
+import tools3d.ovr.HmdInfo;
+import tools3d.ovr.HmdDesc;
 import tools3d.universe.VisualPhysicalUniverse;
-import de.fruitfly.ovr.HMDInfo;
 
 public class HMDCameraPanel extends JPanel implements ICameraPanel
 {
@@ -49,14 +50,17 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 	private HMDCamDolly currentDolly;// viewPlatform
 
-	private HMDInfo hmd;
+	private HmdInfo hmdInfo;
+	private HmdDesc hmdDesc;
 
 	private boolean isRendering = false;
 
 	public HMDCameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
-		hmd = HMDCamDolly.getOculusRift().getHMDInfo();
+		hmdInfo = HMDCamDolly.getOculusRift().getHMDInfo();
+		hmdDesc = HMDCamDolly.getOculusRift().getHmdDesc();
+		
 		setLayout(new GridLayout(1, 2));
 		physicalBody = new PhysicalBody(new Point3d(-0.033, 0, 0), new Point3d(0.033, 0, 0));
 		physicalEnvironment = new PhysicalEnvironment();
@@ -82,7 +86,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 
 		rightCanvas3D2D = new Canvas3D2D(config);
 		rightCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
-		rightCanvas3D2D.isLeft=false;
+		rightCanvas3D2D.isLeft = false;
 
 		leftView = createView(leftCanvas3D2D);
 		setProjectionMatrix(leftView, true);
@@ -121,8 +125,8 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setBackClipDistance(BACK_CLIP);
 		view.setFrontClipDistance(FRONT_CLIP);
 
-		float halfScreenDistanceH = (hmd.HScreenSize / 2);
-		xfov = (float) (2.0f * Math.atan(halfScreenDistanceH / hmd.EyeToScreenDistance));
+		float halfScreenDistanceH = (hmdInfo.HScreenSize / 2);
+		xfov = (float) (2.0f * Math.atan(halfScreenDistanceH / hmdInfo.EyeToScreenDistance));
 		view.setFieldOfView(xfov);
 		System.out.println("FOV set to  " + xfov);
 
@@ -242,11 +246,11 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 	{
 		setHMDCamDolly((HMDCamDolly) dolly);
 	}
-
+	
 	private void setProjectionMatrix(View view, boolean left)
 	{
 		// Compute Aspect Ratio. Stereo mode cuts width in half.
-		float aspectRatio = (hmd.HResolution * 0.5f) / hmd.VResolution;
+		float aspectRatio = (hmdDesc.resolutionW * 0.5f) / hmdDesc.resolutionH;
 		//System.out.println("aspectRatio " + aspectRatio);
 		// Compute Vertical FOV based on distance.
 		//float halfScreenDistance = (hmd.VScreenSize * 0.5f);
@@ -254,20 +258,62 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		//float yfov = (float) (2.0f * Math.atan(halfScreenDistance / hmd.EyeToScreenDistance));
 		//System.out.println("yfov " + yfov);
 		// Compute Horizontal FOV based on distance.
-		float halfHalfScreenDistanceH = (hmd.HScreenSize * 0.5f * 0.5f); //for one screen not both
+		//float halfHalfScreenDistanceH = (hmdInfo.HScreenSize * 0.5f * 0.5f); //for one screen not both
 		//System.out.println("halfHalfScreenDistanceH " + halfHalfScreenDistanceH);
-		xfov = (float) (2.0f * Math.atan(halfHalfScreenDistanceH / hmd.EyeToScreenDistance));
+		//xfov = (float) (2.0f * Math.atan(halfHalfScreenDistanceH / hmdInfo.EyeToScreenDistance));
+		//System.out.println("xfov " + xfov);
+		xfov = hmdDesc.defaultEyeFovR+hmdDesc.defaultEyeFovL;
+		
+		
+		// Post-projection viewport coordinates range from (-1.0, 1.0), with the
+		// center of the left viewport falling at (1/4) of horizontal screen size.
+		// We need to shift this projection center to match with the lens center.
+		// We compute this shift in physical units (meters) to correct
+		// for different screen sizes and then rescale to viewport coordinates.
+		float viewCenter = hmdInfo.HScreenSize * 0.25f;
+		//System.out.println("viewCenter " + viewCenter);
+		float eyeProjectionShift = viewCenter - (hmdInfo.LensSeparationDistance * 0.5f);
+		//System.out.println("eyeProjectionShift " + eyeProjectionShift);
+		float projectionCenterOffset = (4.0f * eyeProjectionShift) / hmdInfo.HScreenSize;
+		//System.out.println("projectionCenterOffset " + projectionCenterOffset);
+		// Projection matrix for the "center eye", which the left/right matrices are based on.
+		Transform3D projCenter = new Transform3D();
+		projCenter.perspective(xfov, aspectRatio, 0.1f, 5000.0f);
+		Transform3D projLeft = new Transform3D();
+		projLeft.setTranslation(new Vector3f(projectionCenterOffset, 0, 0));
+		projLeft.mul(projCenter);
+		Transform3D projRight = new Transform3D();
+		projRight.setTranslation(new Vector3f(-projectionCenterOffset, 0, 0));
+		projRight.mul(projCenter);
+
+		view.setCompatibilityModeEnable(true);
+		view.setLeftProjection(left ? projLeft : projRight);
+	}
+	private void setProjectionMatrixB(View view, boolean left)
+	{
+		// Compute Aspect Ratio. Stereo mode cuts width in half.
+		float aspectRatio = (hmdDesc.resolutionW * 0.5f) / hmdDesc.resolutionH;
+		//System.out.println("aspectRatio " + aspectRatio);
+		// Compute Vertical FOV based on distance.
+		//float halfScreenDistance = (hmd.VScreenSize * 0.5f);
+		//System.out.println("halfScreenDistance " + halfScreenDistance);
+		//float yfov = (float) (2.0f * Math.atan(halfScreenDistance / hmd.EyeToScreenDistance));
+		//System.out.println("yfov " + yfov);
+		// Compute Horizontal FOV based on distance.
+		float halfHalfScreenDistanceH = (hmdInfo.HScreenSize * 0.5f * 0.5f); //for one screen not both
+		//System.out.println("halfHalfScreenDistanceH " + halfHalfScreenDistanceH);
+		xfov = (float) (2.0f * Math.atan(halfHalfScreenDistanceH / hmdInfo.EyeToScreenDistance));
 		//System.out.println("xfov " + xfov);
 		// Post-projection viewport coordinates range from (-1.0, 1.0), with the
 		// center of the left viewport falling at (1/4) of horizontal screen size.
 		// We need to shift this projection center to match with the lens center.
 		// We compute this shift in physical units (meters) to correct
 		// for different screen sizes and then rescale to viewport coordinates.
-		float viewCenter = hmd.HScreenSize * 0.25f;
+		float viewCenter = hmdInfo.HScreenSize * 0.25f;
 		//System.out.println("viewCenter " + viewCenter);
-		float eyeProjectionShift = viewCenter - (hmd.LensSeparationDistance * 0.5f);
+		float eyeProjectionShift = viewCenter - (hmdInfo.LensSeparationDistance * 0.5f);
 		//System.out.println("eyeProjectionShift " + eyeProjectionShift);
-		float projectionCenterOffset = (4.0f * eyeProjectionShift) / hmd.HScreenSize;
+		float projectionCenterOffset = (4.0f * eyeProjectionShift) / hmdInfo.HScreenSize;
 		//System.out.println("projectionCenterOffset " + projectionCenterOffset);
 		// Projection matrix for the "center eye", which the left/right matrices are based on.
 		Transform3D projCenter = new Transform3D();
@@ -283,5 +329,4 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setLeftProjection(left ? projLeft : projRight);
 	}
 
-	
 }

@@ -9,7 +9,6 @@ import javax.media.j3d.Group;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.View;
-import javax.media.j3d.ViewPlatform;
 import javax.swing.SwingUtilities;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
@@ -17,7 +16,7 @@ import javax.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.navigation.NavigationProcessorInterface;
-import de.fruitfly.ovr.OculusRift;
+import tools3d.ovr.OculusRift03;
 
 public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProcessorInterface
 {
@@ -53,13 +52,13 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 
 	private float halfIPD = 0.032f;
 
-	private static OculusRift or = new OculusRift();
+	private static OculusRift03 or = new OculusRift03();
 
 	private View leftView;
 
 	private View rightView;
 
-	public static OculusRift getOculusRift()
+	public static OculusRift03 getOculusRift()
 	{
 		if (!or.isInitialized())
 			or.init();
@@ -195,18 +194,20 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 	}
 	
 	/**
+	 *
+	 *TODO: the F9 bit full screen etc
 	Press F9 or F11 to switch rendering to the Oculus Rift.
-F9 - Switches to hardware full-screen mode. This will give best possible latency, but may blink
-monitors as the operating system changes display settings. If no image shows up in the Rift, then press
-F9 again to cycle to the next monitor.
-F11 - Instantly switches the rendering window to the Rift portion of the desktop. This mode has higher
-latency and no vsync, but is convenient for development.
-Note that the Linux version of OculusWorldDemo currently supports
+	F9 - Switches to hardware full-screen mode. This will give best possible latency, but may blink
+	monitors as the operating system changes display settings. If no image shows up in the Rift, then press
+	F9 again to cycle to the next monitor.
+	F11 - Instantly switches the rendering window to the Rift portion of the desktop. This mode has higher
+	latency and no vsync, but is convenient for development.
+	 
 	*/
 	public void sendToRift()
 	{ 
 		//TODO:...
-		System.out.println("looking for " + or.getHMDInfo().DisplayDeviceName);
+		System.out.println("looking for " + or.getHmdDesc().displayDeviceName);
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		for (GraphicsDevice gd : ge.getScreenDevices())
 		{
@@ -215,9 +216,8 @@ Note that the Linux version of OculusWorldDemo currently supports
 		}
 
 		//using desktop location instead
-
 		Window w = SwingUtilities.getWindowAncestor(leftView.getCanvas3D(0));
-		w.setLocation(or.getHMDInfo().DesktopX, or.getHMDInfo().DesktopY);
+		w.setLocation(or.getHmdDesc().windowsPosX, or.getHmdDesc().windowsPosY);
 	}
 
 	@Override
