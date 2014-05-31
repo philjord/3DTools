@@ -7,6 +7,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import javax.media.j3d.AutoOffScreenCanvas3D;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ImageComponent;
@@ -42,7 +43,9 @@ import tools3d.utils.leafnode.Cube;
  * also continue to enhance by detecting screen size changes and re setting the hud texture to match
  * I suspect the dist in front of viewer stuff will be alter by FOV settings, so watch out for those
  * 
+
  * 
+ * For HMD with teh texture id issue either JCanvas3D  
  * @author philip
  *
  */
@@ -58,6 +61,8 @@ public class Canvas3D2D extends Canvas3D
 	{
 		super(gc);
 		hudShapeBG = new HudShape3D(this);
+		 
+ 
 	}
 
 	/**

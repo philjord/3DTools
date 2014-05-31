@@ -28,6 +28,12 @@ import javax.vecmath.Point3d;
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
 
+/**
+ * TODO: PS why the hell have I never looked into Raster shape3ds? it looks awesome...
+ * @author philip
+ *
+ */
+
 public class HudShape3D extends BranchGroup implements Updater, ComponentListener
 {
 	public static int SHAPE_TEX_WIDTH = 1024;

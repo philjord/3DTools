@@ -25,7 +25,7 @@ public class TransformedBranchGroup extends BranchGroup
 		transformGroup.addChild(child);
 	}
 
-	public Enumeration<?> getAllChildren()
+	public Enumeration<Node> getAllChildren()
 	{
 		return transformGroup.getAllChildren();
 	}
