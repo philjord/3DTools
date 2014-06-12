@@ -100,6 +100,7 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 			canvas.setCursor(invisibleCursor);
 
 			hasKeyFocus = true;
+			mouseIsOver = true;
 			canvas.addFocusListener(this);
 		}
 	}
