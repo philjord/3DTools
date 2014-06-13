@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-<<<<<<< HEAD
 	<classpathentry excluding="JRiftLibrary/" kind="src" path="src"/>
-=======
-	<classpathentry excluding="src/" kind="src" path=""/>
-	<classpathentry kind="src" path="src"/>
->>>>>>> 9b76d1517aa1b98f8c31a3afbb4c80e241df37a4
 	<classpathentry kind="src" path="/Tools"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jftp.jar"/>
@@ -14,12 +9,6 @@
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
-<<<<<<< HEAD
-=======
-	<classpathentry kind="lib" path="/external_jars/ext/jogl/jogl-all.jar"/>
-	<classpathentry kind="lib" path="/external_jars/ext/joal/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/j3dnative.jar"/>
->>>>>>> 9b76d1517aa1b98f8c31a3afbb4c80e241df37a4
 	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jogamp/jar/gluegen-rt.jar"/>
 	<classpathentry kind="lib" path="/external_jars/external jars/jogamp/jar/joal.jar"/>
@@ -27,3 +16,4 @@
 	<classpathentry kind="lib" path="/external_jars/external jars/java3d1.6_10.jar" sourcepath="E:/Java/3rd party jars/java3d-src/src"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
+
