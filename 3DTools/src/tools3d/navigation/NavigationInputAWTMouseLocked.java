@@ -16,7 +16,7 @@ import javax.swing.SwingUtilities;
 
 import tools.WeakListenerList;
 
-public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotionListener, FocusListener
+public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotionListener
 {
 	// multiplyer to get from pixels difference to radian turnage
 	// eg 0.01f mean 100 pixels makes for 1 PI per second or 180 degrees
@@ -41,10 +41,6 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	private Point centerLocation = new Point();
 
 	boolean isRecentering = false;
-
-	private boolean hasKeyFocus = false;
-
-	private boolean mouseIsOver = false;
 
 	private WeakListenerList<NavigationRotationStateListener> navigationRotationStateListeners = new WeakListenerList<NavigationRotationStateListener>();
 
@@ -86,35 +82,17 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 		{
 			canvas.removeMouseListener(this);
 			canvas.removeMouseMotionListener(this);
-			canvas.removeFocusListener(this);
 			canvas.setCursor(Cursor.getDefaultCursor());
 		}
 
 		canvas = newCanvas;
 		if (canvas != null)
 		{
-
 			canvas.addMouseListener(this);
 			canvas.addMouseMotionListener(this);
 			recenterMouse();
 			canvas.setCursor(invisibleCursor);
-
-			hasKeyFocus = true;
-			mouseIsOver = true;
-			canvas.addFocusListener(this);
 		}
-	}
-
-	@Override
-	public void focusGained(FocusEvent e)
-	{	
-		hasKeyFocus = true;
-	}
-
-	@Override
-	public void focusLost(FocusEvent e)
-	{
-		hasKeyFocus = false;
 	}
 
 	private void recenterMouse()
@@ -131,7 +109,7 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 			SwingUtilities.convertPointFromScreen(previousMouseLocation, canvas);
 
 			// only send a camera move if we are focused
-			if (hasKeyFocus)
+			if (canvas.isFocusOwner())
 			{
 				isRecentering = true;
 
@@ -155,7 +133,7 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 
 	public void mouseMoved(MouseEvent e)
 	{
-		if (hasKeyFocus && mouseIsOver)
+		if (canvas.isFocusOwner() && canvas.contains(e.getPoint()))
 		{
 			// this event is from the re-centering the mouse - ignore it
 			if (isRecentering)
@@ -214,14 +192,16 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	@Override
 	public void mouseExited(MouseEvent evt)
 	{
-		if (hasKeyFocus)
+		if (canvas.isFocusOwner())
 		{
 			recenterMouse();
 		}
-		else
-		{
-			mouseIsOver = false;
-		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e)
+	{
+
 	}
 
 	@Override
@@ -239,12 +219,6 @@ public class NavigationInputAWTMouseLocked implements MouseListener, MouseMotion
 	@Override
 	public void mouseReleased(MouseEvent evt)
 	{
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent evt)
-	{
-		mouseIsOver = true;
 	}
 
 	public void mouseClicked(MouseEvent evt)
