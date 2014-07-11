@@ -45,11 +45,11 @@ public class HUDCompass extends HUDElementContainer implements LocationUpdateLis
 		textElement.setLocation(15, 80);
 		add(textElement);
 		compassElement = new HUDElement(50, 50);
-		compassElement.setLocation(5, 170);
+		compassElement.setLocation(5, 110);
 		compassElement.getGraphics().drawImage(SimpleImageLoader.getImage("media/images/compass.gif"), 0, 0, 50, 50, null);
 		add(compassElement);
 		compassNeedleElement = new HUDElement(50, 50);
-		compassNeedleElement.setLocation(5, 170);
+		compassNeedleElement.setLocation(5, 110);
 		add(compassNeedleElement);
 	}
 
