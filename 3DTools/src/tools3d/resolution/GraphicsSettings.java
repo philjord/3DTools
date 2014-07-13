@@ -33,6 +33,8 @@ public class GraphicsSettings
 	 */
 	public boolean isRunFullscreen()
 	{
+		//TODO: tell mac user not ot go full screen until I've got a 
+		// full screen off mechanism
 		return runFullscreen;
 	}
 
