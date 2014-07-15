@@ -178,7 +178,12 @@ public class Utils3D
 	 */
 	public static void safeGetQuat(Transform3D t1, Quat4f q1)
 	{
-
+		//FIXME test if I can remove this now matrix33 rots areconverted properly
+if(true)
+{
+	t1.get(q1);
+	return;
+}
 		float[] mat = new float[16];
 		t1.get(mat);
 		float[] rot = new float[9];
