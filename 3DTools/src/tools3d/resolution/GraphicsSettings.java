@@ -33,8 +33,9 @@ public class GraphicsSettings
 	 */
 	public boolean isRunFullscreen()
 	{
-		//TODO: tell mac user not ot go full screen until I've got a 
+		//TODO: tell mac user not to go full screen until I've got a 
 		// full screen off mechanism
+		// try The Control+Command+F worked for me.
 		return runFullscreen;
 	}
 
@@ -45,6 +46,13 @@ public class GraphicsSettings
 		if (runFullscreen && (nodd == null || !nodd.equals("true")))
 		{
 			JOptionPane.showMessageDialog(null, "Full screen without JVM VM argument -Dsun.java2d.noddraw=true is bad.");
+		}
+
+		String os = System.getProperty("os.name");
+
+		if (os.indexOf("Mac") != -1)
+		{
+			JOptionPane.showMessageDialog(null, "Try Control+Command+F to exit full screen");
 		}
 
 		this.runFullscreen = runFullscreen;

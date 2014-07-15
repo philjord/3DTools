@@ -1,6 +1,7 @@
 package tools3d.resolution;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.DisplayMode;
 import java.awt.Frame;
@@ -26,6 +27,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -48,7 +50,7 @@ import javax.swing.border.TitledBorder;
  * @author Kevin J. Duling (kevin@duling.us)
  */
 @SuppressWarnings("rawtypes")
-public final class DisplayDialog extends JDialog implements ActionListener
+public final class DisplayDialog extends JPanel implements ActionListener
 {
 	private final JButton cancel = new JButton("Cancel");
 
@@ -84,16 +86,48 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 	private GraphicsSettings graphicsSettings = new GraphicsSettings();
 
+	private Container wrapper;
+
+	public static DisplayDialog createDisplayDialog(Frame frame, boolean initMinRes, boolean allowFullScreen, GraphicsSettings prefsGS)
+	{
+		JDialog jd = new JDialog(frame, true);
+		DisplayDialog dd = new DisplayDialog(frame, jd, initMinRes, allowFullScreen, prefsGS);
+
+		jd.pack();
+		jd.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		jd.setLocation((int) (size.getWidth() - jd.getWidth()) >> 1, (int) (size.getHeight() - jd.getHeight()) >> 1);
+		jd.setAlwaysOnTop(true);
+		return dd;
+	}
+	
+	public static DisplayDialog createDisplayInternalFrame(Frame frame, boolean initMinRes, boolean allowFullScreen, GraphicsSettings prefsGS)
+	{
+		JInternalFrame jd = new JInternalFrame(null, true);
+		DisplayDialog dd = new DisplayDialog(frame, jd, initMinRes, allowFullScreen, prefsGS);
+
+		jd.pack();
+		jd.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+		jd.setLocation((int) (size.getWidth() - jd.getWidth()) >> 1, (int) (size.getHeight() - jd.getHeight()) >> 1);
+		//jd.setAlwaysOnTop(true);
+		return dd;
+	}
+
 	/**
 	 * Creates a new instance of DisplayDialog.
 	 * @param frame The parent compnent for this Swing object
+	 * @param wrapper MUST be either JDialog or JInternalFrame
 	 * @param initMinRes 
 	 * @param allowFullScreen 
 	 * @param prefsGS 
 	 */
-	public DisplayDialog(Frame frame, boolean initMinRes, boolean allowFullScreen, GraphicsSettings prefsGS)
+	public DisplayDialog(Frame frame, Container wrapper, boolean initMinRes, boolean allowFullScreen, GraphicsSettings prefsGS)
 	{
-		super(frame, true);
+
+		//super(frame, true);
+		this.wrapper = wrapper;
+
 		GraphicsEnvironment graphicsEnvironment = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		graphicsDevice = graphicsEnvironment.getDefaultScreenDevice();
 		if (!graphicsDevice.isFullScreenSupported())
@@ -116,7 +150,15 @@ public final class DisplayDialog extends JDialog implements ActionListener
 
 		okay.setMnemonic(KeyEvent.VK_O);
 		okay.addActionListener(this);
-		this.getRootPane().setDefaultButton(okay);
+
+		if (wrapper instanceof JDialog)
+		{
+			((JDialog) wrapper).getRootPane().setDefaultButton(okay);
+		}
+		else if (wrapper instanceof JInternalFrame)
+		{
+			((JInternalFrame) wrapper).getRootPane().setDefaultButton(okay);
+		}
 
 		cancel.setMnemonic(KeyEvent.VK_C);
 		cancel.addActionListener(this);
@@ -153,11 +195,8 @@ public final class DisplayDialog extends JDialog implements ActionListener
 		mainPanel.add("South", southPanel);
 
 		add(mainPanel);
-		pack();
-		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
-		setLocation((int) (size.getWidth() - getWidth()) >> 1, (int) (size.getHeight() - getHeight()) >> 1);
-		setAlwaysOnTop(true);
+
+		wrapper.add(this);
 
 	}
 
@@ -424,6 +463,31 @@ public final class DisplayDialog extends JDialog implements ActionListener
 				return mode;
 		}
 		return null;
+	}
+
+	private void dispose()
+	{
+		if (wrapper instanceof JDialog)
+		{
+			((JDialog) wrapper).dispose();
+		}
+		else if (wrapper instanceof JInternalFrame)
+		{
+			((JInternalFrame) wrapper).dispose();
+		}
+
+	}
+
+	public void setVisible(boolean aFlag)
+	{
+		if (wrapper instanceof JDialog)
+		{
+			((JDialog) wrapper).setVisible(aFlag);
+		}
+		else if (wrapper instanceof JInternalFrame)
+		{
+			((JInternalFrame) wrapper).setVisible(aFlag);
+		}
 	}
 
 	private class ModeComparator implements Comparator<DisplayMode>

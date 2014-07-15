@@ -65,8 +65,10 @@ public class ScreenResolution
 
 		if (forceSelect || prefsGS == null || !prefsGS.isValid())
 		{
+
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes, true, prefsGS);
+			//TODO: I need to hand use the jinternalframe version of this guy,but also render it in the panel3D
+			DisplayDialog dlg = DisplayDialog.createDisplayDialog(null, initMinRes, true, prefsGS);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
 		}
@@ -165,7 +167,7 @@ public class ScreenResolution
 		if (forceSelect || prefsGS == null || !prefsGS.isValid())
 		{
 			gs = new GraphicsSettings();
-			DisplayDialog dlg = new DisplayDialog(null, initMinRes, false, prefsGS);
+			DisplayDialog dlg = DisplayDialog.createDisplayDialog(null, initMinRes, false, prefsGS);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
 		}
