@@ -87,6 +87,9 @@ import com.jogamp.opengl.FBObject;
  * pipeline.
  */
 class JoglPipeline extends Pipeline {
+	//PJPJPJPJPJ
+	public static boolean TOOLS3D_MARKER =true; //used to check jar load order
+	
     // Currently prints for entry points not yet implemented
     private static final boolean DEBUG = true;
     // Currently prints for entry points already implemented

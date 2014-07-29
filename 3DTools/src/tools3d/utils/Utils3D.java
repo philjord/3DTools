@@ -169,7 +169,7 @@ public class Utils3D
 			return "null";
 		}
 	}
-	
+
 	/**
 	 * This exists because if teh ww figure below is actually slightly negative(due to bad interpolated quats)
 	 * Then teh output quat is just NaNs
@@ -178,12 +178,23 @@ public class Utils3D
 	 */
 	public static void safeGetQuat(Transform3D t1, Quat4f q1)
 	{
+		safeGetQuat(t1, q1, false);
+	}
+
+	/**
+	 * use this with true to actually do it
+	 * @param t1
+	 * @param q1
+	 * @param doIt
+	 */
+	public static void safeGetQuat(Transform3D t1, Quat4f q1, boolean doIt)
+	{
 		//FIXME test if I can remove this now matrix33 rots areconverted properly
-if(true)
-{
-	t1.get(q1);
-	return;
-}
+		if (!doIt)
+		{
+			t1.get(q1);
+			return;
+		}
 		float[] mat = new float[16];
 		t1.get(mat);
 		float[] rot = new float[9];
@@ -234,5 +245,5 @@ if(true)
 		q1.y = 0.0f;
 		q1.z = 1.0f;
 	}
-	
+
 }

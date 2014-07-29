@@ -10,6 +10,7 @@ import java.awt.Point;
 import java.awt.Toolkit;
 import java.util.prefs.Preferences;
 
+import javax.media.j3d.J3dUtil;
 import javax.swing.JOptionPane;
 
 public class ScreenResolution
@@ -43,6 +44,9 @@ public class ScreenResolution
 			boolean forceSelect)
 	{
 		System.out.println("organising resolution...");
+
+		//chekc to make sure 3dtools joglpipeline in use
+		J3dUtil.checkJarLoadVersion();//TODO: test this!
 
 		// warn about Java 7
 		if (System.getProperty("java.version").indexOf("1.7.") != -1)
