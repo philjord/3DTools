@@ -80,8 +80,9 @@ public class DDSBufferedImage extends BufferedImage
 					ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
 					ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
 			{
+				//FIXME: NiGeometryData not flipping v values seems to fix except tress, check everything
 				//now flip the DXT byte buffer so it can go stright to the opengl driver (dds are not yUp)
-				DxtFlipper.flip(ddsImage, imageInfo);
+				//DxtFlipper.flip(ddsImage, imageInfo);
 			}
 			else
 			{

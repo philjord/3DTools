@@ -127,6 +127,8 @@ public class DxtFlipper
 
 			//TODO: I could halve this requirement by copying the bottom half out
 			//then flipping downward to half then flipping from here down
+			// or even more if I take out bottom row, flip top into bottom
+			//flip bottom put into top move inwards by one step
 
 			byte[] pixels = new byte[nBytes];
 
@@ -142,7 +144,7 @@ public class DxtFlipper
 			//d.position(d.limit()); 
 
 			//int count=0;
-			for (j = 0; j < (h + 3) / 4; j++)
+			for (j = 0; j < ((h + 3) / 4); j++)
 			{
 				dp -= widBytes; // put d ready for copy into
 				System.arraycopy(s, sp, d, dp, widBytes);
