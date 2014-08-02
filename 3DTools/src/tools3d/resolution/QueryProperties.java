@@ -7,6 +7,7 @@ import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -100,10 +101,13 @@ public class QueryProperties extends JFrame
 
 	public static boolean checkForInstalledJ3d()
 	{
+		//the JVM property -Djava.ext.dirs=.\fred\ disables extension completely!
+		
 		// check for java3d installed
 		String extProp = System.getProperties().getProperty("java.ext.dirs");
 		if (extProp != null)
 		{
+			ArrayList<File> preinstalledJ3dJars = new ArrayList<File>();
 			String[] paths = extProp.split(ps);
 			for (String path : paths)
 			{
@@ -115,16 +119,41 @@ public class QueryProperties extends JFrame
 					{
 						if (listOfFiles[i].isFile())
 						{
-							if (listOfFiles[i].getName().indexOf("j3d") != -1)
+							if (listOfFiles[i].getName().indexOf("j3d") != -1 || listOfFiles[i].getName().indexOf("vecmath") != -1)
 							{
-								String mess = listOfFiles[i].getPath() + " looks like Java3d, it needs to be uninstalled.";
-								System.out.println(mess);
-								JOptionPane.showMessageDialog(null, mess);
-								return true;
+								preinstalledJ3dJars.add(listOfFiles[i]);
+
 							}
 						}
 					}
 				}
+			}
+
+			if (preinstalledJ3dJars.size() > 0)
+			{
+				String mess = "There appears to be some pre installed Java3d files.";
+				mess += "\nThey need to be removed (moved or deleted), otherwise this application will almost certainly fail.";
+
+				for (File jf : preinstalledJ3dJars)
+				{
+					mess += "\n" + jf.getPath();
+				}
+				System.out.println(mess);
+				int result = JOptionPane.showConfirmDialog(null, mess, "Pre installed Java detected", JOptionPane.YES_NO_OPTION,
+						JOptionPane.WARNING_MESSAGE);
+				if (result == JOptionPane.YES_OPTION)
+				{
+					boolean success = true;
+					for (File jf : preinstalledJ3dJars)
+					{
+						boolean fileIsNotLocked = jf.renameTo(jf);
+						
+						System.out.println("jf " + jf + " " +fileIsNotLocked);
+						success &= jf.delete();
+					}
+					JOptionPane.showMessageDialog(null, success ? "Sucess!" : "Failed, please remove manually and restart");
+				}
+				return true;
 			}
 
 		}
