@@ -1,5 +1,7 @@
 package tools3d.utils;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -116,10 +118,8 @@ public class Utils3D
 		}
 	}
 
-	public static boolean isCongruent(Transform3D t1)
-	{
-		return ((t1.getType() & Transform3D.CONGRUENT) != 0);
-	}
+
+ 
 
 	public static float inRangeAngle(float angle, float range)
 	{
@@ -170,31 +170,16 @@ public class Utils3D
 		}
 	}
 
-	/**
-	 * This exists because if teh ww figure below is actually slightly negative(due to bad interpolated quats)
-	 * Then teh output quat is just NaNs
-	 * @param t1
-	 * @param q1
-	 */
-	public static void safeGetQuat(Transform3D t1, Quat4f q1)
-	{
-		safeGetQuat(t1, q1, false);
-	}
 
+	//TODO: I should be loading quats safely in fact, figure out what the load issue is
 	/**
-	 * use this with true to actually do it
+	 * slightly off matrices cause NaNs
 	 * @param t1
 	 * @param q1
 	 * @param doIt
 	 */
-	public static void safeGetQuat(Transform3D t1, Quat4f q1, boolean doIt)
+	public static void safeGetQuat(Transform3D t1, Quat4f q1)
 	{
-		//FIXME test if I can remove this now matrix33 rots areconverted properly
-		if (!doIt)
-		{
-			t1.get(q1);
-			return;
-		}
 		float[] mat = new float[16];
 		t1.get(mat);
 		float[] rot = new float[9];
@@ -246,4 +231,61 @@ public class Utils3D
 		q1.z = 1.0f;
 	}
 
+	public static boolean isCongruent(Transform3D t1)
+	{
+		return ((t1.getType() & Transform3D.CONGRUENT) != 0);
+	}
+	
+	public static   boolean isAffine(Transform3D t1)
+	{
+		//TODO: one day a fast version of this using the mat
+		/*float[] matrix = new float[16];
+		t.get(matrix);
+		boolean hasNAN = false;
+		for (int i = 0; i < 16; i++)
+			hasNAN = hasNAN || Float.isNaN(matrix[i]);
+		boolean byPrim = (matrix[12] == 0 && matrix[13] == 0 && matrix[14] == 0 && matrix[15] == 1);*/
+		boolean byMeth = ((t1.getType() & Transform3D.AFFINE) != 0);
+
+		return byMeth;
+	}
+	public static float getPitch(Quat4f q1)
+	{
+		return (float) (Math.atan2(2.0 * (q1.y * q1.z + q1.w * q1.x), q1.w * q1.w - q1.x * q1.x - q1.y * q1.y + q1.z * q1.z));
+	}
+
+	public static float getYaw(Quat4f q1)
+	{
+		return (float) (Math.asin(-2.0 * (q1.x * q1.z - q1.w * q1.y)));
+	}
+
+	public static float getRoll(Quat4f q1)
+	{
+		return (float) (Math.atan2(2.0 * (q1.x * q1.y + q1.w * q.z), q1.w * q1.w + q1.x * q1.x - q1.y * q1.y - q1.z * q1.z));
+	}
+
+	public static String toStringQuat(Quat4f q1)
+	{
+		return "Quat4f y=" + Utils3D.getYaw(q1) + ", p=" + Utils3D.getPitch(q1) + ", r=" + Utils3D.getRoll(q1);
+	}
+	
+	/**
+	 * Unlikely to be what you want!
+	 * @param in
+	 * @param scale
+	 * @return
+	 */
+	public static float truncToDP(float in, int scale)
+	{
+		if (Float.isInfinite(in) || Float.isNaN(in))
+			return in;
+
+		return new BigDecimal(in).setScale(scale, RoundingMode.HALF_UP).floatValue();
+
+		//return Math.floor(in*10^scale)/10^scaled;
+
+		//DecimalFormat df = new DecimalFormat();
+		//df.setMaximumFractionDigits(4);
+		//m11 = Float.parseFloat(df.format(m11));
+	}
 }
