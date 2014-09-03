@@ -357,8 +357,8 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 					}
 					else
 					{
-
-						c.paint(g);
+						if (c.isVisible())
+							c.paint(g);
 					}
 				}
 				catch (NullPointerException e)
