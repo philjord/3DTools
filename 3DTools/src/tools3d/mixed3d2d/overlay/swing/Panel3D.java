@@ -395,7 +395,7 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 
 		while (parent != null)
 		{
-			if (parent instanceof JPanel3D || parent instanceof BasicInternalFrameTitlePane)
+			if (parent instanceof JPanel3D || parent instanceof BasicInternalFrameTitlePane || parent instanceof JPanel)
 			{
 				x += parent.getX() + parent.getInsets().left;
 				y += parent.getY() + parent.getInsets().top;
