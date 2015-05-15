@@ -52,35 +52,34 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.media.nativewindow.AbstractGraphicsDevice;
-import javax.media.nativewindow.AbstractGraphicsScreen;
-import javax.media.nativewindow.CapabilitiesChooser;
-import javax.media.nativewindow.CapabilitiesImmutable;
-import javax.media.nativewindow.GraphicsConfigurationFactory;
-import javax.media.nativewindow.NativeSurface;
-import javax.media.nativewindow.NativeWindowFactory;
-import javax.media.nativewindow.ProxySurface;
-import javax.media.nativewindow.UpstreamSurfaceHook;
-import javax.media.nativewindow.VisualIDHolder;
-import javax.media.opengl.DefaultGLCapabilitiesChooser;
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLCapabilitiesChooser;
-import javax.media.opengl.GLCapabilitiesImmutable;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawable;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.GLFBODrawable;
-import javax.media.opengl.GLProfile;
-import javax.media.opengl.Threading;
-
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.nativewindow.AbstractGraphicsDevice;
+import com.jogamp.nativewindow.AbstractGraphicsScreen;
+import com.jogamp.nativewindow.CapabilitiesChooser;
+import com.jogamp.nativewindow.CapabilitiesImmutable;
+import com.jogamp.nativewindow.GraphicsConfigurationFactory;
+import com.jogamp.nativewindow.NativeSurface;
+import com.jogamp.nativewindow.NativeWindowFactory;
+import com.jogamp.nativewindow.ProxySurface;
+import com.jogamp.nativewindow.UpstreamSurfaceHook;
+import com.jogamp.nativewindow.VisualIDHolder;
 import com.jogamp.nativewindow.awt.AWTGraphicsConfiguration;
 import com.jogamp.nativewindow.awt.AWTGraphicsDevice;
 import com.jogamp.nativewindow.awt.AWTGraphicsScreen;
 import com.jogamp.nativewindow.awt.JAWTWindow;
+import com.jogamp.opengl.DefaultGLCapabilitiesChooser;
 import com.jogamp.opengl.FBObject;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLCapabilities;
+import com.jogamp.opengl.GLCapabilitiesChooser;
+import com.jogamp.opengl.GLCapabilitiesImmutable;
+import com.jogamp.opengl.GLContext;
+import com.jogamp.opengl.GLDrawable;
+import com.jogamp.opengl.GLDrawableFactory;
+import com.jogamp.opengl.GLFBODrawable;
+import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.Threading;
 
 /**
  * Concrete implementation of Pipeline class for the JOGL rendering
@@ -3087,7 +3086,7 @@ class JoglPipeline extends Pipeline {
 
 		GL2 gl = context(ctx).getGL().getGL2();
 
-        int shaderHandle = 0;
+        long shaderHandle = 0;
         if (shaderType == Shader.SHADER_TYPE_VERTEX) {
             shaderHandle = gl.glCreateShaderObjectARB(GL2.GL_VERTEX_SHADER);
         } else if (shaderType == Shader.SHADER_TYPE_FRAGMENT) {
@@ -3099,7 +3098,7 @@ class JoglPipeline extends Pipeline {
                     "Unable to create native shader object");
         }
 
-        shaderId[0] = new JoglShaderObject(shaderHandle);
+        shaderId[0] = new JoglShaderObject((int) shaderHandle);
         return null;
     }
     @Override
@@ -3144,12 +3143,12 @@ class JoglPipeline extends Pipeline {
 
 		GL2 gl = context(ctx).getGL().getGL2();
 
-        int shaderProgramHandle = gl.glCreateProgramObjectARB();
+        long shaderProgramHandle = gl.glCreateProgramObjectARB();
         if (shaderProgramHandle == 0) {
             return new ShaderError(ShaderError.LINK_ERROR,
                     "Unable to create native shader program object");
         }
-        shaderProgramId[0] = new JoglShaderObject(shaderProgramHandle);
+        shaderProgramId[0] = new JoglShaderObject((int) shaderProgramHandle);
         return null;
     }
     @Override
@@ -6300,7 +6299,7 @@ break;
 			if (proxySurface != null) {
 				final UpstreamSurfaceHook ush = proxySurface.getUpstreamSurfaceHook();
 				if (ush instanceof UpstreamSurfaceHook.MutableSize) {
-					((UpstreamSurfaceHook.MutableSize)ush).setSize(newWidth, newHeight);
+					((UpstreamSurfaceHook.MutableSize)ush).setSurfaceSize(newWidth, newHeight);
 				}
 			}
 			/*else if(DEBUG) { // we have to assume surface contains the new size already, hence size check @ bottom
@@ -6320,7 +6319,7 @@ break;
 				// if multisampled the FBO sink (GL_FRONT) will be resized before the swap is executed
 				int numSamples = ((GLFBODrawable)glDrawble).getChosenGLCapabilities().getNumSamples();
 				FBObject fboObjectBack = ((GLFBODrawable)glDrawble).getFBObject( GL.GL_BACK );
-				fboObjectBack.reset(gl, newWidth, newHeight, numSamples, false); // false = don't reset SamplingSinkFBO immediately
+				fboObjectBack.reset(gl, newWidth, newHeight, numSamples);  
 				fboObjectBack.bind(gl);
 
 				// If double buffered without antialiasing the GL_FRONT FBObject

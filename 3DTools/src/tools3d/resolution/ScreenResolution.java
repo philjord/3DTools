@@ -24,10 +24,29 @@ public class ScreenResolution
 	 * CONTEXT_CREATION_ERROR: Renderer: Error creating Canvas3D graphics context or bad pixelformat 
 	 * Or
 	 *  javax.media.j3d.IllegalRenderingStateException: Java 3D ERROR : OpenGL 1.2 or better is required (GL_VERSION=1.1)
-	 * Run check java to discover installed version, uninstalling java 7 or forcibly using jre6 are teh only solutions
+	 * Run check java to discover installed version, uninstalling java 7 or forcibly using jre6 are the only solutions
 	 * Programmatic solution is...
 	 * add the canvas3d on screen early, just before this method call the method
 	 * cameraPanel.startRendering();
+	 * 
+	 * possibly if the glRenderer prop is GDI generic then something bad is worng with drivers?
+	 * JoglPipeline
+	 * String glVersion  = gl.glGetString(GL.GL_VERSION);
+        String glVendor   = gl.glGetString(GL.GL_VENDOR);
+        String glRenderer = gl.glGetString(GL.GL_RENDERER);
+        cv.nativeGraphicsVersion  = glVersion;
+        cv.nativeGraphicsVendor   = glVendor;
+        cv.nativeGraphicsRenderer = glRenderer;
+        
+        returns GDI generic not GeForce GTX 750/PCIe/SSE2 as glView shows correctly
+        "Software rendering -- expect slow frame rates"
+         
+         
+         install new jogamp in external jars
+         create a new java3d 1.6.0 pre 12
+         http://jogamp.org/deployment/java3d/1.6.0-pre12/
+         then check for differences
+        
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
 	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);

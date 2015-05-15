@@ -5,11 +5,11 @@ import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-
 import tools.ddstexture.DDSBufferedImage;
 import tools.ddstexture.DDSImage;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 /**
  * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that
