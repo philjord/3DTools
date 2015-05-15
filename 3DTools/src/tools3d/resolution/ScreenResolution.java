@@ -42,10 +42,10 @@ public class ScreenResolution
         "Software rendering -- expect slow frame rates"
          
          
-         install new jogamp in external jars
-         create a new java3d 1.6.0 pre 12
-         http://jogamp.org/deployment/java3d/1.6.0-pre12/
-         then check for differences
+         running java3d 1.6.0 pre 12 and jogamp 2.3.1
+         
+         alright new go at it process explorer
+         http://technet.microsoft.com/en-us/sysinternals/bb896653
         
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
