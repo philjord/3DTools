@@ -45,8 +45,10 @@ public final class ResolutionTest
 	{
 		//note win construction MUST occur beofre asking for graphics environment etc.
 		win = new JFrame("Fullscreen Example");
+		win.setVisible(true);
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+		
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		gd = ge.getDefaultScreenDevice();
 		GraphicsConfiguration[] gc = gd.getConfigurations();

@@ -46,6 +46,20 @@ public class ScreenResolution
          
          alright new go at it process explorer
          http://technet.microsoft.com/en-us/sysinternals/bb896653
+         
+         Ok new news, when stepping slowly through resolution test I succeeed? Or possibly query canvas is stuffed?? 
+         I've just seen a 1.8 set up with teh right drivers but possibly only whilst a 1.6 was on screen?
+         in joglpipeline glContext.makeCurrent() is finding crap drivers around on 1.8
+         but when test on 1.6 was showing it did not?
+         
+         so I need to see the driver being used everytime in order to do debugging
+         hold phone 1.8 appears to work for dune and resolution test
+         but props and nif display do not work, perhaps examine requires capabilities between them?
+         Java3D suggest no work with 1.1 opengl driver
+         
+         updated joglpipeline no help.
+         but win64 needs new compile of oculus driver so pause to get 1.6 jdk all up and running
+         
         
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
