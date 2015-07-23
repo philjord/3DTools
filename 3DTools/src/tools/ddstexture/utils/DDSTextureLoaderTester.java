@@ -124,8 +124,8 @@ public class DDSTextureLoaderTester
 		String filename = file.getAbsolutePath();
 		try
 		{
-			//showImage(filename, new FileInputStream(file), stayTime);
-			showImageInShape(filename, new FileInputStream(file));
+			showImage(filename, new FileInputStream(file), stayTime);
+			//showImageInShape(filename, new FileInputStream(file));
 		}
 		catch (IOException e)
 		{

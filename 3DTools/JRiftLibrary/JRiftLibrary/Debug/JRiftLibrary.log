@@ -1,24 +1,11 @@
-﻿Build started 15/05/2014 9:11:22 p.m..
-     1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (rebuild target(s)).
-     1>_PrepareForClean:
-         Deleting file "Debug\JRiftLibrary03.lastbuildstate".
-       InitializeBuildStatus:
-         Creating "Debug\JRiftLibrary03.unsuccessfulbuild" because "AlwaysCreate" was specified.
-       ClCompile:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /Ie:\Java\OculusSDK\LibOVR\Include /I"C:\Program Files\Java\jdk1.6.0_45\include" /I"C:\Program Files\Java\jdk1.6.0_45\include\win32" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D JRIFTLIBRARY_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt JRiftLibrary0.3.cpp
+﻿Build started 15/06/2015 10:06:26 a.m..
+     1>Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /Ie:\Java\OculusSDK\LibOVR\Include /I"C:\Program Files\Java\jdk1.6.0_45\include" /I"C:\Program Files\Java\jdk1.6.0_45\include\win32" /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _WINDOWS /D _USRDLL /D JRIFTLIBRARY_EXPORTS /D _WINDLL /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt JRiftLibrary0.3.cpp
          JRiftLibrary0.3.cpp
-       Link:
-         C:\Program Files\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll" /INCREMENTAL:NO /NOLOGO /LIBPATH:E:\Java\OculusSDK\LibOVR\Lib\Win32\VS2010 libovrd.lib Winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\JRiftLibrary03.dll.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.lib" /MACHINE:X86 /DLL Debug\JRiftLibrary0.3.obj
-     1>JRiftLibrary0.3.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/INCREMENTAL:NO' specification
-            Creating library E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.lib and object E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.exp
-         JRiftLibrary.vcxproj -> E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll
-       Manifest:
-         C:\Program Files\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"E:\Java\git\3DTools\3DTools\JRiftLibrary\Debug\JRiftLibrary03.dll;#2" /manifest Debug\JRiftLibrary03.dll.intermediate.manifest
-       FinalizeBuildStatus:
-         Deleting file "Debug\JRiftLibrary03.unsuccessfulbuild".
-         Touching "Debug\JRiftLibrary03.lastbuildstate".
-     1>Done Building Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" (rebuild target(s)).
+     1>e:\java\oculussdk\libovr\include\ovr.h(33): fatal error C1083: Cannot open include file: 'Kernel/OVR_Types.h': No such file or directory
+     1>Done Building Project "E:\Java\git\3DTools\3DTools\JRiftLibrary\JRiftLibrary\JRiftLibrary.vcxproj" (Build target(s)) -- FAILED.
 
-Build succeeded.
+Build FAILED.
 
-Time Elapsed 00:00:02.05
+Time Elapsed 00:00:00.87

@@ -16,10 +16,15 @@ import tools3d.utils.Utils3D;
 
 public class HUDFPSCounter extends HUDElementContainer
 {
+	//see http://websemantics.co.uk/resources/font_size_conversion_chart/ points to pixels
+	private static double pixelToPnt = 1.4;
+	
 	// how many frames to wait for rendering of
 	public static int FRAME_SAMPLE = 5;
 
 	public static int TIME_SAMPLE = 500;
+	
+	public static int HEIGHT = 50;
 
 	private long currtime = 0;
 
@@ -33,13 +38,11 @@ public class HUDFPSCounter extends HUDElementContainer
 
 	private TimeBehavior timeBehavior = new TimeBehavior();
 
-	private HUDElement bgElement;
-
 	private HUDElement textElement;
 
-	private Color fpsTextColor = new Color(0.2f, 0.3f, 0.4f, 1f);
+	private Color fpsTextColor = new Color(1f, 1f, 0f, 1f);
 
-	private Font fpsTextFont = new Font("Arial", Font.PLAIN, 14);
+	private Font fpsTextFont = new Font("Arial", Font.BOLD, (int)(HEIGHT / pixelToPnt));
 
 	public HUDFPSCounter(Canvas3D2D canvas)
 	{
@@ -55,25 +58,18 @@ public class HUDFPSCounter extends HUDElementContainer
 		timeBehavior.setSchedulingBounds(Utils3D.defaultBounds);
 		behaviorBranchGroup.addChild(timeBehavior);
 
-		bgElement = new HUDElement(35, 25);
-		bgElement.setLocation(5, 5);
-		bgElement.getGraphics().setColor(new Color(0.5f, 1f, 1f, 0.4f));
-		bgElement.getGraphics().fillRoundRect(0, 0, 35, 25, 15, 15);
-		add(bgElement);
-		textElement = new HUDElement(30, 20);
-		textElement.setLocation(8, 11);
+		textElement = new HUDElement(40, 30);
+		textElement.setLocation(0, 0);
 		add(textElement);
 	}
 
 	public void addToCanvas(Canvas3D2D canvas)
 	{
-		canvas.addElement(bgElement);
 		canvas.addElement(textElement);
 	}
 
 	public void removeFromCanvas(Canvas3D2D canvas)
 	{
-		canvas.removeElement(bgElement);
 		canvas.removeElement(textElement);
 	}
 
@@ -90,7 +86,8 @@ public class HUDFPSCounter extends HUDElementContainer
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings(
+		{ "unchecked", "rawtypes" })
 		public void processStimulus(Enumeration critera)
 		{
 			currtime = System.currentTimeMillis();
@@ -114,19 +111,18 @@ public class HUDFPSCounter extends HUDElementContainer
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings({ "unchecked", "rawtypes" })
+		@SuppressWarnings(
+		{ "unchecked", "rawtypes" })
 		public void processStimulus(Enumeration critera)
 		{
 			// time is in millisec, so multiply by 1000 to get frames/sec
 			double fps = numOfFrames / (timeOfFrames / 1000.0);
 
-			fps = fps * 10;
-			fps = Math.rint(fps);
-
 			textElement.clear();
 			textElement.getGraphics().setColor(fpsTextColor);
 			textElement.getGraphics().setFont(fpsTextFont);
-			textElement.getGraphics().drawString("" + ((int) fps / 10) + "." + ((int) fps % 10), 0, 10);
+			//note round to int
+			textElement.getGraphics().drawString("" + ((int) Math.rint(fps * 10) / 10), 0, textElement.getHeight() - 5);
 
 			numOfFrames = 0;
 			timeOfFrames = 0;

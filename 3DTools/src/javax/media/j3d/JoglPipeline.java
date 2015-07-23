@@ -6463,12 +6463,14 @@ break;
 
         JoglContext ctx = new JoglContext(glContext);
  //PJPJPJPJPJ/////////////////////////////////////////////////////////////
+ 
+        
       		//I can't find a route to hand this back so I'm just printing it out here
       		IntBuffer buff = IntBuffer.allocate(1);
       		gl.glGetIntegerv(GL2.GL_DEPTH_BITS, buff);
       		if (buff.get(0) < Canvas3D.graphicsConfigTable.get(cv.graphicsConfiguration).getGraphicsConfigTemplate3D().getDepthSize())
       			System.out.println("Depth buffer: " + buff.get(0));  
-      		//PJPJPJPJ////////////////////////////////////////////////////////////////
+//PJPJPJPJ////////////////////////////////////////////////////////////////
 
         try {
             if (!getPropertiesFromCurrentContext(ctx, gl)) {
@@ -8109,6 +8111,12 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
         cv.nativeGraphicsVersion  = glVersion;
         cv.nativeGraphicsVendor   = glVendor;
         cv.nativeGraphicsRenderer = glRenderer;
+        
+        //PJPJPJPJ just for debug
+  //      System.out.println("***glVersion " +glVersion);
+  //      System.out.println("***glVendor " +glVendor);
+  //      System.out.println("***glRenderer " +glRenderer);
+  //      System.out.println( ctx.getGLContext().toString());
 
         // find out the version, major and minor version number
         int[] versionNumbers = extractVersionInfo(glVersion);

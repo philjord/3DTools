@@ -13,64 +13,45 @@ import java.util.prefs.Preferences;
 import javax.media.j3d.J3dUtil;
 import javax.swing.JOptionPane;
 
+import tools.ddstexture.DDSTextureLoader;
+
 public class ScreenResolution
 {
 	/**
 	 * 
-	 * NOTE!! JRE7 can crash out on calls to config the canvas3D
+     * Currently Java 7 or 8 will cause open gl to find a dummy graphics driver on the second call to this method
+     * So you can set up your graphics once on start up but not change... god damn it kenny...
+	 * 
+	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
+	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
+	 * you should then check for a null and respond 
+	 * you should the call something like 
+	 * 		canvas3D.getView().setSceneAntialiasingEnable(gs.isAARequired());
+	 *		DDSTextureLoader.setAnisotropicFilterDegree(gs.getAnisotropicFilterDegree());
+	 *you will always need to call this as well 
+	 *		frame.setVisible(true);
+	 * 
+	 *  we assume the canvas3d is the ONLY child of this frame (so resolution=canvas3d dims)
+	 *  
+	 * NOTE!! JRE7 and 8 can crash out on calls to config the canvas3D
 	 * From Readme:
 	 * Jre 7 some version cause a crash bug, wiht an error log like:
 	 * DefaultRenderingErrorListener.errorOccurred:
 	 * CONTEXT_CREATION_ERROR: Renderer: Error creating Canvas3D graphics context or bad pixelformat 
 	 * Or
 	 *  javax.media.j3d.IllegalRenderingStateException: Java 3D ERROR : OpenGL 1.2 or better is required (GL_VERSION=1.1)
-	 * Run check java to discover installed version, uninstalling java 7 or forcibly using jre6 are the only solutions
-	 * Programmatic solution is...
-	 * add the canvas3d on screen early, just before this method call the method
-	 * cameraPanel.startRendering();
+	 *  
+	 * So this call will call dispose() on the incoming frame, to ensure full screen works.
+	 * This means you MUST call frame.setVisible(true); after this call.	
 	 * 
-	 * possibly if the glRenderer prop is GDI generic then something bad is worng with drivers?
-	 * JoglPipeline
-	 * String glVersion  = gl.glGetString(GL.GL_VERSION);
-        String glVendor   = gl.glGetString(GL.GL_VENDOR);
-        String glRenderer = gl.glGetString(GL.GL_RENDERER);
-        cv.nativeGraphicsVersion  = glVersion;
-        cv.nativeGraphicsVendor   = glVendor;
-        cv.nativeGraphicsRenderer = glRenderer;
-        
-        returns GDI generic not GeForce GTX 750/PCIe/SSE2 as glView shows correctly
-        "Software rendering -- expect slow frame rates"
-         
-         
-         running java3d 1.6.0 pre 12 and jogamp 2.3.1
-         
-         alright new go at it process explorer
-         http://technet.microsoft.com/en-us/sysinternals/bb896653
-         
-         Ok new news, when stepping slowly through resolution test I succeeed? Or possibly query canvas is stuffed?? 
-         I've just seen a 1.8 set up with teh right drivers but possibly only whilst a 1.6 was on screen?
-         in joglpipeline glContext.makeCurrent() is finding crap drivers around on 1.8
-         but when test on 1.6 was showing it did not?
-         
-         so I need to see the driver being used everytime in order to do debugging
-         hold phone 1.8 appears to work for dune and resolution test
-         but props and nif display do not work, perhaps examine requires capabilities between them?
-         Java3D suggest no work with 1.1 opengl driver
-         
-         updated joglpipeline no help.
-         but win64 needs new compile of oculus driver so pause to get 1.6 jdk all up and running
-         
-        
 	 * 
-	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
-	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
-	 * you should then call 
-	 * 		Canvas3D.getView().setSceneAntialiasingEnable(gs.isAARequired());
 	 * 
-	 *  we assume the canvas3d is the ONLY child of this frame (so resolution=canvas3d dims)
 	 * @param prefs where to gather data from, use null to force reselect
-	 * @param frame
-	 * @return
+	 * @param frame the frame that will hold the canvas3d
+	 * @param initMinRes a saftey check for simply applying the minimum spec (test new OS/hardware)
+	 * @param exitOnCancel will not return null, but simply system exit on a cancel
+	 * @param forceSelect if false and prefs holds a last used graphics setting, that is used and no dialog is displayed 
+	 * @return the settign selected, along with setting up the Frame
 	 */
 
 	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
@@ -78,13 +59,14 @@ public class ScreenResolution
 	{
 		System.out.println("organising resolution...");
 
-		//chekc to make sure 3dtools joglpipeline in use
-		J3dUtil.checkJarLoadVersion();//TODO: test this!
+		//check to make sure 3dtools joglpipeline in use
+		J3dUtil.checkJarLoadVersion();//TODO: test this more!
 
-		// warn about Java 7
-		if (System.getProperty("java.version").indexOf("1.7.") != -1)
+		// warn about Java 7 or 8 
+		if (System.getProperty("java.version").indexOf("1.7.") != -1 || System.getProperty("java.version").indexOf("1.8.") != -1)
 		{
-			System.out.println("Warning! Java 7 can cause crashes in java3d, uninstall it is the only answer");
+			//removed while confiming dispose fix
+			//System.out.println("Warning! Java 7 and 8 can cause crashes in java3d");
 		}
 
 		GraphicsSettings prefsGS = null;
@@ -127,8 +109,8 @@ public class ScreenResolution
 		{
 			prefs.put("GraphicsSettings", gs.toPrefString());
 		}
-
-		DisplayMode desiredMode = gs.getDesiredDisplayMode();
+		
+		DisplayMode desiredMode = gs.getDesiredDisplayMode();		
 		if (desiredMode != null)
 		{
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -150,11 +132,18 @@ public class ScreenResolution
 				{
 					gd.setDisplayMode(desiredMode);
 				}
+				else
+				{
+					System.out.println("gd.isDisplayChangeSupported() == false");
+				}
 
 				frame.requestFocus();
 			}
 			else
 			{
+				//I need no one to be full screen
+				gd.setFullScreenWindow(null);			 
+
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 				if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 				{
