@@ -14,7 +14,7 @@ public class J3dUtil
 		{
 			boolean b = JoglPipeline.TOOLS3D_MARKER;
 		}
-		catch (Exception e)
+		catch (Error e)
 		{
 			System.out.println("Bad load order jogl java3d is loaded ahead of 3Dtools.jar!");
 		}
