@@ -73,7 +73,7 @@ public class QueuingCallbackBehavior extends Behavior
 	{
 		synchronized (queue)
 		{
-			if (queue.size() > 0)
+			while (queue.size() > 0)
 			{
 				Object parameter = null;
 				if (newestOnly)
