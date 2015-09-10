@@ -17,6 +17,7 @@ import tools3d.camera.LocatableViewPlatform;
 
 //OH MY GOD! switches pointing to links don't refresh properly!
 // I also notice that shared group appear to be massively inefficient
+
 //allows a transition zone of fadness sent out to 2 nodes attached
 
 public class BetterDistanceLOD extends Behavior
