@@ -1,5 +1,6 @@
 package javax.media.j3d;
 
+import javax.vecmath.Point3f;
 
 public class J3dUtil
 {
@@ -18,5 +19,17 @@ public class J3dUtil
 		{
 			System.out.println("Bad load order jogl java3d is loaded ahead of 3Dtools.jar!");
 		}
+	}
+
+	public static void getViewPosition(ViewPlatform vp, Point3f viewPosition)
+	{
+		viewPosition.x = (float) ((ViewPlatformRetained) vp.retained).schedSphere.center.x;
+		viewPosition.y = (float) ((ViewPlatformRetained) vp.retained).schedSphere.center.y;
+		viewPosition.z = (float) ((ViewPlatformRetained) vp.retained).schedSphere.center.z;
+	}
+
+	public static void getCurrentLocalToVworld(Node node, Transform3D out)
+	{
+		out.set(((NodeRetained) node.retained).getCurrentLocalToVworld());
 	}
 }

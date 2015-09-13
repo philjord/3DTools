@@ -5,15 +5,14 @@ import java.util.Enumeration;
 
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
 import javax.media.j3d.Group;
+import javax.media.j3d.J3dUtil;
 import javax.media.j3d.Node;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.View;
+import javax.media.j3d.ViewPlatform;
 import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.vecmath.Point3d;
-
-import tools3d.camera.LocatableViewPlatform;
+import javax.vecmath.Point3f;
 
 //OH MY GOD! switches pointing to links don't refresh properly!
 // I also notice that shared group appear to be massively inefficient
@@ -39,11 +38,6 @@ public class BetterDistanceLOD extends Behavior
 	private Group parent;
 
 	private ArrayList<BranchGroup> roots;
-
-	// deburners
-	private Point3d viewPosition = new Point3d();
-
-	private Transform3D xform = new Transform3D();
 
 	static final double EPSILON = 1.0e-6;
 
@@ -81,6 +75,15 @@ public class BetterDistanceLOD extends Behavior
 		distances[whichDistance] = distance;
 	}
 
+	// variables for processStimulus
+	private Point3f center = new Point3f();
+
+	private Point3f viewPosition = new Point3f();
+
+	// deburners
+	//private Point3d viewPosition = new Point3d();
+	//private Transform3D xform = new Transform3D();
+
 	@SuppressWarnings("rawtypes")
 	public void processStimulus(Enumeration criteria)
 	{
@@ -99,41 +102,58 @@ public class BetterDistanceLOD extends Behavior
 			wakeupOn(wakeupFrame10);
 			return;
 		}
-
-		Canvas3D canvas = v.getCanvas3D(0);
-		// rotate about axis
-		canvas.getCenterEyeInImagePlate(viewPosition);
-		// transform the points to the Billboard's space
-		if ( v.getViewPlatform() instanceof LocatableViewPlatform)
+///////////////////////////
+		ViewPlatform vp = v.getViewPlatform();
+		if (vp == null)
 		{
-			((LocatableViewPlatform) v.getViewPlatform()).getShortCutGroup().getTransform(xform);
+			wakeupOn(wakeupFrame10);
+			return;
 		}
-		else if (v.getCompatibilityModeEnable())
-		{
-			v.getViewPlatform().getLocalToVworld(xform);
-		}
-		else
-		{
-			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
-		}
-		xform.transform(viewPosition);
 
-		parent.getLocalToVworld(xform);
+		J3dUtil.getViewPosition(vp, viewPosition);
 
-		xform.invert(); // xform is now vWorldToLocal
+		Transform3D localToWorldTrans = new Transform3D();
+		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
+		center.set(0, 0, 0);
+		localToWorldTrans.transform(center);
+		double viewDistance = center.distance(viewPosition);
+///////////////////////////
+		/*	Canvas3D canvas = v.getCanvas3D(0);
+			// rotate about axis
+			canvas.getCenterEyeInImagePlate(viewPosition);
+			// transform the points to the Billboard's space
+			if (v.getViewPlatform() instanceof LocatableViewPlatform)
+			{
+				((LocatableViewPlatform) v.getViewPlatform()).getShortCutGroup().getTransform(xform);
+			}
+			else if (v.getCompatibilityModeEnable())
+			{
+				v.getViewPlatform().getLocalToVworld(xform);
+			}
+			else
+			{
+				canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
+			}
+			xform.transform(viewPosition);
 
-		// transform the eye position into the billboard's coordinate system
-		xform.transform(viewPosition);
+			parent.getLocalToVworld(xform);
 
-		// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
-		// so let's just use the length 
-		double viewDistance = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y)
-				+ (viewPosition.z * viewPosition.z));
+			xform.invert(); // xform is now vWorldToLocal
 
-		//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
-		// see bloated float sign, test
-		viewDistance = viewDistance / xform.getScale();
-		//System.out.println("viewDistance " + viewDistance);
+			// transform the eye position into the billboard's coordinate system
+			xform.transform(viewPosition);
+
+			// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
+			// so let's just use the length 
+			double viewDistance = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y)
+					+ (viewPosition.z * viewPosition.z));
+
+			//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
+			// see bloated float sign, test
+			viewDistance = viewDistance / xform.getScale();
+			//System.out.println("viewDistance " + viewDistance);
+			 
+			 */
 
 		int newIndex = distances.length; // viewDistance > distances[n-1]
 		double distDiff = 999; // nothing happens beyond the last switch, - is beyond cut off
