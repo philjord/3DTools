@@ -13,8 +13,6 @@ import java.util.prefs.Preferences;
 import javax.media.j3d.J3dUtil;
 import javax.swing.JOptionPane;
 
-import tools.ddstexture.DDSTextureLoader;
-
 public class ScreenResolution
 {
 	/**
