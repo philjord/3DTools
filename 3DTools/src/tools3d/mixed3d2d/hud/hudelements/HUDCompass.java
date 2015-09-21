@@ -7,7 +7,6 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import tools.CompassRotation;
-import tools.image.SimpleImageLoader;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.hud.HUDElementContainer;
@@ -18,7 +17,7 @@ public class HUDCompass extends HUDElementContainer implements LocationUpdateLis
 {
 	private HUDElement textElement;
 
-	private Color fpsTextColor = new Color(0.2f, 0.3f, 0.4f, 1f);
+	private Color fpsTextColor = new Color(0.0f, 0.0f, 0.0f, 1f);
 
 	private Font fpsTextFont = new Font("Arial", Font.PLAIN, 10);
 
@@ -38,7 +37,7 @@ public class HUDCompass extends HUDElementContainer implements LocationUpdateLis
 	{
 		bgElement = new HUDElement(80, 50);
 		bgElement.setLocation(5, 70);
-		bgElement.getGraphics().setColor(new Color(0.5f, 1f, 1f, 0.4f));
+		bgElement.getGraphics().setColor(new Color(0.5f, 1f, 1f, 0.85f));
 		bgElement.getGraphics().fillRoundRect(0, 0, 80, 30, 15, 15);
 		add(bgElement);
 		textElement = new HUDElement(70, 10);
@@ -46,7 +45,7 @@ public class HUDCompass extends HUDElementContainer implements LocationUpdateLis
 		add(textElement);
 		compassElement = new HUDElement(50, 50);
 		compassElement.setLocation(5, 110);
-		compassElement.getGraphics().drawImage(SimpleImageLoader.getImage("media/images/compass.gif"), 0, 0, 50, 50, null);
+		//compassElement.getGraphics().drawImage(SimpleImageLoader.getImage("media/images/compass.gif"), 0, 0, 50, 50, null);
 		add(compassElement);
 		compassNeedleElement = new HUDElement(50, 50);
 		compassNeedleElement.setLocation(5, 110);

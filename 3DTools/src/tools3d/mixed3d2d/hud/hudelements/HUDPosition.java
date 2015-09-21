@@ -17,7 +17,7 @@ public class HUDPosition extends HUDElementContainer implements LocationUpdateLi
 
 	private HUDElement textElement;
 
-	private Color fpsTextColor = new Color(0.2f, 0.3f, 0.4f, 1f);
+	private Color fpsTextColor = new Color(0f, 0.0f, 0.0f, 1f);
 
 	private Font fpsTextFont = new Font("Arial", Font.PLAIN, 10);
 
@@ -31,7 +31,7 @@ public class HUDPosition extends HUDElementContainer implements LocationUpdateLi
 	{
 		bgElement = new HUDElement(120, 50);
 		bgElement.setLocation(5, 35);
-		bgElement.getGraphics().setColor(new Color(0.5f, 1f, 1f, 0.4f));
+		bgElement.getGraphics().setColor(new Color(0.5f, 1f, 1f, 0.85f));
 		bgElement.getGraphics().fillRoundRect(0, 0, 120, 30, 15, 15);
 		add(bgElement);
 
