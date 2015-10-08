@@ -8,7 +8,7 @@ import javax.media.j3d.Node;
 // doing structure change addChild, removeChild etc, 
  so these queueing callbakcs need to be on the behavior thread as well.
  
- 
+ Notice for non live scene graphs this system immediately makes teh call and does not queue anything
  
 */
 public class StructureUpdateBehavior extends QueuingCallbackBehavior implements QueuingCallbackBehavior.CallBack
@@ -21,12 +21,18 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 
 	public void add(Group parent, Node child)
 	{
-		this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.ADD, parent, child));
+		if (parent.isLive())
+			this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.ADD, parent, child));
+		else
+			parent.addChild(child);
 	}
 
 	public void remove(Group parent, Node child)
 	{
-		this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.REMOVE, parent, child));
+		if (parent.isLive())
+			this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.REMOVE, parent, child));
+		else
+			parent.removeChild(child);
 	}
 
 	@Override

@@ -13,7 +13,7 @@ import tools3d.utils.Utils3D;
 /** 
  
  TODO: perhaps a longer delay between wakeups? time elapse 100ms?
- Currently only one callback per frame (sounds ok)
+ 
  
 */
 public class QueuingCallbackBehavior extends Behavior
@@ -24,7 +24,9 @@ public class QueuingCallbackBehavior extends Behavior
 
 	private boolean newestOnly = false;
 
-	private WakeupOnElapsedFrames wakeupFrame1 = new WakeupOnElapsedFrames(1, true);
+	private long maxElapsedTimeForCalls = -1;// in ms -1 for disable
+
+	private WakeupOnElapsedFrames wakeup = new WakeupOnElapsedFrames(1, true);
 
 	public QueuingCallbackBehavior(CallBack callBack, boolean newestOnly)
 	{
@@ -61,16 +63,27 @@ public class QueuingCallbackBehavior extends Behavior
 		this.newestOnly = newestOnly;
 	}
 
+	public long getMaxElapsedTimeForCalls()
+	{
+		return maxElapsedTimeForCalls;
+	}
+
+	public void setMaxElapsedTimeForCalls(long maxElapsedTimeForCalls)
+	{
+		this.maxElapsedTimeForCalls = maxElapsedTimeForCalls;
+	}
+
 	@Override
 	public void initialize()
 	{
-		wakeupOn(wakeupFrame1);
+		wakeupOn(wakeup);
 	}
 
 	@SuppressWarnings("rawtypes")
 	@Override
 	public void processStimulus(Enumeration criteria)
 	{
+		long start = System.nanoTime();
 		synchronized (queue)
 		{
 			while (queue.size() > 0)
@@ -93,10 +106,13 @@ public class QueuingCallbackBehavior extends Behavior
 				{
 					e.printStackTrace();
 				}
+
+				if (maxElapsedTimeForCalls > 0 && ((System.nanoTime() - start) / 1000000) > maxElapsedTimeForCalls)
+					break;
 			}
 		}
 
-		wakeupOn(wakeupFrame1);
+		wakeupOn(wakeup);
 	}
 
 	public void addToQueue(Object parameter)
