@@ -24,13 +24,13 @@ import javax.vecmath.Vector4d;
 public abstract class VaryingLODBehaviour extends Behavior
 {
 	// Wakeup condition for node
-	private WakeupOnElapsedFrames wakeupFrameFast;
+	private WakeupOnElapsedFrames wakeup0;
 
-	private WakeupOnElapsedFrames wakeupFrame2;
+	private WakeupOnElapsedFrames wakeup1;
 
-	private WakeupOnElapsedFrames wakeupFrame8;
+	private WakeupOnElapsedFrames wakeup2;
 
-	private WakeupOnElapsedFrames wakeupFrame20;
+	private WakeupOnElapsedFrames wakeup3;
 
 	// Node to operate on.
 	protected Node node = null;
@@ -61,10 +61,10 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (frustumOnly)
 			this.node.setCapability(Node.ALLOW_BOUNDS_READ);
 
-		wakeupFrameFast = new WakeupOnElapsedFrames(1, passive);
-		wakeupFrame2 = new WakeupOnElapsedFrames(2, passive);
-		wakeupFrame8 = new WakeupOnElapsedFrames(8, passive);
-		wakeupFrame20 = new WakeupOnElapsedFrames(20, passive);
+		wakeup0 = new WakeupOnElapsedFrames(1, passive);
+		wakeup1 = new WakeupOnElapsedFrames(2, passive);
+		wakeup2 = new WakeupOnElapsedFrames(4, passive);
+		wakeup3 = new WakeupOnElapsedFrames(8, passive);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	public void initialize()
 	{
 		// Insert wakeup condition into queue
-		wakeupOn(wakeupFrameFast);
+		wakeupOn(wakeup0);
 	}
 
 	//  deburners
@@ -112,7 +112,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (node == null || dists == null || !node.isLive())
 		{
 			//System.out.println("somefing null");
-			wakeupOn(wakeupFrame20);
+			wakeupOn(wakeup3);
 			return;
 		}
 
@@ -120,7 +120,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (view == null)
 		{
 			//System.out.println("view null");
-			wakeupOn(wakeupFrame20);
+			wakeupOn(wakeup3);
 			return;
 		}
 
@@ -128,7 +128,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		ViewPlatform vp = view.getViewPlatform();
 		if (vp == null)
 		{
-			wakeupOn(wakeupFrame20);
+			wakeupOn(wakeup3);
 			return;
 		}
 
@@ -228,19 +228,19 @@ public abstract class VaryingLODBehaviour extends Behavior
 		//		Insert wakeup condition into queue
 		if (viewDistance < dists[0])
 		{
-			wakeupOn(wakeupFrameFast);
+			wakeupOn(wakeup0);
 		}
 		else if (viewDistance < dists[1])
 		{
-			wakeupOn(wakeupFrame2);
+			wakeupOn(wakeup1);
 		}
 		else if (viewDistance < dists[2])
 		{
-			wakeupOn(wakeupFrame8);
+			wakeupOn(wakeup2);
 		}
 		else
 		{
-			wakeupOn(wakeupFrame20);
+			wakeupOn(wakeup3);
 		}
 
 		//FIXME: debug
