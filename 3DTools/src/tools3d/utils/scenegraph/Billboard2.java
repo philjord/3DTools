@@ -233,12 +233,12 @@ public class Billboard2 extends Behavior
 
 	/**
 	 * Gets the alignment axis and sets the parameter to this value.
-	 * @param axis the vector that will contain the ray about which
+	 * @param axis1 the vector that will contain the ray about which
 	 * the billboard rotates
 	 */
-	public void getAlignmentAxis(Vector3f axis)
+	public void getAlignmentAxis(Vector3f axis1)
 	{
-		axis.set(this.axis);
+		axis1.set(this.axis);
 	}
 
 	/**

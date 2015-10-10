@@ -61,7 +61,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		if (frustumOnly)
 			this.node.setCapability(Node.ALLOW_BOUNDS_READ);
 
-		wakeup0 = new WakeupOnElapsedFrames(1, passive);
+		wakeup0 = new WakeupOnElapsedFrames(0, passive);// notice 0 means every frame
 		wakeup1 = new WakeupOnElapsedFrames(2, passive);
 		wakeup2 = new WakeupOnElapsedFrames(4, passive);
 		wakeup3 = new WakeupOnElapsedFrames(8, passive);

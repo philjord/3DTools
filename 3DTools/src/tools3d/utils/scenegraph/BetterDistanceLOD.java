@@ -23,7 +23,7 @@ public class BetterDistanceLOD extends Behavior
 {
 	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
-	private WakeupOnElapsedFrames wakeupFrame1 = new WakeupOnElapsedFrames(1, true);
+	private WakeupOnElapsedFrames wakeupFrame0 = new WakeupOnElapsedFrames(0, true);
 
 	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(2, true);
 
@@ -66,7 +66,7 @@ public class BetterDistanceLOD extends Behavior
 	@Override
 	public void initialize()
 	{
-		wakeupOn(wakeupFrame1);
+		wakeupOn(wakeupFrame0);
 
 	}
 
@@ -232,7 +232,7 @@ public class BetterDistanceLOD extends Behavior
 
 		// Insert wakeup condition into queueif based on proximity to interesting ness
 		if (distDiff < 1.5)
-			wakeupOn(wakeupFrame1);
+			wakeupOn(wakeupFrame0);
 		else if (distDiff < 5)
 			wakeupOn(wakeupFrame2);
 		else if (distDiff < 12)

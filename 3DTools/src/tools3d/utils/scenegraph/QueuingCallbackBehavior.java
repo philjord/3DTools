@@ -26,7 +26,7 @@ public class QueuingCallbackBehavior extends Behavior
 
 	private long maxElapsedTimeForCalls = -1;// in ms -1 for disable
 
-	private WakeupOnElapsedFrames wakeup = new WakeupOnElapsedFrames(1, true);
+	private WakeupOnElapsedFrames wakeup = new WakeupOnElapsedFrames(0, true);
 
 	public QueuingCallbackBehavior(CallBack callBack, boolean newestOnly)
 	{
