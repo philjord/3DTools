@@ -92,7 +92,7 @@ public class DDSTextureLoader
 			if (ret_val == null)
 			{
 				//TODO: if textures weren't compressed I could hand out mapped bytebuffers all the way through to jogl
-				
+
 				DDSImage ddsImage = DDSImage.read(toByteBuffer(inputStream));
 
 				// return null for unsupproted types
@@ -206,6 +206,11 @@ public class DDSTextureLoader
 	{
 		if (in instanceof FastByteArrayInputStream)
 		{
+			//NOTE there is no perforamnce gain from this, but a definate copy time loss
+			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
+			//out.put(((FastByteArrayInputStream) in).getBuf());
+			//out.rewind();
+			//return out;
 			return ByteBuffer.wrap(((FastByteArrayInputStream) in).getBuf());
 		}
 		else
