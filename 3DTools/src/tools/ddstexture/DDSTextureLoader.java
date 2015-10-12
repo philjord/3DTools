@@ -17,6 +17,8 @@ import javax.media.j3d.ImageComponent;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 
+import tools.io.FastByteArrayInputStream;
+
 /**
  * DDS support onto the jogl pipeline.
  * 
@@ -67,7 +69,8 @@ public class DDSTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			System.out
+					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 	}
@@ -88,6 +91,8 @@ public class DDSTextureLoader
 
 			if (ret_val == null)
 			{
+				//TODO: if textures weren't compressed I could hand out mapped bytebuffers all the way through to jogl
+				
 				DDSImage ddsImage = DDSImage.read(toByteBuffer(inputStream));
 
 				// return null for unsupproted types
@@ -155,7 +160,8 @@ public class DDSTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			System.out
+					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 
@@ -196,22 +202,28 @@ public class DDSTextureLoader
 
 	private static int BUFSIZE = 16000;
 
-	//TODO: no doubt this could be faster? Perhaps check for ByteArrayInputStream.
 	public static ByteBuffer toByteBuffer(InputStream in) throws IOException
 	{
-		//note toByteArray trims to size
-		ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
-		byte[] tmp = new byte[BUFSIZE];
-		while (true)
+		if (in instanceof FastByteArrayInputStream)
 		{
-			int r = in.read(tmp);
-			if (r == -1)
-				break;
-
-			out.write(tmp, 0, r);
+			return ByteBuffer.wrap(((FastByteArrayInputStream) in).getBuf());
 		}
+		else
+		{
+			//note toByteArray trims to size
+			ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
+			byte[] tmp = new byte[BUFSIZE];
+			while (true)
+			{
+				int r = in.read(tmp);
+				if (r == -1)
+					break;
 
-		return ByteBuffer.wrap(out.toByteArray());
+				out.write(tmp, 0, r);
+			}
+
+			return ByteBuffer.wrap(out.toByteArray());
+		}
 	}
 
 	private static class WeakValueHashMap<K, V>
