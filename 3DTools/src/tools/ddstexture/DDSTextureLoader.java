@@ -36,11 +36,8 @@ import tools.io.FastByteArrayInputStream;
  */
 public class DDSTextureLoader
 {
-	public static final int BLOCK_SIZE = 4;
-
 	private static int anisotropicFilterDegree = 0;
 
-	//TODO: use this in the graphcs config settings
 	public static void setAnisotropicFilterDegree(int d)
 	{
 		System.out.println("setAnisotropicFilterDegree=" + d);
@@ -128,14 +125,6 @@ public class DDSTextureLoader
 				tex.setMinFilter(Texture.NICEST);
 				tex.setMagFilter(Texture.NICEST);
 
-				//TODO: allow blur! how does this work?
-				//tex.setMinFilter(Texture.FILTER4);
-				//tex.setMagFilter(Texture.FILTER4);
-				//tex.setFilter4Func(new float[]
-				//{ 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f,//
-				//		0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, //
-				//		0.5f });
-
 				//defaults to Texture.ANISOTROPIC_NONE
 				if (anisotropicFilterDegree > 0)
 				{
@@ -206,7 +195,7 @@ public class DDSTextureLoader
 	{
 		if (in instanceof FastByteArrayInputStream)
 		{
-			//NOTE there is no perforamnce gain from this, but a definate copy time loss
+			//NOTE there is no performance gain from this, but a definate copy time loss
 			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
 			//out.put(((FastByteArrayInputStream) in).getBuf());
 			//out.rewind();

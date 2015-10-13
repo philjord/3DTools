@@ -1,9 +1,15 @@
-package tools.ddstexture;
+package tools.ddstexture.utils;
 
 import java.nio.ByteBuffer;
 
+import tools.ddstexture.DDSImage;
 import tools.ddstexture.DDSImage.ImageInfo;
 
+/**
+ * This can be used to flip a Dxt image upside down in order to ensure y-up. It is not needed by any projects currently.
+ * @author phil
+ *
+ */
 public class DxtFlipper
 {
 
