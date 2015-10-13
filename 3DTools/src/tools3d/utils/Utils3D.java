@@ -2,6 +2,10 @@ package tools3d.utils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -29,6 +33,27 @@ public class Utils3D
 	//	infinite bounds for fast decision making
 	public static BoundingSphere defaultBounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY);
 
+	
+	public static FloatBuffer makeFloatBuffer(float[] arr)
+	{
+		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
+		bb.order(ByteOrder.nativeOrder());
+		FloatBuffer fb = bb.asFloatBuffer();
+		fb.put(arr);
+		fb.position(0);
+		return fb;
+	}
+
+	public static IntBuffer makeIntBuffer(int[] arr)
+	{
+		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
+		bb.order(ByteOrder.nativeOrder());
+		IntBuffer ib = bb.asIntBuffer();
+		ib.put(arr);
+		ib.position(0);
+		return ib;
+	}
+	
 	private static Transform3D t = new Transform3D();
 
 	private static Vector3f v = new Vector3f();

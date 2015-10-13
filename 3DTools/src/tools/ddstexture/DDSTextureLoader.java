@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -197,6 +198,7 @@ public class DDSTextureLoader
 		{
 			//NOTE there is no performance gain from this, but a definate copy time loss
 			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
+			//out.order(ByteOrder.nativeOrder());
 			//out.put(((FastByteArrayInputStream) in).getBuf());
 			//out.rewind();
 			//return out;
