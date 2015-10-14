@@ -10,6 +10,8 @@ import javax.media.j3d.Node;
  
  Notice for non live scene graphs this system immediately makes teh call and does not queue anything
  
+ https://java.net/jira/browse/JAVA3D-193
+ 
 */
 public class StructureUpdateBehavior extends QueuingCallbackBehavior implements QueuingCallbackBehavior.CallBack
 {
@@ -53,6 +55,7 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 	{
 		if (parameter instanceof StructureUpdate)
 		{
+			long startTime = System.currentTimeMillis();
 			StructureUpdate structureUpdate = (StructureUpdate) parameter;
 			if (structureUpdate.type == StructureUpdate.TYPE.ADD)
 			{
@@ -62,6 +65,10 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			{
 				structureUpdate.parent.removeChild(structureUpdate.child);
 			}
+
+			if ((System.currentTimeMillis() - startTime) > 5)
+			System.out.println("Structure (" + structureUpdate.type.name() + " " + structureUpdate.parent.getName() + "-"
+					+ structureUpdate.child.getName() + ") update took " + (System.currentTimeMillis() - startTime) + "ms");
 		}
 		else
 		{

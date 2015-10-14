@@ -105,6 +105,13 @@ public class DDSTextureLoader
 		return ret_val;
 	}
 
+	/**
+	 * Note avoid mappedbytebufffers as that will push texture loading (disk activity) onto the j3d thread
+	 * which is bad, pull everything into btye arrays on the current thread
+	 * @param filename
+	 * @param inputBuffer
+	 * @return
+	 */
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
@@ -226,7 +233,6 @@ public class DDSTextureLoader
 		if (in instanceof FastByteArrayInputStream)
 		{
 			//NOTE there is no performance gain from this, but a definate copy time loss
-			// note there IS a gain for pure mappedbytes from disk to graphics card
 			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
 			//out.order(ByteOrder.nativeOrder());
 			//out.put(((FastByteArrayInputStream) in).getBuf());
