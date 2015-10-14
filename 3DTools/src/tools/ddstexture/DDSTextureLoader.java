@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.util.LinkedHashMap;
 import java.util.Set;
 
@@ -82,78 +81,108 @@ public class DDSTextureLoader
 	 */
 	public static Texture getTexture(String filename, InputStream inputStream)
 	{
-		try
+		// Check the cache for an instance first
+		Texture ret_val = loadedTextures.get(filename);
+
+		if (ret_val == null)
 		{
-			// Check the cache for an instance first
-			Texture ret_val = loadedTextures.get(filename);
-
-			if (ret_val == null)
+			try
 			{
-				//TODO: if textures weren't compressed I could hand out mapped bytebuffers all the way through to jogl
-
 				DDSImage ddsImage = DDSImage.read(toByteBuffer(inputStream));
 
-				// return null for unsupproted types
-				if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2 //
-						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4 //
-						|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
-				{
-					System.out.println("Unsupported DDS format " + ddsImage.getPixelFormat() + " for file " + filename);
-					return null;
-				}
-
-				int levels = ddsImage.getNumMipMaps();
-				// now check how big it should be! sometime these things run out with 0 width or 0 height size images
-				int levels2 = Math.min(computeLog(ddsImage.getWidth()), computeLog(ddsImage.getHeight())) + 1;
-				// use the lower of the two, to avoid 0 sizes going to the driver
-				levels = levels > levels2 ? levels2 : levels;
-
-				// always 1 level
-				levels = levels == 0 ? 1 : levels;
-
-				Texture2D tex = new Texture2D(ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP,
-						Texture.RGBA, ddsImage.getWidth(), ddsImage.getHeight());
-
-				tex.setName(filename);
-
-				tex.setBaseLevel(0);
-				tex.setMaximumLevel(levels - 1);
-
-				tex.setBoundaryModeS(Texture.WRAP);
-				tex.setBoundaryModeT(Texture.WRAP);
-
-				// better to let machine decide
-				tex.setMinFilter(Texture.NICEST);
-				tex.setMagFilter(Texture.NICEST);
-
-				//defaults to Texture.ANISOTROPIC_NONE
-				if (anisotropicFilterDegree > 0)
-				{
-					tex.setAnisotropicFilterMode(Texture.ANISOTROPIC_SINGLE_VALUE);
-					tex.setAnisotropicFilterDegree(anisotropicFilterDegree);
-				}
-
-				for (int i = 0; i < levels; i++)
-				{
-					BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
-					tex.setImage(i, new DDSImageComponent2D(ImageComponent.FORMAT_RGBA, image));
-				}
+				Texture2D tex = createTexture(filename, ddsImage);
 
 				loadedTextures.put(filename, tex);
 				ret_val = tex;
-
-				ddsImage.close();
-
 			}
-
-			return ret_val;
+			catch (IOException e)
+			{
+				System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " "
+						+ e.getStackTrace()[0]);
+				return null;
+			}
 		}
-		catch (IOException e)
+		return ret_val;
+	}
+
+	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
+	{
+		// Check the cache for an instance first
+		Texture ret_val = loadedTextures.get(filename);
+
+		if (ret_val == null)
 		{
-			System.out
-					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			try
+			{
+				DDSImage ddsImage = DDSImage.read(inputBuffer);
+				Texture2D tex = createTexture(filename, ddsImage);
+				loadedTextures.put(filename, tex);
+				ret_val = tex;
+			}
+			catch (IOException e)
+			{
+				System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " "
+						+ e.getStackTrace()[0]);
+				return null;
+			}
+		}
+		return ret_val;
+	}
+
+	private static Texture2D createTexture(String filename, DDSImage ddsImage)
+	{
+
+		// return null for unsupproted types
+		if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2 //
+				|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4 //
+				|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
+		{
+			System.out.println("Unsupported DDS format " + ddsImage.getPixelFormat() + " for file " + filename);
 			return null;
 		}
+
+		int levels = ddsImage.getNumMipMaps();
+		// now check how big it should be! sometime these things run out with 0 width or 0 height size images
+		int levels2 = Math.min(computeLog(ddsImage.getWidth()), computeLog(ddsImage.getHeight())) + 1;
+		// use the lower of the two, to avoid 0 sizes going to the driver
+		levels = levels > levels2 ? levels2 : levels;
+
+		// always 1 level
+		levels = levels == 0 ? 1 : levels;
+
+		Texture2D tex = new Texture2D(ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP, Texture.RGBA,
+				ddsImage.getWidth(), ddsImage.getHeight());
+
+		tex.setName(filename);
+
+		tex.setBaseLevel(0);
+		tex.setMaximumLevel(levels - 1);
+
+		tex.setBoundaryModeS(Texture.WRAP);
+		tex.setBoundaryModeT(Texture.WRAP);
+
+		// better to let machine decide
+		tex.setMinFilter(Texture.NICEST);
+		tex.setMagFilter(Texture.NICEST);
+
+		//defaults to Texture.ANISOTROPIC_NONE
+		if (anisotropicFilterDegree > 0)
+		{
+			tex.setAnisotropicFilterMode(Texture.ANISOTROPIC_SINGLE_VALUE);
+			tex.setAnisotropicFilterDegree(anisotropicFilterDegree);
+		}
+
+		for (int i = 0; i < levels; i++)
+		{
+			BufferedImage image = new DDSBufferedImage(ddsImage, i, filename);
+			tex.setImage(i, new DDSImageComponent2D(ImageComponent.FORMAT_RGBA, image));
+		}
+
+		loadedTextures.put(filename, tex);
+
+		ddsImage.close();
+
+		return tex;
 
 	}
 
@@ -197,6 +226,7 @@ public class DDSTextureLoader
 		if (in instanceof FastByteArrayInputStream)
 		{
 			//NOTE there is no performance gain from this, but a definate copy time loss
+			// note there IS a gain for pure mappedbytes from disk to graphics card
 			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
 			//out.order(ByteOrder.nativeOrder());
 			//out.put(((FastByteArrayInputStream) in).getBuf());
