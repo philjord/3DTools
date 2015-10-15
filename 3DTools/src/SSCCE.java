@@ -1,5 +1,8 @@
+import java.util.Enumeration;
+
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
+import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
@@ -18,6 +21,7 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
+import com.sun.j3d.utils.geometry.ColorCube;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public final class SSCCE
@@ -55,49 +59,74 @@ public final class SSCCE
 
 		// prepare scenegraph 
 		// assume this occurs in a seperate thread, with lots of disk access etc. 
-		BranchGroup root = new BranchGroup();
-		root.setCapability(BranchGroup.ALLOW_DETACH);
 
-		for (int i = 0; i < 10000; i++)
+		// not detached
+		BranchGroup root1 = new BranchGroup();
+		for (int i = 0; i < 5000; i++)
 		{
-			TransformGroup tg = new TransformGroup();
-			Transform3D t = new Transform3D();
-			t.setTranslation(new Vector3d((i % 30) - 15, 0, -(i / 30)));
-			tg.setTransform(t);
-
-			Shape3D shape = new Shape3D();
-			TriangleArray tri = new TriangleArray(3, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
-			tri.setCoordinate(0, new Point3f(0.5f, 0.0f, 0.0f));
-			tri.setCoordinate(1, new Point3f(0.0f, 0.5f, 0.0f));
-			tri.setCoordinate(2, new Point3f(-0.5f, 0.0f, 0.0f));
-			tri.setColor(0, new Color3f((float) Math.random(), 0.0f, 0.0f));
-			tri.setColor(1, new Color3f(0.0f, 1.0f, 0.0f));
-			tri.setColor(2, new Color3f(0.0f, 0.0f, 1.0f));
-
-			Appearance app = new Appearance();
-			app.setMaterial(mat);
-			app.setColoringAttributes(ca);
-			PolygonAttributes pa = new PolygonAttributes();
-			pa.setCullFace(PolygonAttributes.CULL_NONE);
-			app.setPolygonAttributes(pa);
-			shape.setAppearance(app);
-			tg.addChild(shape);
-			root.addChild(tg);
+			root1.addChild(buildGroup(mat, ca, i));
 		}
-		root.compile();
+		root1.compile();
+
+		// build detrachable sub graph
+		BranchGroup root2 = new BranchGroup();
+		root2.setCapability(BranchGroup.ALLOW_DETACH);
+		for (int i = 5000; i < 10000; i++)
+		{
+			root2.addChild(buildGroup(mat, ca, i));
+		}
+		root2.compile();
 
 		//Rendering started, add and remove are now from "live" graph
 		// assume this occurs in a behaviour to work around bug 193
 
 		long start = System.currentTimeMillis();
-		group.addChild(root);
+		group.addChild(root1);
+		group.addChild(root2);
 
 		System.out.println("add complete in " + (System.currentTimeMillis() - start) + "ms");
 
+		try
+		{
+			Thread.sleep(1000);
+		}
+		catch (Exception e)
+		{
+		}
+		
 		// now detach the whole lot in a single simple call
 		start = System.currentTimeMillis();
-		root.detach();
+		root2.detach();
 		System.out.println("remove complete in " + (System.currentTimeMillis() - start) + "ms");
 
+	}
+
+	private static Group buildGroup(Material mat, ColoringAttributes ca, int i)
+	{
+		TransformGroup tg = new TransformGroup();
+		Transform3D t = new Transform3D();
+		t.setTranslation(new Vector3d((i % 30) - 15, 0, -(i / 30)));
+		tg.setTransform(t);
+
+		Shape3D shape = new Shape3D();
+		TriangleArray tri = new TriangleArray(3, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		tri.setCoordinate(0, new Point3f(0.5f, 0.0f, 0.0f));
+		tri.setCoordinate(1, new Point3f(0.0f, 0.5f, 0.0f));
+		tri.setCoordinate(2, new Point3f(-0.5f, 0.0f, 0.0f));
+		tri.setColor(0, new Color3f((float) Math.random(), 0.0f, 0.0f));
+		tri.setColor(1, new Color3f(0.0f, 1.0f, 0.0f));
+		tri.setColor(2, new Color3f(0.0f, 0.0f, 1.0f));
+		shape.setGeometry(tri);
+
+		Appearance app = new Appearance();
+		app.setMaterial(mat);
+		app.setColoringAttributes(ca);
+		PolygonAttributes pa = new PolygonAttributes();
+		pa.setCullFace(PolygonAttributes.CULL_NONE);
+		app.setPolygonAttributes(pa);
+		shape.setAppearance(app);
+		tg.addChild(shape);
+
+		return tg;
 	}
 }

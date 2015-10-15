@@ -43,7 +43,7 @@ public class CameraPanel extends JPanel implements ICameraPanel
 		GraphicsConfiguration[] gc = gd.getConfigurations();
 		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
 		//stencil setup stuff
-		//template.setStencilSize(8);		
+		template.setStencilSize(8);		
 		// we must also set the stencil buffer to clear each frame (madness!)
 		// put  -Dj3d.stencilClear=true in your vm arguments!!!  
 
