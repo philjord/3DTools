@@ -1,8 +1,5 @@
-import java.util.Enumeration;
-
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
-import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.ColoringAttributes;
@@ -21,7 +18,6 @@ import javax.vecmath.Point3f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import com.sun.j3d.utils.geometry.ColorCube;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public final class SSCCE
@@ -29,6 +25,8 @@ public final class SSCCE
 
 	public static void main(String[] args)
 	{
+		 
+	      
 		SimpleUniverse universe = new SimpleUniverse();
 		BranchGroup group = new BranchGroup();
 		group.setCapability(Group.ALLOW_CHILDREN_WRITE);
