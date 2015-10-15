@@ -33,7 +33,6 @@ public class Utils3D
 	//	infinite bounds for fast decision making
 	public static BoundingSphere defaultBounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY);
 
-	
 	public static FloatBuffer makeFloatBuffer(float[] arr)
 	{
 		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
@@ -53,7 +52,7 @@ public class Utils3D
 		ib.position(0);
 		return ib;
 	}
-	
+
 	private static Transform3D t = new Transform3D();
 
 	private static Vector3f v = new Vector3f();
@@ -143,9 +142,6 @@ public class Utils3D
 		}
 	}
 
-
- 
-
 	public static float inRangeAngle(float angle, float range)
 	{
 		angle += angle < -range ? (range * 2f) : 0;
@@ -195,7 +191,6 @@ public class Utils3D
 		}
 	}
 
-
 	//TODO: I should be loading quats safely in fact, figure out what the load issue is
 	/**
 	 * slightly off matrices cause NaNs
@@ -221,6 +216,7 @@ public class Utils3D
 		double ww = 0.25 * (1.0 + rot[0] + rot[4] + rot[8]);
 
 		// no negatives or the sqrt below starts baking Nans
+		boolean needsNormalize = ww < 0;
 		ww = (ww < 0 ? 0 : ww);
 		if (!(ww < 1.0e-10))
 		{
@@ -229,6 +225,8 @@ public class Utils3D
 			q1.x = (float) ((rot[7] - rot[5]) * ww);
 			q1.y = (float) ((rot[2] - rot[6]) * ww);
 			q1.z = (float) ((rot[3] - rot[1]) * ww);
+			if(needsNormalize)
+				q1.normalize();
 			return;
 		}
 
@@ -240,6 +238,8 @@ public class Utils3D
 			ww = 0.5 / q1.x;
 			q1.y = (float) (rot[3] * ww);
 			q1.z = (float) (rot[6] * ww);
+			if(needsNormalize)
+				q1.normalize();
 			return;
 		}
 
@@ -249,19 +249,23 @@ public class Utils3D
 		{
 			q1.y = (float) Math.sqrt(ww);
 			q1.z = (float) (rot[7] / (2.0 * q1.y));
+			if(needsNormalize)
+				q1.normalize();
 			return;
 		}
 
 		q1.y = 0.0f;
 		q1.z = 1.0f;
+		if(needsNormalize)
+			q1.normalize();
 	}
 
 	public static boolean isCongruent(Transform3D t1)
 	{
 		return ((t1.getType() & Transform3D.CONGRUENT) != 0);
 	}
-	
-	public static   boolean isAffine(Transform3D t1)
+
+	public static boolean isAffine(Transform3D t1)
 	{
 		//TODO: one day a fast version of this using the mat
 		/*float[] matrix = new float[16];
@@ -274,6 +278,7 @@ public class Utils3D
 
 		return byMeth;
 	}
+
 	public static float getPitch(Quat4f q1)
 	{
 		return (float) (Math.atan2(2.0 * (q1.y * q1.z + q1.w * q1.x), q1.w * q1.w - q1.x * q1.x - q1.y * q1.y + q1.z * q1.z));
@@ -293,7 +298,7 @@ public class Utils3D
 	{
 		return "Quat4f y=" + Utils3D.getYaw(q1) + ", p=" + Utils3D.getPitch(q1) + ", r=" + Utils3D.getRoll(q1);
 	}
-	
+
 	/**
 	 * Unlikely to be what you want!
 	 * @param in
