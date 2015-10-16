@@ -51,6 +51,7 @@ class NodeComponentRetained extends SceneGraphObjectRetained
 	// A list of NodeRetained Objects that refer, directly or indirectly, to this
 	// NodeComponentRetained
 	//PJPJPJPJPJPJPJPJ - so remove node can be as fast as add node
+	//RAISE_BUG:
 	ArrayList users = new BalancedArrayList(1);
 
 	// Mirror object of this node compoenent object

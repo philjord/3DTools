@@ -25,7 +25,16 @@ public final class SSCCE
 
 	public static void main(String[] args)
 	{
-		 
+		// SSCCE I need
+		// mip map issue max level check
+		// renderingattributes needed all round if stencil on
+		// removeChild slowness (users)
+		// postrender transform on texture
+		// possibly the capsule shape intersect code?
+		// reset of resolution bust the world
+		// switches not working with links under them
+		// problem that requesting a depth buffer can give back a very small depth buffer (on mac) like 8 or 16bit
+		// IndexRow of GeometryInfo slowness issue
 	      
 		SimpleUniverse universe = new SimpleUniverse();
 		BranchGroup group = new BranchGroup();

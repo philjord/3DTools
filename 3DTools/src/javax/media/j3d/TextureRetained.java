@@ -1123,6 +1123,8 @@ abstract class TextureRetained extends NodeComponentRetained
 
 			for (int j = 0; j < numFaces; j++)
 			{
+				//RAISE_BUG: a mipmapped image has both how many mips it can have and how many it does have
+				// DXT image don't bother with teh last 0 sized (x or y) images, this is allowed
 				//PJPJDXTfor (int i = 0; i < maxLevels; i++)
 				for (int i = 0; i <= maximumLevel; i++)
 				{
@@ -1141,6 +1143,7 @@ abstract class TextureRetained extends NodeComponentRetained
 		{
 			for (int j = 0; j < numFaces; j++)
 			{
+				//RAISE_BUG: this check doesn't accept the correct mip map numbers
 				//PJPJDXTcheckSizes(images[j]);
 			}
 		}
@@ -1201,6 +1204,7 @@ abstract class TextureRetained extends NodeComponentRetained
 		{
 			for (int j = 0; j < numFaces; j++)
 			{
+				//RAISE_BUG: see above
 				//PJPJDXTfor (int i = 0; i < maxLevels; i++)
 				for (int i = 0; i <= maximumLevel; i++)
 				{

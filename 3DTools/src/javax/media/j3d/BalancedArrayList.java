@@ -9,7 +9,7 @@ import java.util.LinkedHashSet;
 /**
  * Arraylist average speed for inserts average speed for removes
  * 
- * Java3D contains some arraylist that are super fast for adds, but kill removeChild because of slow removal
+ * Java3D contains some arraylists that are super fast for adds, but kill removeChild because of slow removal
  * @author phil
  *
  */

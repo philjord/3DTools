@@ -1459,6 +1459,7 @@ public class GeometryInfo
 	} // End of getListIndices
 
 	// Class to hash 'size' integers
+	//PJPJPJPJPJ optomized
 	private class IndexRow
 	{
 		int[] val;

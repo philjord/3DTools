@@ -4,16 +4,13 @@ import javax.vecmath.Point3f;
 
 public class J3dUtil
 {
-	public static void postProcessFrameBufferbad(float distortionOffset, Canvas3D cv)
-	{
-		//((JoglPipeline) Pipeline.getPipeline()).postProcessFrameBuffer(distortionOffset, cv);
-	}
-
 	public static void checkJarLoadVersion()
 	{
 		try
 		{
 			boolean b = JoglPipeline.TOOLS3D_MARKER;
+			// I must hang on to b otherwise this call doesn't happen
+			b = !!b;// haha!
 		}
 		catch (Error e)
 		{

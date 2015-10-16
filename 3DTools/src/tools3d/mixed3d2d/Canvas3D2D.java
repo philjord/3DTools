@@ -133,6 +133,7 @@ public class Canvas3D2D extends Canvas3D
 			// Oh my god. Long story short, don't touch this if doing overlays.
 			// Longer version, if the last rendered texture on a canvas3d has a transformation
 			// then calls to the J3DGraphics2D will inherit it. Easy way to ensure last texture is plain, render trival cube.
+			//RAISE_BUG:
 			getGraphicsContext3D().draw(trivialShape);
 
 			J3DGraphics2D g = getGraphics2D();

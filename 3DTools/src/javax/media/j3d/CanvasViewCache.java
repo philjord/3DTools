@@ -1384,7 +1384,7 @@ class CanvasViewCache extends Object
 				computeFrustumPlanes(rightProjection, rightVpcToEc, rightFrustumPlanes, rightFrustumPoints, rightCcToVworld);
 			}
 
-			/////PJPJPJPJPJ not called for compatibility mode, odd? 
+			/////PJPJPJPJ not called for compatibility mode, odd? Just for my Oculus work, possibly dump once jogl stereo works
 			// this is equal to the buildProjView(... after the if (doInfinite) below, with fixed project used
 			if (doInfinite)
 			{
