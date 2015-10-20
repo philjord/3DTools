@@ -17,8 +17,9 @@ public class ScreenResolution
 {
 	/**
 	 * 
-     * Currently Java 7 or 8 will cause open gl to find a dummy graphics driver on the second call to this method
-     * So you can set up your graphics once on start up but not change... god damn it kenny...
+	 * Currently Java 7 or 8 will cause open gl to find a dummy graphics driver on the second call to this method
+	 * So you can set up your graphics once on start up but not change... god damn it kenny...
+	 * http://forum.jogamp.org/Jogl-Using-Wrong-Generic-Graphics-Adapter-td4033216.html
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
 	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
@@ -51,21 +52,32 @@ public class ScreenResolution
 	 * @param forceSelect if false and prefs holds a last used graphics setting, that is used and no dialog is displayed 
 	 * @return the settign selected, along with setting up the Frame
 	 */
-
 	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
+	{
+		return organiseResolution(prefs, frame, initMinRes, exitOnCancel, forceSelect, false);
+	}
+
+	public static int resolutionChangeCount = 0;
+
+	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel,
+			boolean forceSelect, boolean undecorated)
 	{
 		System.out.println("organising resolution...");
 
 		//check to make sure 3dtools joglpipeline in use
 		J3dUtil.checkJarLoadVersion();//TODO: test this more!
 
-		// warn about Java 7 or 8 
-		if (System.getProperty("java.version").indexOf("1.7.") != -1 || System.getProperty("java.version").indexOf("1.8.") != -1)
+		// warn about Java 7 or 8
+		String jv = System.getProperty("java.version");
+		if (resolutionChangeCount > 0 && (jv.indexOf("1.7.") != -1 || jv.indexOf("1.8.") != -1))
 		{
-			//removed while confiming dispose fix
-			//System.out.println("Warning! Java 7 and 8 can cause crashes in java3d");
+			JOptionPane.showMessageDialog(frame,
+					"Java 7 or 8 detected!, please be aware, due to a bug, setting the graphics configuration \n"
+							+ "for a second time will likely result in a crash to desktop, please restart the application \n"
+							+ "if this occurs.", "Java 7+ detected", JOptionPane.WARNING_MESSAGE);
 		}
+		resolutionChangeCount++;
 
 		GraphicsSettings prefsGS = null;
 		if (prefs != null)
@@ -107,8 +119,8 @@ public class ScreenResolution
 		{
 			prefs.put("GraphicsSettings", gs.toPrefString());
 		}
-		
-		DisplayMode desiredMode = gs.getDesiredDisplayMode();		
+
+		DisplayMode desiredMode = gs.getDesiredDisplayMode();
 		if (desiredMode != null)
 		{
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -140,12 +152,12 @@ public class ScreenResolution
 			else
 			{
 				//I need no one to be full screen
-				gd.setFullScreenWindow(null);			 
+				gd.setFullScreenWindow(null);
 
 				Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 				if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 				{
-					JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
+					JOptionPane.showMessageDialog(frame, "Resizing window to match desktop settings " + size, "Window Too Large",
 							JOptionPane.ERROR_MESSAGE);
 					frame.setSize(size);
 				}
@@ -156,6 +168,13 @@ public class ScreenResolution
 							+ frame.getInsets().top + frame.getInsets().bottom);
 					frame.setLocation(new Point(((int) (size.getWidth() - frame.getWidth()) >> 1), ((int) (size.getHeight() - frame
 							.getHeight()) >> 1)));
+
+					if (undecorated)
+					{
+						frame.removeNotify();
+						frame.setUndecorated(true);
+						frame.addNotify();
+					}
 				}
 				frame.setVisible(true);
 			}
@@ -175,6 +194,23 @@ public class ScreenResolution
 	public static GraphicsSettings organiseResolution(Preferences prefs, Component comp, boolean initMinRes, boolean exitOnCancel,
 			boolean forceSelect)
 	{
+
+		System.out.println("organising resolution...");
+
+		//check to make sure 3dtools joglpipeline in use
+		J3dUtil.checkJarLoadVersion();//TODO: test this more!
+
+		// warn about Java 7 or 8
+		String jv = System.getProperty("java.version");
+		if (resolutionChangeCount > 0 && (jv.indexOf("1.7.") != -1 || jv.indexOf("1.8.") != -1))
+		{
+			JOptionPane.showMessageDialog(comp,
+					"Java 7 or 8 detected!, please be aware, due to a bug, setting the graphics configuration \n"
+							+ "for a second time will likely result in a crash to desktop, please restart the application \n"
+							+ "if this occurs.", "Java 7+ detected", JOptionPane.WARNING_MESSAGE);
+		}
+		resolutionChangeCount++;
+
 		GraphicsSettings prefsGS = null;
 		if (prefs != null)
 		{
@@ -219,7 +255,7 @@ public class ScreenResolution
 		Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
 		if (desiredMode.getWidth() > size.getWidth() || desiredMode.getHeight() > size.getHeight())
 		{
-			JOptionPane.showMessageDialog(null, "Resizing window to match desktop settings " + size, "Window Too Large",
+			JOptionPane.showMessageDialog(comp, "Resizing window to match desktop settings " + size, "Window Too Large",
 					JOptionPane.ERROR_MESSAGE);
 			comp.setSize(size);
 		}
