@@ -35,6 +35,7 @@ public final class SSCCE
 		// switches not working with links under them
 		// problem that requesting a depth buffer can give back a very small depth buffer (on mac) like 8 or 16bit
 		// IndexRow of GeometryInfo slowness issue
+		// setTransparency in TA has no clamp or rnage check and bad values result is CTD TransparencyAttributes.SCREEN_DOOR
 	      
 		SimpleUniverse universe = new SimpleUniverse();
 		BranchGroup group = new BranchGroup();
