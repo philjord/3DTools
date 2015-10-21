@@ -14,32 +14,35 @@ public class HUDText extends HUDElementContainer
 
 	private HUDElement textShadowElement;
 
-	private Color textColor = new Color(0.9f, 0.9f, 0.9f, 1f);
+	private Color textColor = new Color(1.0f, 1.0f, 0.8f, 1f);
 
 	private Color textGreyColor = textColor.darker();
 
-	private Color textShadowColor = new Color(0.3f, 0.3f, 0.4f, 0.5f);
+	private Color textShadowColor = new Color(0.3f, 0.3f, 0.2f, 0.7f);
 
 	private Font textFont;
+
+	private Font greyTextFont;
 
 	private Canvas3D2D currentCanvas;
 
 	public HUDText(Canvas3D2D canvas3d, Rectangle rectangle)
 	{
-		this(canvas3d, rectangle, 24);
+		this(canvas3d, rectangle, 36);
 	}
 
 	public HUDText(Canvas3D2D canvas3d, Rectangle rectangle, int fontSize)
 	{
-		textFont = new Font("Arial", Font.PLAIN, fontSize);
-
-		textElement = new HUDElement(rectangle.width, rectangle.height);
-		textElement.setLocation(rectangle.x, rectangle.y);
-		add(textElement);
+		textFont = new Font("Arial", Font.BOLD, fontSize);
+		greyTextFont = new Font("Arial", Font.BOLD | Font.ITALIC, fontSize);
 
 		textShadowElement = new HUDElement(rectangle.width, rectangle.height);
 		textShadowElement.setLocation(rectangle.x + 1, rectangle.y + 1);
 		add(textShadowElement);
+
+		textElement = new HUDElement(rectangle.width, rectangle.height);
+		textElement.setLocation(rectangle.x, rectangle.y);
+		add(textElement);
 
 		addToCanvas(canvas3d);
 	}
@@ -67,16 +70,17 @@ public class HUDText extends HUDElementContainer
 
 	public void setText(String newText)
 	{
+		textShadowElement.clear();
+		textShadowElement.getGraphics().setColor(textShadowColor);
+		textShadowElement.getGraphics().setFont(textFont);
+		textShadowElement.getGraphics().drawString(newText, 0, 35);
+
 		textElement.clear();
 		textElement.getGraphics().setColor(textColor);
 		textElement.getGraphics().setFont(textFont);
 		//TODO: must centralise the text
 		textElement.getGraphics().drawString(newText, 0, 35);
 
-		textShadowElement.clear();
-		textShadowElement.getGraphics().setColor(textShadowColor);
-		textShadowElement.getGraphics().setFont(textFont);
-		textShadowElement.getGraphics().drawString(newText, 0, 35);
 	}
 
 	public void setLocation(int x, int y)
@@ -89,7 +93,7 @@ public class HUDText extends HUDElementContainer
 	{
 		textElement.clear();
 		textElement.getGraphics().setColor(textGreyColor);
-		textElement.getGraphics().setFont(textFont);
+		textElement.getGraphics().setFont(greyTextFont);
 		textElement.getGraphics().drawString(newText, 0, 35);
 
 		textShadowElement.clear();
