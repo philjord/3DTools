@@ -17,6 +17,7 @@ import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.Material;
 import javax.media.j3d.QuadArray;
+import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
@@ -76,6 +77,11 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		Material m = new Material();
 		m.setLightingEnable(false);
 		hudShapeApp.setMaterial(m);
+
+		//keep stencil gear in check
+		RenderingAttributes ra = new RenderingAttributes();
+		ra.setDepthBufferEnable(false);
+		hudShapeApp.setRenderingAttributes(ra);
 
 		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
 		hudShape.setAppearance(hudShapeApp);
