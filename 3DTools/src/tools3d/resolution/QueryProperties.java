@@ -139,7 +139,7 @@ public class QueryProperties extends JFrame
 					mess += "\n" + jf.getPath();
 				}
 				System.out.println(mess);
-				int result = JOptionPane.showConfirmDialog(null, mess, "Pre installed Java detected", JOptionPane.YES_NO_OPTION,
+				int result = JOptionPane.showConfirmDialog(null, mess, "Pre installed Java3d detected", JOptionPane.YES_NO_OPTION,
 						JOptionPane.WARNING_MESSAGE);
 				if (result == JOptionPane.YES_OPTION)
 				{
