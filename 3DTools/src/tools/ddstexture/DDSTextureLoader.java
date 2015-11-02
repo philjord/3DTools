@@ -6,17 +6,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.ReferenceQueue;
-import java.lang.ref.WeakReference;
 import java.nio.ByteBuffer;
-import java.util.LinkedHashMap;
-import java.util.Set;
 
 import javax.media.j3d.DDSImageComponent2D;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 
+import tools.WeakValueHashMap;
 import tools.io.FastByteArrayInputStream;
 
 /**
@@ -107,7 +104,7 @@ public class DDSTextureLoader
 
 	/**
 	 * Note avoid mappedbytebufffers as that will push texture loading (disk activity) onto the j3d thread
-	 * which is bad, pull everything into btye arrays on the current thread
+	 * which is bad, pull everything into byte arrays on the current thread
 	 * @param filename
 	 * @param inputBuffer
 	 * @return
@@ -193,6 +190,8 @@ public class DDSTextureLoader
 
 	}
 
+	//private static RequestStats requestStats = new RequestStats(loadedTextures);
+
 	/**
 	* Called to early out in case of cache hit, very likely to return null!
 	* @param filename
@@ -200,6 +199,9 @@ public class DDSTextureLoader
 	*/
 	public static Texture checkCachedTexture(String filename)
 	{
+		//enable to test is caching is good
+		//requestStats.request(filename);
+
 		return loadedTextures.get(filename);
 	}
 
@@ -258,77 +260,4 @@ public class DDSTextureLoader
 		}
 	}
 
-	private static class WeakValueHashMap<K, V>
-	{
-		private final ReferenceQueue<WeakReferenceKey<V>> queue = new ReferenceQueue<WeakReferenceKey<V>>();
-
-		private LinkedHashMap<K, WeakReferenceKey<V>> map = new LinkedHashMap<K, WeakReferenceKey<V>>();
-
-		public V get(K key)
-		{
-			expungeStaleEntries();
-			WeakReferenceKey<V> ref = map.get(key);
-			if (ref != null)
-			{
-				V v = ref.get();
-
-				return v;
-			}
-			return null;
-
-		}
-
-		public V put(K key, V value)
-		{
-			expungeStaleEntries();
-			V oldV = get(key);
-			WeakReferenceKey<V> kv = new WeakReferenceKey<V>(key, value, queue);
-			map.put(key, kv);
-			return oldV;
-		}
-
-		public void clear()
-		{
-			map.clear();
-		}
-
-		@SuppressWarnings("unused")
-		public int size()
-		{
-			return map.size();
-		}
-
-		@SuppressWarnings("unused")
-		public Set<K> keySet()
-		{
-			return map.keySet();
-		}
-
-		/**
-		* Expunges stale entries from the table.
-		*/
-		@SuppressWarnings("unchecked")
-		private void expungeStaleEntries()
-		{
-			WeakReferenceKey<V> ref;
-			while ((ref = (WeakReferenceKey<V>) queue.poll()) != null)
-			{
-				map.remove(ref.key);
-			}
-		}
-
-		private static class WeakReferenceKey<Z> extends WeakReference<Z>
-		{
-			public Object key;
-
-			@SuppressWarnings(
-			{ "unchecked", "rawtypes" })
-			public WeakReferenceKey(Object k, Z v, ReferenceQueue queue)
-			{
-				super(v, queue);
-				this.key = k;
-			}
-		}
-
-	}
 }
