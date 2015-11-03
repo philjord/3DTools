@@ -4,12 +4,12 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
+import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
-import tools3d.utils.PointAtFactory;
 import tools3d.utils.Utils3D;
 
 /**
@@ -47,7 +47,7 @@ public class SimpleTransformGroup extends TransformGroup
 	public SimpleTransformGroup(Vector3f translation, Vector3f lookAt)
 	{
 		this();
-		setTransform(PointAtFactory.createTransform3D(new Point3f(translation), new Point3f(lookAt), true));
+		setTransform(createTransform3D(new Point3f(translation), new Point3f(lookAt), true));
 	}
 
 	public SimpleTransformGroup(Vector3f translation, Vector3f lookAt, BranchGroup group)
@@ -101,6 +101,38 @@ public class SimpleTransformGroup extends TransformGroup
 	public void setTransform(Transform3D transform)
 	{
 		super.setTransform(transform);
+	}
+
+	private static Vector3d defaultUpVector = new Vector3d(0, 1, 0);
+
+	public static Transform3D createTransform3D(Point3d center, Point3d target)
+	{
+		Transform3D trans = new Transform3D();
+		trans.lookAt(center, target, defaultUpVector);
+		trans.invert();
+		return trans;
+	}
+
+	public static Transform3D createTransform3D(Point3f center, Point3f target)
+	{
+		return createTransform3D(new Point3d(center), new Point3d(target));
+	}
+
+	public static Transform3D createTransform3D(Point3d center, Point3d target, boolean levelInY)
+	{
+		if (levelInY)
+		{
+			target.y = center.y;
+		}
+		Transform3D trans = new Transform3D();
+		trans.lookAt(center, target, defaultUpVector);
+		trans.invert();
+		return trans;
+	}
+
+	public static Transform3D createTransform3D(Point3f center, Point3f target, boolean levelInY)
+	{
+		return createTransform3D(new Point3d(center), new Point3d(target), levelInY);
 	}
 
 }
