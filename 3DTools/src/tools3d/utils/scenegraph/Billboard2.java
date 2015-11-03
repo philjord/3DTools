@@ -146,9 +146,9 @@ public class Billboard2 extends Behavior
 		this.axis.set(axis);
 		double invMag;
 		invMag = 1.0 / Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
-		nAxis.x =   axis.x * invMag;
-		nAxis.y =   axis.y * invMag;
-		nAxis.z =  axis.z * invMag;
+		nAxis.x = axis.x * invMag;
+		nAxis.y = axis.y * invMag;
+		nAxis.z = axis.z * invMag;
 
 	}
 
@@ -201,9 +201,9 @@ public class Billboard2 extends Behavior
 		this.axis.set(axis);
 		double invMag;
 		invMag = 1.0 / Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
-		nAxis.x =   axis.x * invMag;
-		nAxis.y =   axis.y * invMag;
-		nAxis.z =   axis.z * invMag;
+		nAxis.x = axis.x * invMag;
+		nAxis.y = axis.y * invMag;
+		nAxis.z = axis.z * invMag;
 
 	}
 
@@ -225,9 +225,9 @@ public class Billboard2 extends Behavior
 		this.axis.set(axis);
 		double invMag;
 		invMag = 1.0 / Math.sqrt(axis.x * axis.x + axis.y * axis.y + axis.z * axis.z);
-		nAxis.x =   axis.x * invMag;
-		nAxis.y =   axis.y * invMag;
-		nAxis.z =  axis.z * invMag;
+		nAxis.x = axis.x * invMag;
+		nAxis.y = axis.y * invMag;
+		nAxis.z = axis.z * invMag;
 
 	}
 
@@ -298,6 +298,15 @@ public class Billboard2 extends Behavior
 		wakeupOn(wakeupFrame);
 	}
 
+	//deburners
+	private Transform3D xform = new Transform3D();
+
+	private Transform3D bbXform = new Transform3D();
+
+	private Transform3D prevTransform = new Transform3D();
+	
+	private Transform3D zRotate = new Transform3D();
+
 	/**
 	 * Process stimulus method that computes appropriate transform.
 	 * @param criteria an enumeration of the criteria that caused the
@@ -324,11 +333,10 @@ public class Billboard2 extends Behavior
 		Canvas3D canvas = v.getCanvas3D(0);
 		boolean status;
 
-		Transform3D xform = new Transform3D();
-		Transform3D bbXform = new Transform3D();
-		Transform3D prevTransform = new Transform3D();
-
+		// to see if things have changed
 		tg.getTransform(prevTransform);
+		// get the current translation out so it is not altered
+		tg.getTransform(bbXform);
 
 		if (mode == ROTATE_ABOUT_AXIS)
 		{ // rotate about axis
@@ -409,7 +417,7 @@ public class Billboard2 extends Behavior
 				aa.y = nAxis.y;
 				aa.z = nAxis.z;
 				aa.angle = -angle;
-				bbXform.set(aa);
+				bbXform.setRotation(aa);
 				if (!prevTransform.epsilonEquals(bbXform, EPSILON))
 				{
 					// Optimization for Billboard since it use passive
@@ -420,11 +428,7 @@ public class Billboard2 extends Behavior
 			}
 			else
 			{
-				bbXform.setIdentity();
-				if (!prevTransform.epsilonEquals(bbXform, EPSILON))
-				{
-					tg.setTransform(bbXform);
-				}
+				// do nothing, leave things as they are
 			}
 
 		}
@@ -433,7 +437,7 @@ public class Billboard2 extends Behavior
 			// Need to rotate Z axis to point to eye, and Y axis to be 
 			// parallel to view platform Y axis, rotating around rotation pt 
 
-			Transform3D zRotate = new Transform3D();
+		
 
 			// get the eye point 
 			canvas.getCenterEyeInImagePlate(viewPosition);
