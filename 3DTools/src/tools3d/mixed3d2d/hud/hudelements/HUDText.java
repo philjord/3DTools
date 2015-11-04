@@ -10,6 +10,9 @@ import tools3d.mixed3d2d.hud.HUDElementContainer;
 
 public class HUDText extends HUDElementContainer
 {
+
+	private boolean alignHCenter = true;
+
 	private HUDElement textElement;
 
 	private HUDElement textShadowElement;
@@ -26,6 +29,8 @@ public class HUDText extends HUDElementContainer
 
 	private Canvas3D2D currentCanvas;
 
+	private Rectangle rectangle;
+
 	public HUDText(Canvas3D2D canvas3d, Rectangle rectangle)
 	{
 		this(canvas3d, rectangle, 36);
@@ -33,6 +38,13 @@ public class HUDText extends HUDElementContainer
 
 	public HUDText(Canvas3D2D canvas3d, Rectangle rectangle, int fontSize)
 	{
+		this(canvas3d, rectangle, fontSize, true);
+	}
+
+	public HUDText(Canvas3D2D canvas3d, Rectangle rectangle, int fontSize, boolean alignHCenter)
+	{
+		this.alignHCenter = alignHCenter;
+		this.rectangle = rectangle;
 		textFont = new Font("Arial", Font.BOLD, fontSize);
 		greyTextFont = new Font("Arial", Font.BOLD | Font.ITALIC, fontSize);
 
@@ -68,33 +80,51 @@ public class HUDText extends HUDElementContainer
 		}
 	}
 
-	public void setText(String newText)
-	{
-		textShadowElement.clear();
-		textShadowElement.getGraphics().setColor(textShadowColor);
-		textShadowElement.getGraphics().setFont(textFont);
-		textShadowElement.getGraphics().drawString(newText, 0, 35);
-
-		textElement.clear();
-		textElement.getGraphics().setColor(textColor);
-		textElement.getGraphics().setFont(textFont);
-		//TODO: must centralise the text
-		textElement.getGraphics().drawString(newText, 0, 35);
-
-	}
-
 	public void setLocation(int x, int y)
 	{
 		textElement.setLocation(x, y);
 		textShadowElement.setLocation(x + 1, y + 1);
 	}
 
+	public void setText(String newText)
+	{
+
+		int hOffset = 0;
+		if (alignHCenter)
+		{
+			int sw = textElement.getGraphics().getFontMetrics(textFont).stringWidth(newText);
+			hOffset = (rectangle.width / 2) - (sw / 2);
+		}
+
+		textShadowElement.clear();
+		textShadowElement.getGraphics().setColor(textShadowColor);
+		textShadowElement.getGraphics().setFont(textFont);
+		textShadowElement.getGraphics().drawString(newText, hOffset, 35);
+
+		textElement.clear();
+		textElement.getGraphics().setColor(textColor);
+		textElement.getGraphics().setFont(textFont);
+
+		textElement.getGraphics().drawString(newText, hOffset, 35);
+
+		//debug outliner
+		//textElement.getGraphics().drawRect(0, 0, rectangle.width-1, rectangle.height-1); 
+
+	}
+
 	public void setTextGreyed(String newText)
 	{
+		int hOffset = 0;
+		if (alignHCenter)
+		{
+			int sw = textElement.getGraphics().getFontMetrics(textFont).stringWidth(newText);
+			hOffset = (rectangle.width / 2) - (sw / 2);
+		}
+
 		textElement.clear();
 		textElement.getGraphics().setColor(textGreyColor);
 		textElement.getGraphics().setFont(greyTextFont);
-		textElement.getGraphics().drawString(newText, 0, 35);
+		textElement.getGraphics().drawString(newText, hOffset, 35);
 
 		textShadowElement.clear();
 
