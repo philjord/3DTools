@@ -18,12 +18,17 @@ public class TimedRunnableBehavior extends Behavior
 
 	private WakeupCondition criterion;
 
-	public TimedRunnableBehavior(long delay, int loopCount, Runnable callback)
+	public TimedRunnableBehavior(long delay)
 	{
-		this.callback = callback;
-		this.loopCount = loopCount;
 		criterion = new WakeupOnElapsedTime(delay);
 		setSchedulingBounds(Utils3D.defaultBounds);
+		setEnable(false);
+	}
+
+	public void start(int loopCount1, Runnable callback1)
+	{
+		this.callback = callback1;
+		this.loopCount = loopCount1;
 		setEnable(true);
 	}
 
@@ -32,20 +37,19 @@ public class TimedRunnableBehavior extends Behavior
 		wakeupOn(criterion);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings(
+	{ "unchecked", "rawtypes" })
 	public void processStimulus(Enumeration criteria)
 	{
 		callback.run();
-		if (loopCount == -1)
-		{
-			wakeupOn(criterion);
-		}
-		else
+		wakeupOn(criterion);
+
+		if (loopCount != -1)
 		{
 			loopCount -= 1;
-			if (loopCount > 0)
+			if (loopCount <= 0)
 			{
-				wakeupOn(criterion);
+				setEnable(false);
 			}
 		}
 	}
