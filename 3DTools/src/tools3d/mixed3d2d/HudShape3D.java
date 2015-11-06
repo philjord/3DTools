@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -173,6 +174,29 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		float hH = (float) SHAPE_TEX_HEIGHT / (float) canvas.getHeight();
 		//System.out.println("hW " + hW + " = " + SHAPE_TEX_WIDTH + "/" + canvas.getWidth());
 		//	System.out.println("hH " + hH + " = " + SHAPE_TEX_HEIGHT + "/" + canvas.getHeight());
+
+		//final clear for all previously removed hud elements
+		synchronized (canvas.getRemovedHudElements())
+		{
+			for (HUDElement e : canvas.getRemovedHudElements())
+			{
+				if (e != null && e.isEnabled())
+				{
+					g.clearRect((int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), e.getWidth(), e.getHeight()); //NOT fillRect doesn't work
+				}
+			}
+		}
+		//final clear for all previously removed panel3ds
+		synchronized (canvas.getRemovedPanel3ds())
+		{
+			for (Panel3D p : canvas.getRemovedPanel3ds())
+			{
+				if (p != null && p.isEnabled())
+				{
+					g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
+				}
+			}
+		}
 
 		//do all clears first in case of overlapping elements
 		synchronized (canvas.getHudElements())

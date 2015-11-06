@@ -54,14 +54,18 @@ public class Canvas3D2D extends Canvas3D
 
 	private ArrayList<Panel3D> panel3ds = new ArrayList<Panel3D>();
 
+	// for a last clear call
+	private ArrayList<HUDElement> removedHudElements = new ArrayList<HUDElement>();
+
+	private ArrayList<Panel3D> removedPanel3ds = new ArrayList<Panel3D>();
+
 	private HudShape3D hudShapeBG;
 
 	public Canvas3D2D(GraphicsConfiguration gc)
 	{
 		super(gc);
 		hudShapeBG = new HudShape3D(this);
-		 
- 
+
 	}
 
 	/**
@@ -95,6 +99,7 @@ public class Canvas3D2D extends Canvas3D
 		synchronized (hudElements)
 		{
 			hudElements.remove(element);
+			removedHudElements.add(element);
 		}
 	}
 
@@ -114,6 +119,7 @@ public class Canvas3D2D extends Canvas3D
 		synchronized (panel3ds)
 		{
 			panel3ds.remove(panel3D);
+			removedPanel3ds.add(panel3D);
 		}
 	}
 
@@ -175,6 +181,16 @@ public class Canvas3D2D extends Canvas3D
 		return panel3ds;
 	}
 
+	public ArrayList<HUDElement> getRemovedHudElements()
+	{
+		return removedHudElements;
+	}
+
+	public ArrayList<Panel3D> getRemovedPanel3ds()
+	{
+		return removedPanel3ds;
+	}
+
 	public static boolean applyPostEffect = false;
 
 	public float distortionOffset = 0.25f;
@@ -196,7 +212,7 @@ public class Canvas3D2D extends Canvas3D
 			if (img == null)
 			{
 
-				Rectangle rect = this.getBounds();				
+				Rectangle rect = this.getBounds();
 				img = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
 				img2 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
 				img3 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
@@ -234,7 +250,7 @@ public class Canvas3D2D extends Canvas3D
 				{
 					texIn.set((float) x / (float) img2.getWidth(), (float) y / (float) img2.getHeight());
 					Tuple2f tc = HmdWarp(texIn);
-					if (x == 0 && y == 0&& false)
+					if (x == 0 && y == 0 && false)
 					{
 						System.out.println("x " + ((float) x / (float) img2.getWidth()) + " y " + ((float) y / (float) img2.getHeight()));
 						System.out.println(" tc.x " + tc.x + " tc.y " + tc.y);
@@ -260,14 +276,14 @@ public class Canvas3D2D extends Canvas3D
 	private Tuple2f HmdWarp(Tuple2f texIn)
 	{
 		theta.set(texIn);// range 0 to 1
-		
+
 		theta.x -= 0.5;
 		theta.y -= 0.5;//range now -0.5 to 0.5
 
 		theta.scale(2);//range now -1 to 1
-		
+
 		theta.y /= 1.25; // y over size remove
-		
+
 		theta.add(LensCenterLocation); // add lens offset
 
 		float rSq = (theta.x * theta.x) + (theta.y * theta.y);
@@ -277,14 +293,13 @@ public class Canvas3D2D extends Canvas3D
 		//+	 (K3 * rSq * rSq * rSq);		
 		theta.scale(distort);
 		theta.sub(LensCenterLocation);//remove lens offset
-		
+
 		theta.y *= 1.25; // y over size remove
-		
+
 		theta.scale(0.5f);//range now -0.5 to 0.5
 
 		theta.x += 0.5;
 		theta.y += 0.5;//range 0 to 1
-		
 
 		//now scale back up to full screen???
 
