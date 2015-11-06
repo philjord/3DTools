@@ -18,19 +18,19 @@ public class NavigationInputAWTKey implements KeyListener
 
 	public static float VERTICAL_RATE = 10.0f; //not final to allow faster flight
 
-	public final static int FORWARD_KEY = KeyEvent.VK_W;
+	public static int FORWARD_KEY = KeyEvent.VK_W;
 
-	public final static int FAST_KEY = KeyEvent.VK_E;
+	public static int FAST_KEY = KeyEvent.VK_E;
 
-	public final static int BACK_KEY = KeyEvent.VK_S;
+	public static int BACK_KEY = KeyEvent.VK_S;
 
-	public final static int LEFT_KEY = KeyEvent.VK_A;
+	public static int LEFT_KEY = KeyEvent.VK_A;
 
-	public final static int RIGHT_KEY = KeyEvent.VK_D;
+	public static int RIGHT_KEY = KeyEvent.VK_D;
 
-	public final static int UP_KEY = KeyEvent.VK_Q;
+	public static int UP_KEY = KeyEvent.VK_Q;
 
-	public final static int DOWN_KEY = KeyEvent.VK_Z;
+	public static int DOWN_KEY = KeyEvent.VK_Z;
 
 	private boolean allowVerticalMovement = false;
 

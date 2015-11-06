@@ -37,6 +37,11 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			parent.removeChild(child);
 	}
 
+	public void remove(Node child)
+	{
+		remove((Group) child.getParent(), child);
+	}
+
 	@Override
 	public void addToQueue(Object parameter)
 	{
@@ -67,8 +72,8 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			}
 
 			if ((System.currentTimeMillis() - startTime) > 5)
-			System.out.println("Structure (" + structureUpdate.type.name() + " " + structureUpdate.parent.getName() + "-"
-					+ structureUpdate.child.getName() + ") update took " + (System.currentTimeMillis() - startTime) + "ms");
+				System.out.println("Structure (" + structureUpdate.type.name() + " " + structureUpdate.parent.getName() + "-"
+						+ structureUpdate.child.getName() + ") update took " + (System.currentTimeMillis() - startTime) + "ms");
 		}
 		else
 		{
@@ -97,4 +102,5 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			this.child = child;
 		}
 	}
+
 }
