@@ -85,7 +85,7 @@ public class HUDCompass extends HUDElementContainer implements LocationUpdateLis
 		int yawDeg = (int) CompassRotation.wrapToMax(-CompassRotation.radToDeg(yawPitch.getYaw()), 360);
 
 		textElement.getGraphics().drawString("" + yawDeg + " " + bearings[(yawDeg + 22) % 360 / 45], 0, 10);
-		textElement.getGraphics().drawString("" + (int) CompassRotation.radToDeg(yawPitch.getPitch()), 40, 10);
+		textElement.getGraphics().drawString("Azi " + (int) CompassRotation.radToDeg(yawPitch.getPitch()), 40, 10);
 
 		double yawRad = -yawPitch.getYaw();
 		compassNeedleElement.clear();

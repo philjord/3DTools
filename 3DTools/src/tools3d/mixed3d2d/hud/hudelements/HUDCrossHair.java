@@ -35,6 +35,7 @@ public class HUDCrossHair extends HUDElementContainer
 
 	public HUDCrossHair(String imageName)
 	{
+
 		Image im = SimpleImageLoader.getImage(imageName);
 		if (im != null)
 		{
@@ -48,6 +49,20 @@ public class HUDCrossHair extends HUDElementContainer
 			crossHairElement.getGraphics().drawImage(im, 0, 0, null);
 			add(crossHairElement);
 		}
+	}
+
+	public HUDCrossHair()
+	{
+		width = 20;
+		height = 20;
+		crossHairElement = new HUDElement(width, height);
+		crossHairElement.getGraphics().setColor(new Color(0.5f, 0.6f, 0.6f, 0.9f));
+		crossHairElement.getGraphics().drawLine(0, (height / 2), width, (height / 2));
+		crossHairElement.getGraphics().drawLine(0, (height / 2) - 1, width, (height / 2) - 1);
+		crossHairElement.getGraphics().drawLine((width / 2), 0, (width / 2), height);
+		crossHairElement.getGraphics().drawLine((width / 2) - 1, 0, (width / 2) - 1, height);
+		add(crossHairElement);
+
 	}
 
 	public void addToCanvas(Canvas3D2D canvas)
