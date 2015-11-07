@@ -5,7 +5,6 @@ import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 import java.util.Enumeration;
 
 import javax.media.j3d.Appearance;
@@ -57,6 +56,8 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	private ImageComponent2D hudShapeIc2d;
 
 	private Canvas3D2D canvas;
+
+	private boolean finalClearRequired = false;
 
 	public HudShape3D(Canvas3D2D canvas)
 	{
@@ -155,101 +156,119 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	@Override
 	public void updateData(ImageComponent2D imageComponent, int x, int y, int width, int height)
 	{
-
-		//This method will only be called when we are attached to a scene graph, i.e. this.isLive()==true
-		// so these hudelements won't be drawn as overlays
-		Graphics2D g = hudShapeIc2d.getImage().createGraphics();
-		g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
-
-		//I'm  way better off clearing the individual hud elements little squares worth
-		//g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOT fillRect doesn't work
-
-		// Enable to help place hud elements
-		//g.drawRect(2, 2, SHAPE_TEX_WIDTH - 4, SHAPE_TEX_HEIGHT - 4);
-
-		//ok I've got it, the hud sizes are for screen coords, but for hud shape texture
-		// I've got a fixed width of 1024, so the draws need to account for that properly
-
-		float hW = (float) SHAPE_TEX_WIDTH / (float) canvas.getWidth();
-		float hH = (float) SHAPE_TEX_HEIGHT / (float) canvas.getHeight();
-		//System.out.println("hW " + hW + " = " + SHAPE_TEX_WIDTH + "/" + canvas.getWidth());
-		//	System.out.println("hH " + hH + " = " + SHAPE_TEX_HEIGHT + "/" + canvas.getHeight());
-
-		//final clear for all previously removed hud elements
-		synchronized (canvas.getRemovedHudElements())
+		if (!canvas.hasEnabledPanel3D())
 		{
-			for (HUDElement e : canvas.getRemovedHudElements())
+			//This method will only be called when we are attached to a scene graph, i.e. this.isLive()==true
+			// so these hudelements won't be drawn as overlays
+			Graphics2D g = hudShapeIc2d.getImage().createGraphics();
+			g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
+
+			//I'm  way better off clearing the individual hud elements little squares worth
+			//g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOT fillRect doesn't work
+
+			//ok I've got it, the hud sizes are for screen coords, but for hud shape texture
+			// I've got a fixed width of 1024, so the draws need to account for that properly
+
+			float hW = (float) SHAPE_TEX_WIDTH / (float) canvas.getWidth();
+			float hH = (float) SHAPE_TEX_HEIGHT / (float) canvas.getHeight();
+			//System.out.println("hW " + hW + " = " + SHAPE_TEX_WIDTH + "/" + canvas.getWidth());
+			//	System.out.println("hH " + hH + " = " + SHAPE_TEX_HEIGHT + "/" + canvas.getHeight());
+
+			//final clear for all previously removed hud elements
+			synchronized (canvas.getRemovedHudElements())
 			{
-				if (e != null && e.isEnabled())
+				for (HUDElement e : canvas.getRemovedHudElements())
 				{
-					g.clearRect((int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), e.getWidth(), e.getHeight()); //NOT fillRect doesn't work
+					if (e != null)
+					{
+						g.clearRect((int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), e.getWidth(), e.getHeight()); //NOT fillRect doesn't work
+					}
 				}
 			}
-		}
-		//final clear for all previously removed panel3ds
-		synchronized (canvas.getRemovedPanel3ds())
-		{
-			for (Panel3D p : canvas.getRemovedPanel3ds())
+			//final clear for all previously removed panel3ds
+			synchronized (canvas.getRemovedPanel3ds())
 			{
-				if (p != null && p.isEnabled())
+				for (Panel3D p : canvas.getRemovedPanel3ds())
 				{
-					g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
+					if (p != null)
+					{
+						g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
+					}
 				}
 			}
-		}
 
-		//do all clears first in case of overlapping elements
-		synchronized (canvas.getHudElements())
-		{
-			for (HUDElement e : canvas.getHudElements())
+			//do all clears first in case of overlapping elements
+			synchronized (canvas.getHudElements())
 			{
-				if (e != null && e.isEnabled())
+				for (HUDElement e : canvas.getHudElements())
 				{
-					g.clearRect((int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), e.getWidth(), e.getHeight()); //NOT fillRect doesn't work
+					if (e != null && e.isEnabled())
+					{
+						g.clearRect((int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), e.getWidth(), e.getHeight()); //NOT fillRect doesn't work
+					}
 				}
 			}
-		}
 
-		//TODO: I should NEVER draw this on a hud shape I should flip to post render
-		synchronized (canvas.getPanel3ds())
-		{
-			for (Panel3D p : canvas.getPanel3ds())
+			//see below never actually called
+			synchronized (canvas.getPanel3ds())
 			{
-				if (p != null && p.isEnabled())
+				for (Panel3D p : canvas.getPanel3ds())
 				{
-					g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
+					if (p != null && p.isEnabled() && p.isUpdated())
+					{
+						g.clearRect(p.getX(), p.getY(), p.getWidth(), p.getHeight()); //NOTE fillRect doesn't work
+					}
 				}
 			}
-		}
 
-		// now draw
-		synchronized (canvas.getHudElements())
-		{
-			for (HUDElement e : canvas.getHudElements())
+			// now draw
+			synchronized (canvas.getHudElements())
 			{
-				if (e != null && e.isEnabled())
+				for (HUDElement e : canvas.getHudElements())
 				{
-					//TODO: draw at scaled width and height?
-					g.drawImage(e.getBufferedImage(), (int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), null);
+					if (e != null && e.isEnabled())
+					{
+						//TODO: draw at scaled width and height?
+						g.drawImage(e.getBufferedImage(), (int) (e.getAbsoluteX() * hW), (int) (e.getAbsoluteY() * hH), null);
+					}
 				}
 			}
-		}
 
-		//TODO: I should NEVER draw this on a hud shape I should flip to post render
-		synchronized (canvas.getPanel3ds())
-		{
-			for (Panel3D p : canvas.getPanel3ds())
+			//TODO: Note this is never in fact called, because of teh check above
+			// I can't put nice Panel3D in the hud shape because teh scaling (hW and hH) make it
+			// look too terrible
+			synchronized (canvas.getPanel3ds())
 			{
-				if (p != null && p.isEnabled())
+				for (Panel3D p : canvas.getPanel3ds())
 				{
-					//TODO: draw at scaled width and height?
-					g.drawImage(p.getBufferedImage(), (int) (p.getX() * hW), (int) (p.getY() * hH), null);
+					if (p != null && p.isEnabled())
+					{
+						g.drawImage(p.getBufferedImage(), (int) (p.getX() * hW), (int) (p.getY() * hH), //
+								(int) (p.getWidth() * hW), (int) (p.getHeight() * hH), null);
+					}
 				}
 			}
+
+			// in case we flip to post render system due to panel3Ds arriving
+			finalClearRequired = true;
+
+			// Enable to help place hud elements
+			//g.setColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
+			//g.drawRect(3, 3, SHAPE_TEX_WIDTH - 6, SHAPE_TEX_HEIGHT - 6);
+			//g.drawRect(4, 4, SHAPE_TEX_WIDTH - 8, SHAPE_TEX_HEIGHT - 8);
+
+			// must reset so the image displays, before TextureRetained mip level fix this wasn't needed
+			hudShapeApp.setTexture(tex);
+		}
+		else if (finalClearRequired)
+		{
+			Graphics2D g = hudShapeIc2d.getImage().createGraphics();
+			g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
+			g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOTE fillRect doesn't work
+			finalClearRequired = false;
+			hudShapeApp.setTexture(tex);
 		}
 
-		// must reset so the image displays, before TextureRetained mip level fix this wasn't needed
-		hudShapeApp.setTexture(tex);
 	}
 
 	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)

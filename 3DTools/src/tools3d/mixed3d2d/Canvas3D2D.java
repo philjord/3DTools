@@ -1,22 +1,12 @@
 package tools3d.mixed3d2d;
 
-import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
-import java.awt.Rectangle;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.J3DGraphics2D;
-import javax.media.j3d.Raster;
 import javax.media.j3d.Shape3D;
-import javax.vecmath.Point3f;
-import javax.vecmath.Tuple2f;
-import javax.vecmath.Vector2f;
 
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
@@ -129,12 +119,12 @@ public class Canvas3D2D extends Canvas3D
 	@Override
 	public void postRender()
 	{
-		applyPostEffect();
+		//applyPostEffect();
 
 		//	J3dUtil.postProcessFrameBuffer(distortionOffset, this);
 
-		// we only draw if the hud is not in the scene live or any panel3d exists
-		if (!hudShapeBG.isLive())
+		// we only draw if the hud is not in the scene live or any panel3d are enabled
+		if (!hudShapeBG.isLive() || hasEnabledPanel3D())
 		{
 			// Oh my god. Long story short, don't touch this if doing overlays.
 			// Longer version, if the last rendered texture on a canvas3d has a transformation
@@ -190,6 +180,26 @@ public class Canvas3D2D extends Canvas3D
 	{
 		return removedPanel3ds;
 	}
+
+	public boolean hasEnabledPanel3D()
+	{
+		boolean enabledPanel3D = false;
+		for (Panel3D p : panel3ds)
+		{
+			if (p != null && p.isEnabled())
+			{
+				enabledPanel3D = true;
+				break;
+			}
+		}
+		return enabledPanel3D;
+	}
+	
+	
+	
+	
+	public boolean isLeft = true;
+	/*
 
 	public static boolean applyPostEffect = false;
 
@@ -269,7 +279,7 @@ public class Canvas3D2D extends Canvas3D
 		}
 	}
 
-	public boolean isLeft = true;
+
 
 	private Vector2f theta = new Vector2f();
 
@@ -315,5 +325,6 @@ public class Canvas3D2D extends Canvas3D
 	public static float K3 = 0.0f;
 
 	private Tuple2f LensCenterLocation = new Vector2f(0f, 0f);
+	*/
 
 }

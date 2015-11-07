@@ -147,6 +147,8 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 
 	private boolean fullSized = false;
 
+	private boolean hasBeenUpdated = false;
+
 	/**
 	 * fullScreen, But only on a good pausey screen as this is expensive to render (postRender)
 	 */
@@ -188,12 +190,18 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 
 	public BufferedImage getBufferedImage()
 	{
+		hasBeenUpdated = false;
 		return currentBufferedImage;
 	}
 
 	public boolean isEnabled()
 	{
-		return enabled;
+		return enabled && comps.size() > 0;
+	}
+
+	public boolean isUpdated()
+	{
+		return hasBeenUpdated;
 	}
 
 	public void setEnabled(boolean enabled)
@@ -322,7 +330,6 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 		g.setComposite(AlphaComposite.Clear);
 		g.fillRect(0, 0, width, height);
 		g.setComposite(AlphaComposite.SrcOver);
-
 	}
 
 	public synchronized void redraw(boolean forceAll)
@@ -368,10 +375,13 @@ public class Panel3D implements MouseListener, MouseMotionListener, KeyListener
 				adjustGraphicsLocation(false, g, c);
 			}
 		}
-		updateRequired.clear();
 
 		//swap the back buffer to front
 		currentBufferedImage = g == graphics1 ? bufferedImage1 : bufferedImage2;
+
+		hasBeenUpdated = forceAll || updateRequired.size() > 0;
+		updateRequired.clear();
+
 	}
 
 	private static void adjustGraphicsLocation(boolean prePaint, Graphics2D g, JComponent c)
