@@ -53,6 +53,8 @@ public class ExitDialogPane3D extends JPanel implements ActionListener
 		label.setText("Are you sure you wish to exit?");
 		panel3D.redraw(true);
 
+		setVisible(false);
+
 	}
 
 	public void addActionListener(ActionListener actionListener)
