@@ -78,7 +78,7 @@ public class DDSDecompressor
 		//can't use width or height as it's been corrected to 1 already
 		if (imageInfo.getWidth() < 1 || imageInfo.getHeight() < 1)
 		{
-			return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
 		}
 
 		//prep the buffer
