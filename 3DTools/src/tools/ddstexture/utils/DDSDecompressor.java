@@ -5,6 +5,7 @@ import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
+import tools.MiniFloat;
 import tools.ddstexture.DDSImage;
 
 /**
