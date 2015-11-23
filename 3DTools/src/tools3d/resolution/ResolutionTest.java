@@ -4,6 +4,8 @@ import java.awt.GraphicsConfigTemplate;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -21,14 +23,17 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TriangleArray;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.WindowConstants;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
-import tools.ddstexture.DDSTextureLoader;
-
 import com.sun.j3d.utils.universe.SimpleUniverse;
+
+import tools.ddstexture.DDSTextureLoader;
 
 /**
  * A match altered class of:
@@ -41,6 +46,8 @@ public final class ResolutionTest
 
 	private final JFrame win;
 
+	private Canvas3D canvas3D;
+
 	private ResolutionTest()
 	{
 		//note win construction MUST occur beofre asking for graphics environment etc.
@@ -48,7 +55,13 @@ public final class ResolutionTest
 		win.setVisible(true);
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		
+		JMenuBar menubar = new JMenuBar();
+		JMenu fileMenu = new JMenu("File");
+		JMenuItem setGraphicsMenuItem = new JMenuItem("Set Graphics");
+		fileMenu.add(setGraphicsMenuItem);
+		menubar.add(fileMenu);
+		win.setJMenuBar(menubar);
+
 		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		gd = ge.getDefaultScreenDevice();
 		GraphicsConfiguration[] gc = gd.getConfigurations();
@@ -56,13 +69,12 @@ public final class ResolutionTest
 		// antialiasing REQUIRED is good to have
 		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
 		GraphicsConfiguration config = template.getBestConfiguration(gc);
-		Canvas3D canvas3D = new Canvas3D(config);
+		canvas3D = new Canvas3D(config);
 		win.add(canvas3D);
 
 		GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, true, true);
 
-		canvas3D.addKeyListener(new KeyAdapter()
-		{
+		canvas3D.addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e)
 			{
 				final int keyCode = e.getKeyCode();
@@ -83,6 +95,18 @@ public final class ResolutionTest
 		// don't bother super fast for now
 		//ConsoleFPSCounter fps = new ConsoleFPSCounter();
 		//su.addBranchGraph(fps.getBehaviorBranchGroup());
+
+		setGraphicsMenuItem.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e)
+			{
+				GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, false, false);
+
+				canvas3D.getView().setSceneAntialiasingEnable(gs.isAaRequired());
+				DDSTextureLoader.setAnisotropicFilterDegree(gs.getAnisotropicFilterDegree());
+
+			}
+		});
 
 	}
 
