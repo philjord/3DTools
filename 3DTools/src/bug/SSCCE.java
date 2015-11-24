@@ -1,4 +1,5 @@
 package bug;
+
 import javax.media.j3d.AmbientLight;
 import javax.media.j3d.Appearance;
 import javax.media.j3d.BoundingSphere;
@@ -13,6 +14,7 @@ import javax.media.j3d.Shape3D;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.TriangleArray;
+import javax.swing.JFrame;
 import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
@@ -23,21 +25,81 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 
 public final class SSCCE
 {
+	/**SSCCE I need
+			// mip map issue max level check
+			// renderingattributes needed all round if stencil on
+			// removeChild slowness (users)
+			// postrender transform on texture
+			// possibly the capsule shape intersect code?
+			// reset of resolution bust the world - removeNotify
+			// switches not working with links under them
+			// problem that requesting a depth buffer can give back a very small depth buffer (on mac) like 8 or 16bit
+			// IndexRow of GeometryInfo slowness issue
+			// setTransparency in TA has no clamp or range check and bad values result is CTD TransparencyAttributes.SCREEN_DOOR
+	*/
 
+	//CTD for removeNotify
 	public static void main(String[] args)
 	{
-		// SSCCE I need
-		// mip map issue max level check
-		// renderingattributes needed all round if stencil on
-		// removeChild slowness (users)
-		// postrender transform on texture
-		// possibly the capsule shape intersect code?
-		// reset of resolution bust the world
-		// switches not working with links under them
-		// problem that requesting a depth buffer can give back a very small depth buffer (on mac) like 8 or 16bit
-		// IndexRow of GeometryInfo slowness issue
-		// setTransparency in TA has no clamp or rnage check and bad values result is CTD TransparencyAttributes.SCREEN_DOOR
-	      
+
+		SimpleUniverse universe = new SimpleUniverse();
+		BranchGroup group = new BranchGroup();
+
+		Transform3D viewTransform = new Transform3D();
+		viewTransform.lookAt(new Point3d(0, 10, 200), new Point3d(), new Vector3d(0, 1, 0));
+		viewTransform.invert();
+		universe.getViewingPlatform().getViewPlatformTransform().setTransform(viewTransform);
+		universe.getViewer().getView().setBackClipDistance(1000);
+
+		// lights
+		BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 1000.0);
+		Color3f ambientColor = new Color3f(.4f, .4f, .4f);
+		AmbientLight ambientLightNode = new AmbientLight(ambientColor);
+		ambientLightNode.setInfluencingBounds(bounds);
+		group.addChild(ambientLightNode);
+
+		Shape3D shape = new Shape3D();
+		TriangleArray tri = new TriangleArray(3, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		tri.setCoordinate(0, new Point3f(5f, 0.0f, 0.0f));
+		tri.setCoordinate(1, new Point3f(0.0f, 5f, 0.0f));
+		tri.setCoordinate(2, new Point3f(-5f, 0.0f, 0.0f));
+		tri.setColor(0, new Color3f((float) Math.random(), 0.0f, 0.0f));
+		tri.setColor(1, new Color3f(0.0f, 1.0f, 0.0f));
+		tri.setColor(2, new Color3f(0.0f, 0.0f, 1.0f));
+		shape.setAppearance(new Appearance());
+		shape.setGeometry(tri);
+		group.addChild(shape);
+
+		universe.addBranchGraph(group);
+		
+		JFrame f = (JFrame) universe.getViewer().getCanvas3D().getParent().getParent().getParent().getParent().getParent();
+		f.validate();
+		
+		try
+		{
+			Thread.sleep(5000);
+		}
+		catch (Exception e)
+		{
+		}
+// ok this doesn't crash nothing yet, need to push it harder?
+		f.removeNotify();
+		f.setUndecorated(true);
+		f.addNotify();
+
+		try
+		{
+			Thread.sleep(5000);
+		}
+		catch (Exception e)
+		{
+		}
+	}
+
+	// remove slowness - not yet working
+	public static void main2(String[] args)
+	{
+
 		SimpleUniverse universe = new SimpleUniverse();
 		BranchGroup group = new BranchGroup();
 		group.setCapability(Group.ALLOW_CHILDREN_WRITE);
@@ -97,17 +159,18 @@ public final class SSCCE
 
 		try
 		{
-			Thread.sleep(1000);
+			Thread.sleep(500);
 		}
 		catch (Exception e)
 		{
 		}
-		
+
 		// now detach the whole lot in a single simple call
 		start = System.currentTimeMillis();
 		root2.detach();
 		System.out.println("remove complete in " + (System.currentTimeMillis() - start) + "ms");
 
+		
 	}
 
 	private static Group buildGroup(Material mat, ColoringAttributes ca, int i)
