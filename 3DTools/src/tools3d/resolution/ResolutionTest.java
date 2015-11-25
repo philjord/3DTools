@@ -35,11 +35,6 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import tools.ddstexture.DDSTextureLoader;
 
-/**
- * A match altered class of:
- * A demo to illustrate fullscreen exclusive mode with Java3D
- * @author Kevin J. Duling (kevin@duling.us)
- */
 public final class ResolutionTest
 {
 	private final GraphicsDevice gd;
@@ -50,7 +45,7 @@ public final class ResolutionTest
 
 	private ResolutionTest()
 	{
-		//note win construction MUST occur beofre asking for graphics environment etc.
+		//note win construction MUST occur before asking for graphics environment etc.
 		win = new JFrame("Fullscreen Example");
 		win.setVisible(true);
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -161,11 +156,6 @@ public final class ResolutionTest
 
 	public static void main(String[] args)
 	{
-
-		//load up the native dlls!		 
-		//new Java3dLinker2();
-
 		new ResolutionTest();
-
 	}
 }

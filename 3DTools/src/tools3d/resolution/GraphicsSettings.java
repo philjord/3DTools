@@ -33,9 +33,6 @@ public class GraphicsSettings
 	 */
 	public boolean isRunFullscreen()
 	{
-		//TODO: tell mac user not to go full screen until I've got a 
-		// full screen off mechanism
-		// try The Control+Command+F worked for me.
 		return runFullscreen;
 	}
 

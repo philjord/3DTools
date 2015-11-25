@@ -51,8 +51,7 @@ public class ConsoleFPSCounter
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings(
-		{ "unchecked", "rawtypes" })
+		@SuppressWarnings("rawtypes")
 		public void processStimulus(Enumeration critera)
 		{
 			currtime = System.currentTimeMillis();
@@ -76,8 +75,7 @@ public class ConsoleFPSCounter
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings(
-		{ "unchecked", "rawtypes" })
+		@SuppressWarnings("rawtypes")
 		public void processStimulus(Enumeration critera)
 		{
 			// time is in millisec, so multiply by 1000 to get frames/sec

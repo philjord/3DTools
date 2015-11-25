@@ -45,11 +45,10 @@ import javax.swing.border.TitledBorder;
  * refresh rate, color depth, and whether the app should run in fullscreen or
  * windowed mode.
  * 
- * NOTE if you select any resolution mode other than current you will reset all attached montiors
- * which will muck up multi monitor window layouts
- * @author Kevin J. Duling (kevin@duling.us)
+ * NOTE if you select any resolution mode other than current you will reset all attached monitors
+ * which will muck up multi-monitor window layouts
  */
-@SuppressWarnings("rawtypes")
+ 
 public final class DisplayDialog extends JPanel implements ActionListener
 {
 	private final JButton cancel = new JButton("Cancel");
@@ -72,11 +71,11 @@ public final class DisplayDialog extends JPanel implements ActionListener
 
 	private Map<String, ArrayList<DisplayMode>> displayModesByRes = new HashMap<String, ArrayList<DisplayMode>>();
 
-	private final JComboBox modesDropDown = new JComboBox();
+	private final JComboBox<String> modesDropDown = new JComboBox<String>();
 
-	private final JComboBox bitDepthDropDown = new JComboBox();
+	private final JComboBox<String> bitDepthDropDown = new JComboBox<String>();
 
-	private final JComboBox refreshDropDown = new JComboBox();
+	private final JComboBox<String> refreshDropDown = new JComboBox<String>();
 
 	private JSlider anisotropicFilterDegree;
 
@@ -116,7 +115,7 @@ public final class DisplayDialog extends JPanel implements ActionListener
 
 	/**
 	 * Creates a new instance of DisplayDialog.
-	 * @param frame The parent compnent for this Swing object
+	 * @param frame The parent component for this Swing object
 	 * @param wrapper MUST be either JDialog or JInternalFrame
 	 * @param initMinRes 
 	 * @param allowFullScreen 
@@ -208,8 +207,8 @@ public final class DisplayDialog extends JPanel implements ActionListener
 				.setBorder(new CompoundBorder(new TitledBorder(null, "Anisotropic Filter", TitledBorder.LEFT, TitledBorder.TOP), border5));
 
 		anisotropicFilterDegree = new JSlider(0, 5, 0);
-		Hashtable labels = anisotropicFilterDegree.createStandardLabels(1, 0);
-		Enumeration e = labels.keys();
+		Hashtable<?, ?> labels = anisotropicFilterDegree.createStandardLabels(1, 0);
+		Enumeration<?> e = labels.keys();
 
 		while (e.hasMoreElements())
 		{

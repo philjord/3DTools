@@ -16,10 +16,7 @@ import javax.swing.JOptionPane;
 public class ScreenResolution
 {
 	/**
-	 * 
-	 * Currently Java 7 or 8 will cause open gl to find a dummy graphics driver on the second call to this method
-	 * So you can set up your graphics once on start up but not change... god damn it kenny...
-	 * http://forum.jogamp.org/Jogl-Using-Wrong-Generic-Graphics-Adapter-td4033216.html
+	 * Ok, so it turns out I killed Kenny, you basterd...
 	 * 
 	 * Ask the user for a resolution setting and returns it (or exits if user cancels)
 	 * 		GraphicsSettings gs = ScreenResolution.organiseResolution(this);
@@ -31,26 +28,13 @@ public class ScreenResolution
 	 *		frame.setVisible(true);
 	 * 
 	 *  we assume the canvas3d is the ONLY child of this frame (so resolution=canvas3d dims)
-	 *  
-	 * NOTE!! JRE7 and 8 can crash out on calls to config the canvas3D
-	 * From Readme:
-	 * Jre 7 some version cause a crash bug, wiht an error log like:
-	 * DefaultRenderingErrorListener.errorOccurred:
-	 * CONTEXT_CREATION_ERROR: Renderer: Error creating Canvas3D graphics context or bad pixelformat 
-	 * Or
-	 *  javax.media.j3d.IllegalRenderingStateException: Java 3D ERROR : OpenGL 1.2 or better is required (GL_VERSION=1.1)
-	 *  
-	 * So this call will call dispose() on the incoming frame, to ensure full screen works.
-	 * This means you MUST call frame.setVisible(true); after this call.	
-	 * 
-	 * 
 	 * 
 	 * @param prefs where to gather data from, use null to force reselect
 	 * @param frame the frame that will hold the canvas3d
-	 * @param initMinRes a saftey check for simply applying the minimum spec (test new OS/hardware)
+	 * @param initMinRes a safety check for simply applying the minimum spec (test new OS/hardware)
 	 * @param exitOnCancel will not return null, but simply system exit on a cancel
 	 * @param forceSelect if false and prefs holds a last used graphics setting, that is used and no dialog is displayed 
-	 * @return the settign selected, along with setting up the Frame
+	 * @return the setting selected, along with setting up the Frame
 	 */
 	public static GraphicsSettings organiseResolution(Preferences prefs, Frame frame, boolean initMinRes, boolean exitOnCancel, boolean forceSelect)
 	{
@@ -81,7 +65,7 @@ public class ScreenResolution
 		{
 
 			gs = new GraphicsSettings();
-			//TODO: I need to hand use the jinternalframe version of this guy,but also render it in the panel3D
+			//TODO: I need to hand use the jinternalframe version of this guy, but also render it in the panel3D
 			DisplayDialog dlg = DisplayDialog.createDisplayDialog(null, initMinRes, true, prefsGS);
 			dlg.setVisible(true);
 			gs = dlg.getGraphicsSettings();
@@ -184,7 +168,7 @@ public class ScreenResolution
 		System.out.println("organising resolution...");
 
 		//check to make sure 3dtools joglpipeline in use
-		J3dUtil.checkJarLoadVersion();//TODO: test this more!
+		J3dUtil.checkJarLoadVersion(); 
 
 		GraphicsSettings prefsGS = null;
 		if (prefs != null)
