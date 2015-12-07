@@ -185,6 +185,11 @@ public class GeometryInfo
 
 	private boolean coordOnly = false;
 
+	////PJPJPJPJPJPJPJ
+	private int vertexAttrCount = 0;
+
+	private int[] vertexAttrSizes = null;
+
 	/**
 	 * Constructor.
 	 * Creates an empty GeometryInfo object.  
@@ -427,54 +432,54 @@ public class GeometryInfo
 		switch (prim)
 		{
 
-			case QUAD_ARRAY:
+		case QUAD_ARRAY:
 
-				coordinateIndices = expandQuad(coordinateIndices);
-				if (colorIndices != null)
-					colorIndices = expandQuad(colorIndices);
-				if (normalIndices != null)
-					normalIndices = expandQuad(normalIndices);
-				for (int i = 0; i < texCoordSetCount; i++)
-					texCoordIndexSets[i] = expandQuad(texCoordIndexSets[i]);
-				break;
+			coordinateIndices = expandQuad(coordinateIndices);
+			if (colorIndices != null)
+				colorIndices = expandQuad(colorIndices);
+			if (normalIndices != null)
+				normalIndices = expandQuad(normalIndices);
+			for (int i = 0; i < texCoordSetCount; i++)
+				texCoordIndexSets[i] = expandQuad(texCoordIndexSets[i]);
+			break;
 
-			case TRIANGLE_FAN_ARRAY:
-				// Count how many triangles are in the object
-				for (int i = 0; i < stripCounts.length; i++)
-				{
-					triangles += stripCounts[i] - 2;
-				}
+		case TRIANGLE_FAN_ARRAY:
+			// Count how many triangles are in the object
+			for (int i = 0; i < stripCounts.length; i++)
+			{
+				triangles += stripCounts[i] - 2;
+			}
 
-				coordinateIndices = expandTriFan(triangles, coordinateIndices);
-				if (colorIndices != null)
-					colorIndices = expandTriFan(triangles, colorIndices);
-				if (normalIndices != null)
-					normalIndices = expandTriFan(triangles, normalIndices);
-				for (int i = 0; i < texCoordSetCount; i++)
-					texCoordIndexSets[i] = expandTriFan(triangles, texCoordIndexSets[i]);
-				break;
+			coordinateIndices = expandTriFan(triangles, coordinateIndices);
+			if (colorIndices != null)
+				colorIndices = expandTriFan(triangles, colorIndices);
+			if (normalIndices != null)
+				normalIndices = expandTriFan(triangles, normalIndices);
+			for (int i = 0; i < texCoordSetCount; i++)
+				texCoordIndexSets[i] = expandTriFan(triangles, texCoordIndexSets[i]);
+			break;
 
-			case TRIANGLE_STRIP_ARRAY:
-				// Count how many triangles are in the object
-				for (int i = 0; i < stripCounts.length; i++)
-				{
-					triangles += stripCounts[i] - 2;
-				}
+		case TRIANGLE_STRIP_ARRAY:
+			// Count how many triangles are in the object
+			for (int i = 0; i < stripCounts.length; i++)
+			{
+				triangles += stripCounts[i] - 2;
+			}
 
-				coordinateIndices = expandTriStrip(triangles, coordinateIndices);
-				if (colorIndices != null)
-					colorIndices = expandTriStrip(triangles, colorIndices);
-				if (normalIndices != null)
-					normalIndices = expandTriStrip(triangles, normalIndices);
-				for (int i = 0; i < texCoordSetCount; i++)
-					texCoordIndexSets[i] = expandTriStrip(triangles, texCoordIndexSets[i]);
-				break;
+			coordinateIndices = expandTriStrip(triangles, coordinateIndices);
+			if (colorIndices != null)
+				colorIndices = expandTriStrip(triangles, colorIndices);
+			if (normalIndices != null)
+				normalIndices = expandTriStrip(triangles, normalIndices);
+			for (int i = 0; i < texCoordSetCount; i++)
+				texCoordIndexSets[i] = expandTriStrip(triangles, texCoordIndexSets[i]);
+			break;
 
-			case POLYGON_ARRAY:
-				if (tr == null)
-					tr = new Triangulator();
-				tr.triangulate(this);
-				break;
+		case POLYGON_ARRAY:
+			if (tr == null)
+				tr = new Triangulator();
+			tr.triangulate(this);
+			break;
 		}
 
 		prim = TRIANGLE_ARRAY;
@@ -1412,6 +1417,13 @@ public class GeometryInfo
 		this.contourCounts = contourCounts;
 	} // End of setContourCounts
 
+	//PJPJPJPJPJPJPJ
+	public void setVertexAttributes(int vertexAttrCount, int[] vertexAttrSizes)
+	{
+		this.vertexAttrCount = vertexAttrCount;
+		this.vertexAttrSizes = vertexAttrSizes;
+	}
+
 	/**
 	 * Retrieves a reference to the array of contourCounts.
 	 */
@@ -1469,7 +1481,7 @@ public class GeometryInfo
 		//private static final int HASHCONST = 0xBABEFACE;
 
 		public int hashCode()
-		{			
+		{
 			return Arrays.hashCode(val);
 			/*int bits = 0;
 			for (int i = 0; i < size; i++)
@@ -1481,7 +1493,7 @@ public class GeometryInfo
 
 		public boolean equals(Object obj)
 		{
-			return Arrays.equals(val, ((IndexRow)obj).val);
+			return Arrays.equals(val, ((IndexRow) obj).val);
 			/*for (int i = 0; i < size; i++)
 			{
 				if (((IndexRow) obj).get(i) != val[i])
@@ -2158,6 +2170,10 @@ public class GeometryInfo
 		else if (texCoordDim == 4)
 			vertexFormat |= GeometryArray.TEXTURE_COORDINATE_4;
 
+		//PJPJPJPJPJPJPJ
+		if (vertexAttrCount > 0)
+			vertexFormat |= GeometryArray.VERTEX_ATTRIBUTES;
+
 		return vertexFormat;
 	} // End of getVertexFormat
 
@@ -2601,29 +2617,34 @@ public class GeometryInfo
 			texCoordSetMap[0] = 0;
 		}
 
+		//PJPJPJPJPJPJPJ all constructors below have int vertexAttrCount, int[] vertexAttrSizes
+
 		// Create the GeometryArray object
 		GeometryArray ga = null;
 		switch (prim)
 		{
-			case TRIANGLE_ARRAY:
-				TriangleArray ta = new TriangleArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap);
-				ga = (GeometryArray) ta;
-				break;
+		case TRIANGLE_ARRAY:
+			TriangleArray ta = new TriangleArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount,
+					vertexAttrSizes);
+			ga = (GeometryArray) ta;
+			break;
 
-			case QUAD_ARRAY:
-				QuadArray qa = new QuadArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap);
-				ga = (GeometryArray) qa;
-				break;
+		case QUAD_ARRAY:
+			QuadArray qa = new QuadArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount, vertexAttrSizes);
+			ga = (GeometryArray) qa;
+			break;
 
-			case TRIANGLE_STRIP_ARRAY:
-				TriangleStripArray tsa = new TriangleStripArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, stripCounts);
-				ga = (GeometryArray) tsa;
-				break;
+		case TRIANGLE_STRIP_ARRAY:
+			TriangleStripArray tsa = new TriangleStripArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount,
+					vertexAttrSizes, stripCounts);
+			ga = (GeometryArray) tsa;
+			break;
 
-			case TRIANGLE_FAN_ARRAY:
-				TriangleFanArray tfa = new TriangleFanArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, stripCounts);
-				ga = (GeometryArray) tfa;
-				break;
+		case TRIANGLE_FAN_ARRAY:
+			TriangleFanArray tfa = new TriangleFanArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount,
+					vertexAttrSizes, stripCounts);
+			ga = (GeometryArray) tfa;
+			break;
 		}
 
 		fillIn(ga, byRef, interleaved, nio);
@@ -2778,32 +2799,34 @@ public class GeometryInfo
 		// Create the IndexedGeometryArray object
 		//
 
+		//PJPJPJPJPJPJPJ all constructors below have int vertexAttrCount, int[] vertexAttrSizes
+
 		IndexedGeometryArray ga = null;
 
 		switch (prim)
 		{
-			case TRIANGLE_ARRAY:
-				IndexedTriangleArray ta = new IndexedTriangleArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
-						coordinateIndices.length);
-				ga = (IndexedGeometryArray) ta;
-				break;
+		case TRIANGLE_ARRAY:
+			IndexedTriangleArray ta = new IndexedTriangleArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount,
+					vertexAttrSizes, coordinateIndices.length);
+			ga = (IndexedGeometryArray) ta;
+			break;
 
-			case QUAD_ARRAY:
-				IndexedQuadArray qa = new IndexedQuadArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
-						coordinateIndices.length);
-				ga = (IndexedGeometryArray) qa;
-				break;
-			case TRIANGLE_STRIP_ARRAY:
-				IndexedTriangleStripArray tsa = new IndexedTriangleStripArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
-						coordinateIndices.length, stripCounts);
-				ga = (IndexedGeometryArray) tsa;
-				break;
+		case QUAD_ARRAY:
+			IndexedQuadArray qa = new IndexedQuadArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap, vertexAttrCount,
+					vertexAttrSizes, coordinateIndices.length);
+			ga = (IndexedGeometryArray) qa;
+			break;
+		case TRIANGLE_STRIP_ARRAY:
+			IndexedTriangleStripArray tsa = new IndexedTriangleStripArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
+					vertexAttrCount, vertexAttrSizes, coordinateIndices.length, stripCounts);
+			ga = (IndexedGeometryArray) tsa;
+			break;
 
-			case TRIANGLE_FAN_ARRAY:
-				IndexedTriangleFanArray tfa = new IndexedTriangleFanArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
-						coordinateIndices.length, stripCounts);
-				ga = (IndexedGeometryArray) tfa;
-				break;
+		case TRIANGLE_FAN_ARRAY:
+			IndexedTriangleFanArray tfa = new IndexedTriangleFanArray(vertexCount, vertexFormat, texCoordSetCount, texCoordSetMap,
+					vertexAttrCount, vertexAttrSizes, coordinateIndices.length, stripCounts);
+			ga = (IndexedGeometryArray) tfa;
+			break;
 		}
 
 		// Fill in the GeometryArray object
@@ -2858,7 +2881,6 @@ public class GeometryInfo
 		return getIndexedGeometryArray(false, false, false, false, false);
 	} // End of getIndexedGeometryArray()
 
-	
 } // End of class GeometryInfo
 
 // End of file GeometryInfo.java

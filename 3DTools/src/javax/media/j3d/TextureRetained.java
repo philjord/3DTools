@@ -43,7 +43,7 @@ import javax.vecmath.Tuple3f;
  * objects must be created as either a Texture2D object or a
  * Texture3D object.
  */
-@SuppressWarnings("all") 
+@SuppressWarnings("all")
 abstract class TextureRetained extends NodeComponentRetained
 {
 	// A list of pre-defined bits to indicate which component
@@ -2662,24 +2662,28 @@ abstract class TextureRetained extends NodeComponentRetained
 		// so that RenderBin can acquire a lock before rendering
 		// to prevent updating of image data while rendering
 
+		//PJPJPJ almost no image is ever editable, and on edit could be locked
+		//PJPJPJPJ this smoothes things a bit, but possibly has issues I haven't hit yet
+		/*
 		for (int j = 0; j < numFaces; j++)
 		{
 			for (int i = 0; i < maxLevels; i++)
 			{
 				image = images[j][i];
-
+		
 				// it is possible that image.source == null because
 				// the mipmap could have been created by the library, and
 				// hence don't have source and therefore they are
 				// guaranteed not modifiable
-
+		
 				if (image != null
 						&& (image.isByReference() || (image.source != null && image.source.getCapability(ImageComponent.ALLOW_IMAGE_WRITE))))
 				{
+					
 					tb.renderBin.addNodeComponent(image);
 				}
 			}
-		}
+		}*/
 	}
 
 	void decTextureBinRefCount(TextureBin tb)
@@ -2691,6 +2695,9 @@ abstract class TextureRetained extends NodeComponentRetained
 
 		// remove any modifiable images from RenderBin nodeComponentList
 
+		//PJPJPJ almost no image is ever editable, and on edit could be locked
+		//PJPJPJPJ this smoothes things a bit, but possibly has issues I haven't hit yet
+		/*
 		for (int j = 0; j < numFaces; j++)
 		{
 			for (int i = 0; i < maxLevels; i++)
@@ -2702,7 +2709,7 @@ abstract class TextureRetained extends NodeComponentRetained
 					tb.renderBin.removeNodeComponent(image);
 				}
 			}
-		}
+		}*/
 	}
 
 	final void sendMessage(int attrMask, Object attr)
@@ -2749,14 +2756,14 @@ abstract class TextureRetained extends NodeComponentRetained
 	{
 		switch (bit)
 		{
-			case Texture.ALLOW_ENABLE_WRITE:
-			case Texture.ALLOW_IMAGE_WRITE:
-			case Texture.ALLOW_LOD_RANGE_WRITE:
-			{
-				setFrequencyChangeMask(bit, bit);
-			}
-			default:
-				break;
+		case Texture.ALLOW_ENABLE_WRITE:
+		case Texture.ALLOW_IMAGE_WRITE:
+		case Texture.ALLOW_LOD_RANGE_WRITE:
+		{
+			setFrequencyChangeMask(bit, bit);
+		}
+		default:
+			break;
 		}
 	}
 
