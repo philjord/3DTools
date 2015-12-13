@@ -81,8 +81,7 @@ public class SimpleCameraHandler extends BranchGroup
 		modelRotateMouseRotate.setEnable(false);
 		addChild(modelRotateMouseRotate);
 
-		freeLookMouseRotate.setupCallback(new MouseBehaviorCallback()
-		{
+		freeLookMouseRotate.setupCallback(new MouseBehaviorCallback() {
 			@Override
 			public void transformChanged(int type, Transform3D transform)
 			{
@@ -103,8 +102,7 @@ public class SimpleCameraHandler extends BranchGroup
 		selectPickCanvas.setTolerance(0.0f);
 		selectPickCanvas.setFlags(PickInfo.CLOSEST_INTERSECTION_POINT);
 
-		canvas3D.addMouseListener(new MouseAdapter()
-		{
+		canvas3D.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
@@ -120,8 +118,7 @@ public class SimpleCameraHandler extends BranchGroup
 
 		});
 
-		canvas3D.addMouseWheelListener(new MouseWheelListener()
-		{
+		canvas3D.addMouseWheelListener(new MouseWheelListener() {
 			public void mouseWheelMoved(MouseWheelEvent e)
 			{
 				if (e.getWheelRotation() < 0)
@@ -135,8 +132,7 @@ public class SimpleCameraHandler extends BranchGroup
 			}
 		});
 
-		canvas3D.addKeyListener(new KeyAdapter()
-		{
+		canvas3D.addKeyListener(new KeyAdapter() {
 
 			public void keyPressed(KeyEvent e)
 			{
@@ -148,48 +144,40 @@ public class SimpleCameraHandler extends BranchGroup
 					moveAmount = defaultMove * 5;
 				}
 
-				Vector3d left = new Vector3d(0, 0, -1);
-				Vector3d forward = new Vector3d(0, 1, 0);
-				//trasnform only rotates vectors?
+				Vector3d left = new Vector3d(-1, 0, 0);
+				Vector3d up = new Vector3d(0, 1, 0);
+				Vector3d m = new Vector3d(0, 0, 0);
 
-				viewTransform.transform(forward);
-				forward.scale(moveAmount);
+				//viewTransform.transform(forward);
+
 				//dir.negate();
 
 				if (e.getKeyCode() == KeyEvent.VK_W)
 				{
-
+					m.set(up);
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_S)
 				{
-					forward.negate();
+					m.set(up);
+					m.negate();
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_A)
 				{
-					forward.set(left);
+					m.set(left);
 				}
 				else if (e.getKeyCode() == KeyEvent.VK_D)
 				{
-					forward.set(left);
-					forward.negate();
-				}
-				else if (e.getKeyCode() == KeyEvent.VK_Q)
-				{
-					forward.cross(left, forward);
-
-				}
-				else if (e.getKeyCode() == KeyEvent.VK_Z)
-				{
-					forward.cross(left, forward);
-					forward.negate();
+					m.set(left);
+					m.negate();
 				}
 				else
 				{
-					forward.set(0, 0, 0);
+					m.set(0, 0, 0);
 				}
+				m.scale(moveAmount);
 
 				viewTransform.get(loc);
-				loc.add(forward);
+				loc.add(m);
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
@@ -212,6 +200,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += 1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
+		if (parentFrame != null)
+			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
 	}
 
 	private void back()
@@ -220,6 +210,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += -1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
+		if (parentFrame != null)
+			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
 
 	}
 
