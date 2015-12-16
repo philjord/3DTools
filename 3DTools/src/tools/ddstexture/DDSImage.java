@@ -173,6 +173,8 @@ public class DDSImage
 	public static final int D3DFMT_DXT4 = 0x34545844;
 
 	public static final int D3DFMT_DXT5 = 0x35545844;
+	
+	public static final int D3DFMT_ATI2 = 843666497;
 
 	/**
 	 * Reads a DirectDraw surface from the specified file name, returning the resulting DDSImage.

@@ -592,7 +592,8 @@ class JoglPipeline extends Pipeline {
 
                     if ((vformat & GeometryArray.TEXTURE_COORDINATE) != 0) {
                         if (texCoordSetMapLen > 0) {
-                            if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+                        	//PJPJPJ
+                            if (isExtensionAvailableGL_VERSION_1_3(gl)) {
                                 if ((vformat & GeometryArray.TEXTURE_COORDINATE_2) != 0) {
                                     for (int k = 0; k < texCoordSetMapLen; k++) {
                                         if (texCoordSetMapOffset[k] != -1) {
@@ -776,7 +777,7 @@ class JoglPipeline extends Pipeline {
 
                 if ((vformat & GeometryArray.TEXTURE_COORDINATE) != 0) {
                     if (texCoordSetMapLen > 0) {
-                        if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+                        if (isExtensionAvailableGL_VERSION_1_3(gl)) {
                             if ((vformat & GeometryArray.TEXTURE_COORDINATE_2) != 0) {
                                 for (int k = 0; k < texCoordSetMapLen; k++) {
                                     if (texCoordSetMapOffset[k] != -1) {
@@ -860,7 +861,9 @@ class JoglPipeline extends Pipeline {
         }
     }
 
-    // used to Build Dlist GeometryArray by Reference with java arrays
+   
+
+	// used to Build Dlist GeometryArray by Reference with java arrays
     @Override
     void buildGAForByRef(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1109,7 +1112,7 @@ class JoglPipeline extends Pipeline {
 
 	private void clientActiveTextureUnit(GL2 gl, int texUnit) {
         if (VERBOSE) System.err.println("JoglPipeline.clientActiveTextureUnit()");
-        if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        if (isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glClientActiveTexture(texUnit + GL.GL_TEXTURE0);
         }
     }
@@ -1361,7 +1364,7 @@ class JoglPipeline extends Pipeline {
                     break;
             }
 
-            if (gl.isExtensionAvailable("GL_EXT_multi_draw_arrays")) {
+            if (isExtensionAvailableGL_EXT_multi_draw_arrays(gl)) {
                 gl.glMultiDrawArrays(primType, start_array, 0, sarray, 0, sarray.length);
             } else {
                 for (int i = 0; i < sarray.length; i++) {
@@ -1457,16 +1460,20 @@ class JoglPipeline extends Pipeline {
     }
 
 
-    // glLockArrays() is invoked only for indexed geometry, and the
+   
+
+	// glLockArrays() is invoked only for indexed geometry, and the
     // vertexCount is guarenteed to be >= 0.
     private void lockArray(GL2 gl, int vertexCount) {
-        if (gl.isExtensionAvailable("GL_EXT_compiled_vertex_array")) {
+        if (isExtensionAvailableGL_EXT_compiled_vertex_array(gl)) {
             gl.glLockArraysEXT(0, vertexCount);
         }
     }
 
-    private void unlockArray(GL2 gl) {
-        if (gl.isExtensionAvailable("GL_EXT_compiled_vertex_array")) {
+  
+
+	private void unlockArray(GL2 gl) {
+        if (isExtensionAvailableGL_EXT_compiled_vertex_array(gl)) {
             gl.glUnlockArraysEXT();
         }
     }
@@ -1595,9 +1602,9 @@ class JoglPipeline extends Pipeline {
                     primType = GL.GL_LINE_STRIP;
                     break;
             }
-            if (gl.isExtensionAvailable("GL_EXT_multi_draw_arrays")) {
+            if (isExtensionAvailableGL_EXT_multi_draw_arrays(gl)) {
                 gl.glMultiDrawArrays(primType, start_array, 0, sarray, 0, strip_len);
-            } else if (gl.isExtensionAvailable("GL_VERSION_1_4")) {
+            } else if (isExtensionAvailableGL_VERSION_1_4(gl)) {
                 gl.glMultiDrawArrays(primType, start_array, 0, sarray, 0, strip_len);
             } else {
                 for (int i = 0; i < strip_len; i++) {
@@ -1627,7 +1634,9 @@ class JoglPipeline extends Pipeline {
         }
     }
 
-    private String getVertexDescription(int vformat) {
+    
+
+	private String getVertexDescription(int vformat) {
         String res = "";
         if ((vformat & GeometryArray.COORDINATES)          != 0) res += "COORDINATES ";
         if ((vformat & GeometryArray.NORMALS)              != 0) res += "NORMALS ";
@@ -2717,7 +2726,7 @@ class JoglPipeline extends Pipeline {
                         oglFormat = GL.GL_RGB;
                         break;
                     case ImageComponentRetained.TYPE_BYTE_ABGR:
-                        if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If its zero, should never come here!
+                        if (isExtensionAvailableGL_EXT_abgr(gl)) { // If its zero, should never come here!
                             oglFormat = GL2.GL_ABGR_EXT;
                         } else {
                             assert false;
@@ -2821,7 +2830,9 @@ class JoglPipeline extends Pipeline {
 
     // ShaderAttributeValue methods
 
-    @Override
+    
+
+	@Override
     ShaderError setGLSLUniform1i(Context ctx,
             ShaderProgramId shaderProgramId,
             ShaderAttrLoc uniformLocation,
@@ -4070,7 +4081,7 @@ class JoglPipeline extends Pipeline {
                     gl.glMatrixMode(GL2.GL_MODELVIEW);
                     gl.glPushMatrix();
 
-                    if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+                    if (isExtensionAvailableGL_VERSION_1_3(gl)) {
                         gl.glLoadTransposeMatrixd(vworldToEc, 0);
                     } else {
                         double[] v = new double[16];
@@ -4421,7 +4432,7 @@ class JoglPipeline extends Pipeline {
 
         if (isIdentity) {
             gl.glLoadIdentity();
-        } else if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        } else if (isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glLoadTransposeMatrixd(transform, 0);
         } else {
             double[] mx = new double[16];
@@ -4890,7 +4901,7 @@ class JoglPipeline extends Pipeline {
 
 		GL2 gl = context(ctx).getGL().getGL2();
 
-        if (index >= 0 && gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        if (index >= 0 && isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glActiveTexture(index + GL.GL_TEXTURE0);
             gl.glClientActiveTexture(GL.GL_TEXTURE0 + index);
 // FIXME: GL_NV_register_combiners
@@ -5155,7 +5166,7 @@ class JoglPipeline extends Pipeline {
                     format = GL.GL_RGB;
                     break;
                 case ImageComponentRetained.TYPE_BYTE_ABGR:
-                    if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If its zero, should never come here!
+                    if (isExtensionAvailableGL_EXT_abgr(gl)) { // If its zero, should never come here!
                         format = GL2.GL_ABGR_EXT;
                     } else {
                         assert false;
@@ -5322,7 +5333,7 @@ class JoglPipeline extends Pipeline {
                     numBytes = 3;
                     break;
                 case ImageComponentRetained.TYPE_BYTE_ABGR:
-                    if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If its zero, should never come here!
+                    if (isExtensionAvailableGL_EXT_abgr(gl)) { // If its zero, should never come here!
                         format = GL2.GL_ABGR_EXT;
                         numBytes = 4;
                     } else {
@@ -5712,7 +5723,7 @@ class JoglPipeline extends Pipeline {
                     format = GL.GL_RGB;
                     break;
                 case ImageComponentRetained.TYPE_BYTE_ABGR:
-                    if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If its zero, should never come here!
+                    if (isExtensionAvailableGL_EXT_abgr(gl)) { // If its zero, should never come here!
                         format = GL2.GL_ABGR_EXT;
                     } else {
                         assert false;
@@ -5735,7 +5746,7 @@ class JoglPipeline extends Pipeline {
                     }
                     break;
 ///////////////////////////////////////////////////PJPJPJ////////////////////
-//DXT
+//DXT              
 case GL2.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
 internalFormat = GL2.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
 break;
@@ -5744,6 +5755,30 @@ internalFormat = GL2.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
 break;
 case GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
 internalFormat = GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
+break;
+case GL2.GL_COMPRESSED_RG_RGTC2:
+//if (gl.isExtensionAvailable("GL_EXT_texture_compression_latc")) 
+{
+	//gl.isExtensionAvailable("GL_EXT_texture_compression_latc")
+	//GL_ATI_texture_compression_3dc
+	//GL_AMD_compressed_3DC_texture
+	
+	//internalFormat =  GL2.GL_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT;
+	//internalFormat =  0x8837;//GL2.GL_COMPRESSED_LUMINANCE_ALPHA_3DC_ATI;
+	//internalFormat = 0x87FA;//3DC_XY_AMD
+	internalFormat =  GL2.GL_COMPRESSED_RG_RGTC2;
+	
+	//LATC2_XYSwizzle
+	
+	// this is what I want to use
+	//#define GL_COMPRESSED_LUMINANCE_ALPHA_3DC_ATI 0x8837
+	//#define FOURCC_ATI2 0x32495441
+}
+//else
+{
+//	System.out.println("MOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
+//	internalFormat = GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT; // looks terrible
+}
 break;
 case GL2.GL_RGBA_S3TC:
 internalFormat = GL2.GL_RGBA_S3TC;
@@ -5771,7 +5806,8 @@ break;
 				//DXT
 				if (internalFormat == GL2.GL_COMPRESSED_RGBA_S3TC_DXT1_EXT //
 						|| internalFormat == GL2.GL_COMPRESSED_RGBA_S3TC_DXT3_EXT //
-						|| internalFormat == GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT)
+						|| internalFormat == GL2.GL_COMPRESSED_RGBA_S3TC_DXT5_EXT
+						|| internalFormat == GL2.GL_COMPRESSED_RG_RGTC2)
 				{
 					//DXT
 					ByteBuffer bb = (ByteBuffer) data;
@@ -5896,7 +5932,7 @@ break;
                     numBytes = 3;
                     break;
                 case ImageComponentRetained.TYPE_BYTE_ABGR:
-                    if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If its zero, should never come here!
+                    if (isExtensionAvailableGL_EXT_abgr(gl)) { // If its zero, should never come here!
                         format = GL2.GL_ABGR_EXT;
                         numBytes = 4;
                     } else {
@@ -6735,7 +6771,7 @@ break;
                     break;
                     // GL_ABGR_EXT
                 case ImageComponentRetained.TYPE_BYTE_ABGR:
-                    if (gl.isExtensionAvailable("GL_EXT_abgr")) { // If false, should never come here!
+                    if (isExtensionAvailableGL_EXT_abgr(gl)) { // If false, should never come here!
                         type = GL2.GL_ABGR_EXT;
                     } else {
                         assert false;
@@ -6963,12 +6999,14 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
         if (VERBOSE) System.err.println("JoglPipeline.setBlendColor()");
 
 		GL2 gl = context(ctx).getGL().getGL2();
-        if (gl.isExtensionAvailable("GL_ARB_imaging")) {
+        if (isExtensionAvailableGL_ARB_imaging(gl)) {
             gl.glBlendColor(red, green, blue, alpha);
         }
     }
 
-    // native method for setting blend func
+   
+
+	// native method for setting blend func
     @Override
     void setBlendFunc(Context ctx, int srcBlendFunction, int dstBlendFunction) {
         if (VERBOSE) System.err.println("JoglPipeline.setBlendFunc()");
@@ -7126,7 +7164,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
 		GL2 gl = context(ctx).getGL().getGL2();
         if (texUnitIndex >= 0 &&
-                gl.isExtensionAvailable("GL_VERSION_1_3")) {
+                isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glActiveTexture(texUnitIndex + GL.GL_TEXTURE0);
             gl.glClientActiveTexture(texUnitIndex + GL.GL_TEXTURE0);
         }
@@ -7143,7 +7181,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
         if (VERBOSE) System.err.println("JoglPipeline.activeTextureUnit()");
 
 		GL2 gl = context(ctx).getGL().getGL2();
-        if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        if (isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glActiveTexture(texUnitIndex + GL.GL_TEXTURE0);
             gl.glClientActiveTexture(texUnitIndex + GL.GL_TEXTURE0);
         }
@@ -7538,7 +7576,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
         gl.glMatrixMode(GL2.GL_MODELVIEW);
 
-        if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        if (isExtensionAvailableGL_VERSION_1_3(gl)) {
             gl.glLoadTransposeMatrixd(viewMatrix, 0);
             gl.glMultTransposeMatrixd(modelMatrix, 0);
         } else {
@@ -7560,7 +7598,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
         gl.glMatrixMode(GL2.GL_PROJECTION);
 
-        if (gl.isExtensionAvailable("GL_VERSION_1_3")) {
+        if (isExtensionAvailableGL_VERSION_1_3(gl)) {
             // Invert the Z value in clipping coordinates because OpenGL uses
             // left-handed clipping coordinates, while Java3D defines right-handed
             // coordinates everywhere.
@@ -7753,7 +7791,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
 
-        if (gl.isExtensionAvailable("GL_EXT_abgr")) {
+        if (isExtensionAvailableGL_EXT_abgr(gl)) {
             glType = GL2.GL_ABGR_EXT;
         } else {
             switch (format) {
@@ -7809,7 +7847,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
 		GL2 gl = context(ctx).getGL().getGL2();
 
-        int glType = (gl.isExtensionAvailable("GL_EXT_abgr") ? GL2.GL_ABGR_EXT : GL.GL_RGBA);
+        int glType = (isExtensionAvailableGL_EXT_abgr(gl) ? GL2.GL_ABGR_EXT : GL.GL_RGBA);
 
         gl.glBindTexture(GL.GL_TEXTURE_2D, objectId);
 
@@ -7910,7 +7948,9 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
         return true;
     }
 
-    private int[] extractVersionInfo(String versionString) {
+   
+
+	private int[] extractVersionInfo(String versionString) {
         StringTokenizer tok = new StringTokenizer(versionString, ". ");
         int major = Integer.valueOf(tok.nextToken()).intValue();
         int minor = Integer.valueOf(tok.nextToken()).intValue();
@@ -8045,7 +8085,9 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
 
-    private void checkGLSLShaderExtensions(Canvas3D cv,
+  
+
+	private void checkGLSLShaderExtensions(Canvas3D cv,
             JoglContext ctx,
             GL gl,
             boolean hasgl13) {
@@ -9022,4 +9064,57 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
         return bufs;
     }
+    
+    
+    ///PJPJPJPJ requesting caps is expensive caps are unliekly to change during live times
+    private int glisExtensionAvailableGL_VERSION_1_3 = 0;
+    private boolean isExtensionAvailableGL_VERSION_1_3(GL2 gl)
+	{
+		if (glisExtensionAvailableGL_VERSION_1_3 == 0)
+			glisExtensionAvailableGL_VERSION_1_3 = gl.isExtensionAvailable("GL_VERSION_1_3") ? 1 : -1;
+
+		return glisExtensionAvailableGL_VERSION_1_3 == 1;
+	}
+    private int isExtensionAvailableGL_EXT_multi_draw_arrays = 0;
+    private boolean isExtensionAvailableGL_EXT_multi_draw_arrays(GL2 gl)
+   	{
+    	if(isExtensionAvailableGL_EXT_multi_draw_arrays==0)    	
+    		isExtensionAvailableGL_EXT_multi_draw_arrays = gl.isExtensionAvailable("GL_EXT_multi_draw_arrays") ? 1 : -1;   
+    	
+		return isExtensionAvailableGL_EXT_multi_draw_arrays==1;
+   	}
+    private int isExtensionAvailableGL_EXT_compiled_vertex_array = 0;
+    private boolean isExtensionAvailableGL_EXT_compiled_vertex_array(GL2 gl)
+  	{
+    	if(isExtensionAvailableGL_EXT_compiled_vertex_array==0)    	
+    		isExtensionAvailableGL_EXT_compiled_vertex_array = gl.isExtensionAvailable("GL_EXT_compiled_vertex_array") ? 1 : -1;   
+    	
+		return isExtensionAvailableGL_EXT_compiled_vertex_array==1;
+  	}
+    private int isExtensionAvailableGL_VERSION_1_4 = 0;
+    private boolean isExtensionAvailableGL_VERSION_1_4(GL2 gl)
+	{
+    	if(isExtensionAvailableGL_VERSION_1_4==0)    	
+    		isExtensionAvailableGL_VERSION_1_4 = gl.isExtensionAvailable("GL_VERSION_1_4") ? 1 : -1;   
+    	
+		return isExtensionAvailableGL_VERSION_1_4==1;
+	}
+    private int isExtensionAvailableGL_EXT_abgr = 0;
+    private boolean isExtensionAvailableGL_EXT_abgr(GL2 gl)
+	{
+    	if(isExtensionAvailableGL_EXT_abgr==0)    	
+    		isExtensionAvailableGL_EXT_abgr = gl.isExtensionAvailable("GL_EXT_abgr") ? 1 : -1;   
+    	
+		return isExtensionAvailableGL_EXT_abgr==1;
+	}
+    private int isExtensionAvailableGL_ARB_imaging = 0;
+    private boolean isExtensionAvailableGL_ARB_imaging(GL2 gl)
+   	{
+    	if(isExtensionAvailableGL_ARB_imaging==0)    	
+    		isExtensionAvailableGL_ARB_imaging = gl.isExtensionAvailable("GL_ARB_imaging") ? 1 : -1;   
+    	
+		return isExtensionAvailableGL_ARB_imaging==1;
+   	}
+    private int isExtensionAvailableGL_ARB_vertex_shader = 0;
+ 
 }

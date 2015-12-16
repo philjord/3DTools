@@ -1291,7 +1291,6 @@ abstract class TextureRetained extends NodeComponentRetained
 	// bind a named texture to a texturing target
 	void bindTexture(Canvas3D cv)
 	{
-
 		synchronized (resourceLock)
 		{
 			if (objectId == -1)
@@ -1906,6 +1905,7 @@ abstract class TextureRetained extends NodeComponentRetained
 	 * updateNative is called while traversing the RenderBin to
 	 * update the texture state
 	 */
+	private int count = 0;
 	void updateNative(Canvas3D cv)
 	{
 		boolean reloadTexture = false; // true - reload all levels of texture

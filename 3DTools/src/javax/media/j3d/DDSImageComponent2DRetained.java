@@ -65,6 +65,10 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		{
 			return GL2.GL_RGBA_S3TC;
 		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_ATI2)
+		{		 
+			return GL2.GL_COMPRESSED_RG_RGTC2;
+		}
 		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
 				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
 				ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F)
@@ -138,6 +142,10 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1//
 					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3//
 					|| ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5)
+			{
+				return ((DDSBufferedImage) bi).getBuffer();
+			}
+			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_ATI2)
 			{
 				return ((DDSBufferedImage) bi).getBuffer();
 			}
