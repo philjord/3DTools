@@ -110,6 +110,11 @@ public class DDSDecompressor
 		{
 			return decompressRGBA_S3TC_DXT5_EXT();
 		}
+		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_ATI2)
+		{
+			// NOT correct but it gives you the idea a bit
+			return decompressRGBA_S3TC_DXT5_EXT();
+		}
 		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8)
 		{
 			return decodeR8G8B8();
