@@ -3550,13 +3550,14 @@ private void processOrderedGroupInserted(J3dMessage m) {
 				// Note that the rm LOCALE Translation update should ocuur
 				// Before the ra is added to the object update list
 				// It is a Text3D Molecule
-			    else if ((rm.primaryMoleculeType  & RenderMolecule.TEXT3D_MOLECULE) != 0){
-
-				if (!ra.onUpdateList()) {
-				    ra.dirtyMask |= RenderAtom.ON_UPDATELIST;
-				    objUpdateList.add(ra);
-				}
-			    }
+			    //<AND>
+//			    else if ((rm.primaryMoleculeType  & RenderMolecule.TEXT3D_MOLECULE) != 0){
+//
+//				if (!ra.onUpdateList()) {
+//				    ra.dirtyMask |= RenderAtom.ON_UPDATELIST;
+//				    objUpdateList.add(ra);
+//				}
+//			    }</>
 			    if (ra.isOriented() && !ra.inDirtyOrientedRAs()) {
 				dirtyOrientedRAs.add(ra);
 				ra.dirtyMask |= RenderAtom.IN_DIRTY_ORIENTED_RAs;
@@ -4406,13 +4407,14 @@ private void processOrderedGroupInserted(J3dMessage m) {
 	    }
         }
 
-        if (renderMolecule.primaryMoleculeType  ==
-	    RenderMolecule.TEXT3D_MOLECULE) {
-            if (!ra.onUpdateList()) {
-		ra.dirtyMask |= RenderAtom.ON_UPDATELIST;
-                objUpdateList.add(ra);
-            }
-        }
+      //<AND>
+//      if (renderMolecule.primaryMoleculeType  ==
+//	    RenderMolecule.TEXT3D_MOLECULE) {
+//          if (!ra.onUpdateList()) {
+//		ra.dirtyMask |= RenderAtom.ON_UPDATELIST;
+//              objUpdateList.add(ra);
+//          }
+//      }</>
 
         // ra.needSeparateLocaleVwcBounds flag is determined in
         // RenderMolecule.addRenderAtom based on the render method type.

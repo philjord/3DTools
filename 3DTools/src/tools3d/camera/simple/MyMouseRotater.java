@@ -6,7 +6,7 @@ import java.util.Enumeration;
 
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupCriterion;
-import javax.media.j3d.WakeupOnAWTEvent;
+//<AND>import javax.media.j3d.WakeupOnAWTEvent;
 import javax.media.j3d.WakeupOnBehaviorPost;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
@@ -56,17 +56,19 @@ public class MyMouseRotater extends MouseBehavior
 		while (criteria.hasMoreElements())
 		{
 			wakeup = (WakeupCriterion) criteria.nextElement();
-			if (wakeup instanceof WakeupOnAWTEvent)
-			{
-				events = ((WakeupOnAWTEvent) wakeup).getAWTEvent();
-				if (events.length > 0)
-				{
-					evt = (MouseEvent) events[events.length - 1];
-					doProcess(evt);
-				}
-			}
+			//<AND>
+//			if (wakeup instanceof WakeupOnAWTEvent)
+//			{
+//				events = ((WakeupOnAWTEvent) wakeup).getAWTEvent();
+//				if (events.length > 0)
+//				{
+//					evt = (MouseEvent) events[events.length - 1];
+//					doProcess(evt);
+//				}
+//			}
 
-			else if (wakeup instanceof WakeupOnBehaviorPost)
+			//else
+				if (wakeup instanceof WakeupOnBehaviorPost)
 			{
 				while (true)
 				{

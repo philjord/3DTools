@@ -1845,29 +1845,30 @@ Enumeration getAllGeometries(int id) {
 	    }
 	}
 
-	if((geometry != null) &&
-	   (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D)) {
-
-	    for(i = 0; i<gSize; i++) {
-		geometry = geometryList.get(i);
-		if(geometry != null) {
-		    Text3DRetained tempT3d = (Text3DRetained)geometry;
-		    geometryCnt += tempT3d.numChars;
-		}
-		else {
-		    // This is slightly wasteful, but not quite worth to optimize yet.
-		    geometryCnt++;
-		}
-	    }
-	    newGA.geometryArray = new GeometryRetained[geometryCnt];
-	    newGA.lastLocalTransformArray = new Transform3D[geometryCnt];
-	    // Reset geometryCnt;
-	    geometryCnt = 0;
-
-	}
-	else {
+	//<AND>
+//	if((geometry != null) &&
+//	   (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D)) {
+//
+//	    for(i = 0; i<gSize; i++) {
+//		geometry = geometryList.get(i);
+//		if(geometry != null) {
+//		    Text3DRetained tempT3d = (Text3DRetained)geometry;
+//		    geometryCnt += tempT3d.numChars;
+//		}
+//		else {
+//		    // This is slightly wasteful, but not quite worth to optimize yet.
+//		    geometryCnt++;
+//		}
+//	    }
+//	    newGA.geometryArray = new GeometryRetained[geometryCnt];
+//	    newGA.lastLocalTransformArray = new Transform3D[geometryCnt];
+//	    // Reset geometryCnt;
+//	    geometryCnt = 0;
+//
+//	}
+//	else {
 	    newGA.geometryArray = new GeometryRetained[gSize];
-	}
+	//}</AND>
 
 	newGA.locale = mS3d.locale;
 	newGA.visible = visible;
@@ -1880,28 +1881,29 @@ Enumeration getAllGeometries(int id) {
 		newGA.geometryArray[geometryCnt++] = null;
 	    }
 	    else {
-		if (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D) {
-		    Text3DRetained t = (Text3DRetained)geometry;
-		    GeometryRetained geo;
-		    for (i=0; i<t.numChars; i++, geometryCnt++) {
-			geo = t.geometryList[i];
-			if (geo!= null) {
-			    newGA.geometryArray[geometryCnt] = geo;
-			    newGA.lastLocalTransformArray[geometryCnt] =
-				t.charTransforms[i];
-
-			} else {
-			    newGA.geometryArray[geometryCnt] = null;
-			    newGA.lastLocalTransformArray[geometryCnt] = null;
-			}
-
+	    	//<AND>	    	
+//			if (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D) {
+//			    Text3DRetained t = (Text3DRetained)geometry;
+//			    GeometryRetained geo;
+//			    for (i=0; i<t.numChars; i++, geometryCnt++) {
+//				geo = t.geometryList[i];
+//				if (geo!= null) {
+//				    newGA.geometryArray[geometryCnt] = geo;
+//				    newGA.lastLocalTransformArray[geometryCnt] =
+//					t.charTransforms[i];
+	//
+//				} else {
+//				    newGA.geometryArray[geometryCnt] = null;
+//				    newGA.lastLocalTransformArray[geometryCnt] = null;
+//				}
+	//
+//			    }
+	//
+//			} else {
+			    newGA.geometryArray[geometryCnt++] = geometry;
+			//}</AND>
 		    }
-
-		} else {
-		    newGA.geometryArray[geometryCnt++] = geometry;
 		}
-	    }
-	}
 
 	oldGAArray = new GeometryAtom[s3dMSize];
 	newGAArray = new GeometryAtom[s3dMSize];
@@ -2628,29 +2630,30 @@ final static ArrayList<ArrayList<GeometryAtom>> getGeomAtomsList(ArrayList userL
 		break;
 	    }
 	}
-	if((geometry != null) &&
-	   (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D)) {
-
-	    for(gaCnt = 0; gaCnt<gSize; gaCnt++) {
-		geometry = geometryList.get(gaCnt);
-		if(geometry != null) {
-		    Text3DRetained tempT3d = (Text3DRetained)geometry;
-		    geometryCnt += tempT3d.numChars;
-		}
-		else {
-		    // This is slightly wasteful, but not quite worth to optimize yet.
-		    geometryCnt++;
-		}
-	    }
-	    gAtom.geometryArray = new GeometryRetained[geometryCnt];
-	    gAtom.lastLocalTransformArray = new Transform3D[geometryCnt];
-	    // Reset geometryCnt;
-	    geometryCnt = 0;
-
-	}
-	else {
+	//<AND>	
+//	if((geometry != null) &&
+//	   (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D)) {
+//
+//	    for(gaCnt = 0; gaCnt<gSize; gaCnt++) {
+//		geometry = geometryList.get(gaCnt);
+//		if(geometry != null) {
+//		    Text3DRetained tempT3d = (Text3DRetained)geometry;
+//		    geometryCnt += tempT3d.numChars;
+//		}
+//		else {
+//		    // This is slightly wasteful, but not quite worth to optimize yet.
+//		    geometryCnt++;
+//		}
+//	    }
+//	    gAtom.geometryArray = new GeometryRetained[geometryCnt];
+//	    gAtom.lastLocalTransformArray = new Transform3D[geometryCnt];
+//	    // Reset geometryCnt;
+//	    geometryCnt = 0;
+//
+//	}
+//	else {
 	    gAtom.geometryArray = new GeometryRetained[gSize];
-	}
+	//}</AND>
 
 
 	for(gaCnt = 0; gaCnt<geometryList.size(); gaCnt++) {
@@ -2659,27 +2662,28 @@ final static ArrayList<ArrayList<GeometryAtom>> getGeomAtomsList(ArrayList userL
 		gAtom.geometryArray[gaCnt] = null;
 	    }
 	    else {
-		if (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D) {
-		    Text3DRetained t = (Text3DRetained)geometry;
-		    GeometryRetained geo;
-		    for (i=0; i<t.numChars; i++, geometryCnt++) {
-			geo = t.geometryList[i];
-			if (geo != null) {
-			    gAtom.geometryArray[geometryCnt] = geo;
-			    gAtom.lastLocalTransformArray[geometryCnt] =
-				t.charTransforms[i];
-			} else {
-			    gAtom.geometryArray[geometryCnt] = null;
-			    gAtom.lastLocalTransformArray[geometryCnt] = null;
-			}
-
+	    	//<AND>	    	
+//			if (geometry.geoType == GeometryRetained.GEO_TYPE_TEXT3D) {
+//			    Text3DRetained t = (Text3DRetained)geometry;
+//			    GeometryRetained geo;
+//			    for (i=0; i<t.numChars; i++, geometryCnt++) {
+//				geo = t.geometryList[i];
+//				if (geo != null) {
+//				    gAtom.geometryArray[geometryCnt] = geo;
+//				    gAtom.lastLocalTransformArray[geometryCnt] =
+//					t.charTransforms[i];
+//				} else {
+//				    gAtom.geometryArray[geometryCnt] = null;
+//				    gAtom.lastLocalTransformArray[geometryCnt] = null;
+//				}
+	//
+//			    }
+	//
+//			} else {
+			    gAtom.geometryArray[gaCnt] = geometry;
+			//}</AND>
 		    }
-
-		} else {
-		    gAtom.geometryArray[gaCnt] = geometry;
 		}
-	    }
-	}
 	gAtom.locale = ms.locale;
 	gAtom.visible = visible;
 	gAtom.source = ms;

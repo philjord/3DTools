@@ -33,9 +33,9 @@
 package javax.media.j3d;
 
 import java.awt.GraphicsConfiguration;
-import java.awt.Point;
-import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
+//<AND>import java.awt.Point;
+//<AND>import java.awt.image.BufferedImage;
+//<AND>import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -718,23 +718,25 @@ ArrayList<TextureRetained> textureIDResourceTable = new ArrayList<TextureRetaine
 			canvas.graphicsContext3D.doFlush(
 				((Boolean)m[nmesg].args[2]).booleanValue());
 			break;
-		    case GraphicsContext3D.FLUSH2D:
-			canvas.graphics2D.doFlush();
-			break;
-		    case GraphicsContext3D.DRAWANDFLUSH2D:
-			Object ar[] = m[nmesg].args;
-			canvas.graphics2D.doDrawAndFlushImage(
-					      (BufferedImage) ar[2],
-					      ((Point) ar[3]).x,
-					      ((Point) ar[3]).y,
-					      (ImageObserver) ar[4]);
-			break;
-		    case GraphicsContext3D.DISPOSE2D:
-                        // Issue 583 - the graphics2D field may be null here
-			if (canvas.graphics2D != null) {
-                            canvas.graphics2D.doDispose();
-                        }
-			break;
+			//<AND>			
+//		    case GraphicsContext3D.FLUSH2D:
+//			canvas.graphics2D.doFlush();
+//			break;
+//		    case GraphicsContext3D.DRAWANDFLUSH2D:
+//			Object ar[] = m[nmesg].args;
+//			canvas.graphics2D.doDrawAndFlushImage(
+//					      (BufferedImage) ar[2],
+//					      ((Point) ar[3]).x,
+//					      ((Point) ar[3]).y,
+//					      (ImageObserver) ar[4]);
+//			break;
+//		    case GraphicsContext3D.DISPOSE2D:
+//                        // Issue 583 - the graphics2D field may be null here
+//			if (canvas.graphics2D != null) {
+//                            canvas.graphics2D.doDispose();
+//                        }
+//			break;
+//</AND>
 		    case GraphicsContext3D.SET_MODELCLIP:
 			canvas.graphicsContext3D.doSetModelClip(
 				(ModelClip)m[nmesg].args[2]);
@@ -903,9 +905,11 @@ ArrayList<TextureRetained> textureIDResourceTable = new ArrayList<TextureRetaine
                                 break doneRender;
 			    }
 
-			    if (canvas.graphics2D != null) {
-				canvas.graphics2D.init();
-			    }
+                //<AND>            
+			    //if (canvas.graphics2D != null) {
+				//canvas.graphics2D.init();
+			    //}
+                //</AND>
 
 			    canvas.ctxTimeStamp =
 				    VirtualUniverse.mc.getContextTimeStamp();

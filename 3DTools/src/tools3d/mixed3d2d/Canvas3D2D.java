@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
-import javax.media.j3d.J3DGraphics2D;
+//<AND>import javax.media.j3d.J3DGraphics2D;
 import javax.media.j3d.Shape3D;
 
 import tools3d.mixed3d2d.hud.HUDElement;
@@ -132,31 +132,31 @@ public class Canvas3D2D extends Canvas3D
 			//RAISE_BUG:
 			getGraphicsContext3D().draw(trivialShape);
 
-			J3DGraphics2D g = getGraphics2D();
+			//<AND>	J3DGraphics2D g = getGraphics2D();
 
-			synchronized (hudElements)
-			{
-				for (HUDElement e : hudElements)
-				{
-					if (e != null && e.isEnabled())
-					{
-						g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
-					}
-				}
-			}
-
-			synchronized (panel3ds)
-			{
-				for (Panel3D p : panel3ds)
-				{
-					if (p != null && p.isEnabled())
-					{
-						g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
-					}
-				}
-			}
-
-			g.flush(false);
+//			synchronized (hudElements)
+//			{
+//				for (HUDElement e : hudElements)
+//				{
+//					if (e != null && e.isEnabled())
+//					{
+//						g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
+//					}
+//				}
+//			}
+//
+//			synchronized (panel3ds)
+//			{
+//				for (Panel3D p : panel3ds)
+//				{
+//					if (p != null && p.isEnabled())
+//					{
+//						g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
+//					}
+//				}
+//			}
+//
+//			g.flush(false);
 		}
 
 	}
