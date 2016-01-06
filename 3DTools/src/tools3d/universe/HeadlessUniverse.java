@@ -3,11 +3,11 @@ package tools3d.universe;
 import java.awt.GraphicsConfiguration;
 import java.awt.image.BufferedImage;
 
+import javax.media.j3d.AutoOffScreenCanvas3D;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
 
-import com.sun.j3d.exp.swing.impl.AutoOffScreenCanvas3D;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
