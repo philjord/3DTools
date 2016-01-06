@@ -67,7 +67,7 @@ public class SimpleCameraHandler extends BranchGroup
 		this.viewingPlatform = _viewingPlatform;
 		this.canvas3D = _canvas3D;
 		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
-		//<AND>freeLookMouseRotate = new MyMouseRotater(viewingPlatform.getViewPlatformTransform());
+		freeLookMouseRotate = new MyMouseRotater(canvas3D, viewingPlatform.getViewPlatformTransform());
 
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -76,7 +76,7 @@ public class SimpleCameraHandler extends BranchGroup
 		 freeLookMouseRotate.setEnable(true);
 		 addChild(freeLookMouseRotate);
 
-		 modelRotateMouseRotate = new MouseRotate(modelRotateTransformGroup);
+		 modelRotateMouseRotate = new MouseRotate(canvas3D, modelRotateTransformGroup);
 		 modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
 		 modelRotateMouseRotate.setEnable(false);
 		 addChild(modelRotateMouseRotate);

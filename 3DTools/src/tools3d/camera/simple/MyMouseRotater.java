@@ -1,12 +1,13 @@
 package tools3d.camera.simple;
 
-import java.awt.AWTEvent;
+ 
+import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.Enumeration;
 
 import javax.media.j3d.TransformGroup;
 import javax.media.j3d.WakeupCriterion;
-//<AND>import javax.media.j3d.WakeupOnAWTEvent;
+ 
 import javax.media.j3d.WakeupOnBehaviorPost;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
@@ -24,9 +25,9 @@ public class MyMouseRotater extends MouseBehavior
 
 	private MouseBehaviorCallback callback = null;
 
-	public MyMouseRotater(TransformGroup transformGroup)
+	public MyMouseRotater(Component c, TransformGroup transformGroup)
 	{
-		super(transformGroup);
+		super(c, transformGroup);
 		flags = flags | INVERT_INPUT;
 	}
 
@@ -43,12 +44,11 @@ public class MyMouseRotater extends MouseBehavior
 		}
 	}
 
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "rawtypes" })
 	public void processStimulus(Enumeration criteria)
 	{
 		WakeupCriterion wakeup;
-		AWTEvent[] events;
+		 
 		MouseEvent evt;
 		//	 	int id;
 		//	 	int dx, dy;
@@ -56,19 +56,8 @@ public class MyMouseRotater extends MouseBehavior
 		while (criteria.hasMoreElements())
 		{
 			wakeup = (WakeupCriterion) criteria.nextElement();
-			//<AND>
-//			if (wakeup instanceof WakeupOnAWTEvent)
-//			{
-//				events = ((WakeupOnAWTEvent) wakeup).getAWTEvent();
-//				if (events.length > 0)
-//				{
-//					evt = (MouseEvent) events[events.length - 1];
-//					doProcess(evt);
-//				}
-//			}
 
-			//else
-				if (wakeup instanceof WakeupOnBehaviorPost)
+			if (wakeup instanceof WakeupOnBehaviorPost)
 			{
 				while (true)
 				{
