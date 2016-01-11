@@ -143,6 +143,7 @@ class JoglPipeline extends Pipeline {
     //
 
     // used for GeometryArrays by Copy or interleaved
+    //NOT USED BY MORROWIND - but drawTrivial uses it
     @Override
     void execute(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -167,6 +168,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // used by GeometryArray by Reference with java arrays
+    //NOT USED BY MORROWIND
     @Override
     void executeVA(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -258,6 +260,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // used by GeometryArray by Reference with NIO buffer
+    // USED BY MORROWIND
     @Override
     void executeVABuffer(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -280,7 +283,7 @@ class JoglPipeline extends Pipeline {
             int[] texIndex, int texstride, Object[] texCoords,
             int cdirty) {
         if (VERBOSE) System.err.println("JoglPipeline.executeVABuffer()");
-
+ 
         boolean floatCoordDefined  = ((vdefined & GeometryArrayRetained.COORD_FLOAT)    != 0);
         boolean doubleCoordDefined = ((vdefined & GeometryArrayRetained.COORD_DOUBLE)   != 0);
         boolean floatColorsDefined = ((vdefined & GeometryArrayRetained.COLOR_FLOAT)    != 0);
@@ -364,6 +367,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // used by GeometryArray by Reference in interleaved format with NIO buffer
+    // NOT USED BY MORROWIND
     @Override
     void executeInterleavedBuffer(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -377,7 +381,7 @@ class JoglPipeline extends Pipeline {
             int numActiveTexUnit,
             FloatBuffer varray, float[] cdata, int cdirty) {
         if (VERBOSE) System.err.println("JoglPipeline.executeInterleavedBuffer()");
-
+ 
         executeGeometryArray(ctx, geo, geo_type,
                 isNonUniformScale, useAlpha, ignoreVertexColors,
                 startVIndex, vcount, vformat,
@@ -386,6 +390,7 @@ class JoglPipeline extends Pipeline {
                 null, varray, cdata, cdirty);
     }
 
+    //IN USE BY MORROWIND
     @Override
     void setVertexFormat(Context ctx, GeometryArrayRetained geo,
             int vformat, boolean useAlpha, boolean ignoreVertexColors) {
@@ -413,6 +418,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // used for GeometryArrays
+    // IN USE BY MORROWIND
     @Override
     void buildGA(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -864,6 +870,7 @@ class JoglPipeline extends Pipeline {
    
 
 	// used to Build Dlist GeometryArray by Reference with java arrays
+    // NOT IN USE BY MORROWIND
     @Override
     void buildGAForByRef(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1064,7 +1071,7 @@ class JoglPipeline extends Pipeline {
     //----------------------------------------------------------------------
     // Private helper methods for GeometryArrayRetained
     //
-
+//NOT IN USE BY MORROWIND
     private void
             testForInterleavedArrays(int vformat,
             boolean[] useInterleavedArrays,
@@ -1103,13 +1110,13 @@ class JoglPipeline extends Pipeline {
         gl.glEnableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
         gl.glTexCoordPointer(texSize, texDataType, stride, pointer);
     }
-
+  //IN USE BY MORROWIND
 	private void disableTexCoordPointer(GL2 gl, int texUnit) {
         if (VERBOSE) System.err.println("JoglPipeline.disableTexCoordPointer()");
         clientActiveTextureUnit(gl, texUnit);
         gl.glDisableClientState(GL2.GL_TEXTURE_COORD_ARRAY);
     }
-
+//IN USE BY MORROWIND
 	private void clientActiveTextureUnit(GL2 gl, int texUnit) {
         if (VERBOSE) System.err.println("JoglPipeline.clientActiveTextureUnit()");
         if (isExtensionAvailableGL_VERSION_1_3(gl)) {
@@ -1117,7 +1124,7 @@ class JoglPipeline extends Pipeline {
         }
     }
 
-
+ //NOT IN USE BY MORROWIND
     private void
             executeTexture(int texCoordSetMapLen,
             int texSize, int bstride, int texCoordoff,
@@ -1150,7 +1157,7 @@ class JoglPipeline extends Pipeline {
             }
         }
     }
-
+//IN USE BY MORROWIND
 	private void resetTexture(GL2 gl, JoglContext ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetTexture()");
         /* Disable texture coordinate arrays for all texture units */
@@ -1160,7 +1167,7 @@ class JoglPipeline extends Pipeline {
         /* Reset client active texture unit to 0 */
         clientActiveTextureUnit(gl, 0);
     }
-
+	//NOT IN USE BY MORROWIND
     private void
             executeGeometryArray(Context absCtx,
             GeometryArrayRetained geo, int geo_type,
@@ -1464,6 +1471,7 @@ class JoglPipeline extends Pipeline {
 
 	// glLockArrays() is invoked only for indexed geometry, and the
     // vertexCount is guarenteed to be >= 0.
+  //IN USE BY MORROWIND
     private void lockArray(GL2 gl, int vertexCount) {
         if (isExtensionAvailableGL_EXT_compiled_vertex_array(gl)) {
             gl.glLockArraysEXT(0, vertexCount);
@@ -1471,13 +1479,13 @@ class JoglPipeline extends Pipeline {
     }
 
   
-
+  //IN USE BY MORROWIND
 	private void unlockArray(GL2 gl) {
         if (isExtensionAvailableGL_EXT_compiled_vertex_array(gl)) {
             gl.glUnlockArraysEXT();
         }
     }
-
+	// IN USE BY MORROWIND
     private void
             executeGeometryArrayVA(Context absCtx,
             GeometryArrayRetained geo,
@@ -1635,7 +1643,7 @@ class JoglPipeline extends Pipeline {
     }
 
     
-
+  //NOT IN USE BY MORROWIND
 	private String getVertexDescription(int vformat) {
         String res = "";
         if ((vformat & GeometryArray.COORDINATES)          != 0) res += "COORDINATES ";
@@ -1649,7 +1657,7 @@ class JoglPipeline extends Pipeline {
         if ((vformat & GeometryArray.VERTEX_ATTRIBUTES)    != 0) res += "VERTEX_ATTRIBUTES ";
         return res;
     }
-
+	//NOT IN USE BY MORROWIND
     private String getGeometryDescription(int geo_type) {
         switch (geo_type) {
             case GeometryRetained.GEO_TYPE_TRI_STRIP_SET : return "GEO_TYPE_TRI_STRIP_SET";
@@ -1662,7 +1670,7 @@ class JoglPipeline extends Pipeline {
             default: return "(unknown " + geo_type + ")";
         }
     }
-
+  //IN USE BY MORROWIND
     private void resetVertexAttrs(GL gl, JoglContext ctx, int vertexAttrCount) {
         // Disable specified vertex attr arrays
         for (int i = 0; i < vertexAttrCount; i++) {
@@ -1678,6 +1686,7 @@ class JoglPipeline extends Pipeline {
     //
 
     // by-copy or interleaved, by reference, Java arrays
+    //IN USE BY MORROWIND
     @Override
     void executeIndexedGeometry(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1710,6 +1719,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // interleaved, by reference, nio buffer
+  //NOT IN USE BY MORROWIND
     @Override
     void executeIndexedGeometryBuffer(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1739,6 +1749,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // non interleaved, by reference, Java arrays
+    //IN USE BY MORROWIND
     @Override
     void executeIndexedGeometryVA(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1832,6 +1843,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // non interleaved, by reference, nio buffer
+  //IN USE BY MORROWIND
     @Override
     void executeIndexedGeometryVABuffer(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -1939,6 +1951,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // by-copy geometry
+    //IN USE BY MORROWIND
     @Override
     void buildIndexedGeometry(Context absCtx,
             GeometryArrayRetained geo, int geo_type,
@@ -2256,7 +2269,7 @@ class JoglPipeline extends Pipeline {
     //
     // Helper routines for IndexedGeometryArrayRetained
     //
-
+  //IN USE BY MORROWIND
     private void executeIndexedGeometryArray(Context absCtx,
             GeometryArrayRetained geo, int geo_type,
             boolean isNonUniformScale,
@@ -2546,7 +2559,7 @@ class JoglPipeline extends Pipeline {
         }
     }
 
-
+  //IN USE BY MORROWIND
     private void executeIndexedGeometryArrayVA(Context absCtx,
             GeometryArrayRetained geo, int geo_type,
             boolean isNonUniformScale,
@@ -2699,6 +2712,7 @@ class JoglPipeline extends Pipeline {
     //
 
     // Native method for readRaster
+    // REMOVE FOR SIMPLICITY, POSSIBLY ADD BACK LATER
     @Override
     void readRaster(Context ctx,
             int type, int xSrcOffset, int ySrcOffset,
@@ -3385,13 +3399,13 @@ class JoglPipeline extends Pipeline {
 
         return -1;
     }
-
+ 
     // ---------------------------------------------------------------------
 
     //
     // ColoringAttributesRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateColoringAttributes(Context ctx,
             float dRed, float dGreen, float dBlue,
@@ -3424,7 +3438,7 @@ class JoglPipeline extends Pipeline {
     //
     // DirectionalLightRetained methods
     //
-
+//IN USE BY MORROWIND
     private static final float[] black = new float[4];
     @Override
     void updateDirectionalLight(Context ctx,
@@ -3462,7 +3476,7 @@ class JoglPipeline extends Pipeline {
     //
     // PointLightRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updatePointLight(Context ctx,
             int lightSlot, float red, float green,
@@ -3499,7 +3513,7 @@ class JoglPipeline extends Pipeline {
     //
     // SpotLightRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateSpotLight(Context ctx,
             int lightSlot, float red, float green,
@@ -3542,7 +3556,7 @@ class JoglPipeline extends Pipeline {
     //
     // ExponentialFogRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateExponentialFog(Context ctx,
             float red, float green, float blue,
@@ -3567,7 +3581,7 @@ class JoglPipeline extends Pipeline {
     //
     // LinearFogRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateLinearFog(Context ctx,
             float red, float green, float blue,
@@ -3593,7 +3607,7 @@ class JoglPipeline extends Pipeline {
     //
     // LineAttributesRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateLineAttributes(Context ctx,
             float lineWidth, int linePattern,
@@ -3634,7 +3648,7 @@ class JoglPipeline extends Pipeline {
     //
     // MaterialRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateMaterial(Context ctx,
             float red, float green, float blue, float alpha,
@@ -3699,7 +3713,7 @@ class JoglPipeline extends Pipeline {
     //
     // ModelClipRetained methods
     //
-
+  //NOT IN USE BY MORROWIND
     @Override
     void updateModelClip(Context ctx, int planeNum, boolean enableFlag,
             double A, double B, double C, double D) {
@@ -3729,7 +3743,7 @@ class JoglPipeline extends Pipeline {
     //
     // PointAttributesRetained methods
     //
-
+  //NOT IN USE BY MORROWIND
     @Override
     void updatePointAttributes(Context ctx, float pointSize, boolean pointAntialiasing) {
         if (VERBOSE) System.err.println("JoglPipeline.updatePointAttributes()");
@@ -3751,7 +3765,7 @@ class JoglPipeline extends Pipeline {
     //
     // PolygonAttributesRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updatePolygonAttributes(Context ctx,
             int polygonMode, int cullFace,
@@ -3820,7 +3834,7 @@ class JoglPipeline extends Pipeline {
     //
     // RenderingAttributesRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateRenderingAttributes(Context ctx,
             boolean depthBufferWriteEnableOverride,
@@ -3943,7 +3957,7 @@ class JoglPipeline extends Pipeline {
             }
         }
     }
-
+  //IN USE BY MORROWIND
     private int getFunctionValue(int func) {
         switch (func) {
             case RenderingAttributes.ALWAYS:
@@ -3974,7 +3988,7 @@ class JoglPipeline extends Pipeline {
 
         return func;
     }
-
+  //IN USE BY MORROWIND
     private int getStencilOpValue(int op) {
         switch (op) {
             case RenderingAttributes.STENCIL_KEEP:
@@ -4012,6 +4026,7 @@ class JoglPipeline extends Pipeline {
      * trans contains eyeTovworld transform in d3d
      * trans contains vworldToEye transform in ogl
      */
+  //NOT IN USE BY MORROWIND
     @Override
     void updateTexCoordGeneration(Context ctx,
             boolean enable, int genMode, int format,
@@ -4371,6 +4386,7 @@ class JoglPipeline extends Pipeline {
     }
 
     @Override
+  //IN USE BY MORROWIND
     void updateTransparencyAttributes(Context ctx,
             float alpha, int geometryType,
             int polygonMode,
@@ -4410,7 +4426,7 @@ class JoglPipeline extends Pipeline {
     //
     // TextureAttributesRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureAttributes(Context ctx,
             double[] transform, boolean isIdentity, int textureMode,
@@ -4474,7 +4490,7 @@ class JoglPipeline extends Pipeline {
 //            gl.glDisable(GL.GL_TEXTURE_COLOR_TABLE_SGI);
 //        }
     }
-
+  //NOT IN USE BY MORROWIND
     @Override
     void updateRegisterCombiners(Context absCtx,
             double[] transform, boolean isIdentity, int textureMode,
@@ -4688,7 +4704,7 @@ class JoglPipeline extends Pipeline {
 //            gl.glDisable(GL.GL_TEXTURE_COLOR_TABLE_SGI);
         // GL_SGI_texture_color_table
     }
-
+  //NOT IN USE BY MORROWIND
     @Override
     void updateTextureColorTable(Context ctx, int numComponents,
             int colorTableSize,
@@ -4708,7 +4724,7 @@ class JoglPipeline extends Pipeline {
 //            gl.glEnable(GL.GL_TEXTURE_COLOR_TABLE_SGI);
 //        }
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateCombiner(Context ctx,
             int combineRgbMode, int combineAlphaMode,
@@ -4761,7 +4777,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // Helper routines for above
-
+  //IN USE BY MORROWIND
     private void getGLCombineMode(GL gl, int combineRgbMode, int combineAlphaMode,
             int[] GLrgbMode, int[] GLalphaMode) {
         switch (combineRgbMode) {
@@ -4894,7 +4910,7 @@ class JoglPipeline extends Pipeline {
     //
     // TextureUnitStateRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureUnitState(Context ctx, int index, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.updateTextureUnitState()");
@@ -4931,7 +4947,7 @@ class JoglPipeline extends Pipeline {
     // TextureRetained methods
     // Texture2DRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void bindTexture2D(Context ctx, int objectId, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.bindTexture2D(objectId=" + objectId + ",enable=" + enable + ")");
@@ -4947,7 +4963,7 @@ class JoglPipeline extends Pipeline {
             gl.glEnable(GL.GL_TEXTURE_2D);
         }
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DImage(Context ctx,
             int numLevels, int level,
@@ -4961,7 +4977,7 @@ class JoglPipeline extends Pipeline {
                 numLevels, level, textureFormat, imageFormat,
                 width, height, boundaryWidth, dataType, data, useAutoMipMap);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DSubImage(Context ctx,
             int level, int xoffset, int yoffset,
@@ -4980,7 +4996,7 @@ class JoglPipeline extends Pipeline {
                 imgXOffset, imgYOffset, tilew, width, height,
                 dataType, data);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DLodRange(Context ctx,
             int baseLevel, int maximumLevel,
@@ -4991,7 +5007,7 @@ class JoglPipeline extends Pipeline {
                 baseLevel, maximumLevel,
                 minimumLOD, maximumLOD);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DLodOffset(Context ctx,
             float lodOffsetS, float lodOffsetT,
@@ -5001,7 +5017,7 @@ class JoglPipeline extends Pipeline {
         updateTextureLodOffset(ctx, GL.GL_TEXTURE_2D,
                 lodOffsetS, lodOffsetT, lodOffsetR);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DBoundary(Context ctx,
             int boundaryModeS, int boundaryModeT,
@@ -5014,7 +5030,7 @@ class JoglPipeline extends Pipeline {
                 boundaryRed, boundaryGreen,
                 boundaryBlue, boundaryAlpha);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DFilterModes(Context ctx,
             int minFilter, int magFilter) {
@@ -5022,7 +5038,7 @@ class JoglPipeline extends Pipeline {
 
         updateTextureFilterModes(ctx, GL.GL_TEXTURE_2D, minFilter, magFilter);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DSharpenFunc(Context ctx,
             int numSharpenTextureFuncPts,
@@ -5032,7 +5048,7 @@ class JoglPipeline extends Pipeline {
         updateTextureSharpenFunc(ctx, GL.GL_TEXTURE_2D,
                 numSharpenTextureFuncPts, sharpenTextureFuncPts);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DFilter4Func(Context ctx,
             int numFilter4FuncPts,
@@ -5042,14 +5058,14 @@ class JoglPipeline extends Pipeline {
         updateTextureFilter4Func(ctx, GL.GL_TEXTURE_2D,
                 numFilter4FuncPts, filter4FuncPts);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTexture2DAnisotropicFilter(Context ctx, float degree) {
         if (VERBOSE) System.err.println("JoglPipeline.updateTexture2DAnisotropicFilter()");
 
         updateTextureAnisotropicFilter(ctx, GL.GL_TEXTURE_2D, degree);
     }
-
+  //IN USE BY MORROWIND
     private void updateTextureLodRange(Context ctx,
             int target,
             int baseLevel, int maximumLevel,
@@ -5062,7 +5078,7 @@ class JoglPipeline extends Pipeline {
         gl.glTexParameterf(target, GL2.GL_TEXTURE_MIN_LOD, minimumLOD);
         gl.glTexParameterf(target, GL2.GL_TEXTURE_MAX_LOD, maximumLOD);
     }
-
+  //NOT IN USE BY MORROWIND
     private void updateTextureLodOffset(Context ctx,
             int target,
             float lodOffsetS, float lodOffsetT,
@@ -5075,7 +5091,7 @@ class JoglPipeline extends Pipeline {
 //        gl.glTexParameterf(target, GL.GL_TEXTURE_LOD_BIAS_T_SGIX, lodOffsetT);
 //        gl.glTexParameterf(target, GL.GL_TEXTURE_LOD_BIAS_R_SGIX, lodOffsetR);
     }
-
+  //IN USE BY MORROWIND
     private void updateTextureAnisotropicFilter(Context ctx, int target, float degree) {
         GL gl = context(ctx).getGL();
         // checking of the availability of anisotropic filter functionality
@@ -5090,7 +5106,7 @@ class JoglPipeline extends Pipeline {
     //
     // Texture3DRetained methods
     //
-
+  //NOT IN USE BY MORROWIND
     @Override
     void bindTexture3D(Context ctx, int objectId, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.bindTexture3D()");
@@ -5106,7 +5122,7 @@ class JoglPipeline extends Pipeline {
             gl.glEnable(GL2.GL_TEXTURE_3D);
         }
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DImage(Context ctx,
             int numLevels, int level,
@@ -5268,7 +5284,7 @@ class JoglPipeline extends Pipeline {
             assert false;
         }
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DSubImage(Context ctx,
             int level,
@@ -5455,7 +5471,7 @@ class JoglPipeline extends Pipeline {
 
     }
 
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DLodRange(Context ctx,
             int baseLevel, int maximumLevel,
@@ -5466,7 +5482,7 @@ class JoglPipeline extends Pipeline {
                 baseLevel, maximumLevel,
                 minimumLod, maximumLod);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DLodOffset(Context ctx,
             float lodOffsetS, float lodOffsetT,
@@ -5476,7 +5492,7 @@ class JoglPipeline extends Pipeline {
         updateTextureLodOffset(ctx, GL2.GL_TEXTURE_3D,
                 lodOffsetS, lodOffsetT, lodOffsetR);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DBoundary(Context ctx,
             int boundaryModeS, int boundaryModeT,
@@ -5490,7 +5506,7 @@ class JoglPipeline extends Pipeline {
                 boundaryRed, boundaryGreen,
                 boundaryBlue, boundaryAlpha);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DFilterModes(Context ctx,
             int minFilter, int magFilter) {
@@ -5499,7 +5515,7 @@ class JoglPipeline extends Pipeline {
         updateTextureFilterModes(ctx, GL2.GL_TEXTURE_3D,
                 minFilter, magFilter);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DSharpenFunc(Context ctx,
             int numSharpenTextureFuncPts,
@@ -5509,7 +5525,7 @@ class JoglPipeline extends Pipeline {
         updateTextureSharpenFunc(ctx, GL2.GL_TEXTURE_3D,
                 numSharpenTextureFuncPts, sharpenTextureFuncPts);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DFilter4Func(Context ctx,
             int numFilter4FuncPts,
@@ -5519,7 +5535,7 @@ class JoglPipeline extends Pipeline {
         updateTextureFilter4Func(ctx, GL2.GL_TEXTURE_3D,
                 numFilter4FuncPts, filter4FuncPts);
     }
-
+    //NOT IN USE BY MORROWIND
     @Override
     void updateTexture3DAnisotropicFilter(Context ctx, float degree) {
         if (VERBOSE) System.err.println("JoglPipeline.updateTexture3DAnisotropicFilter()");
@@ -5533,7 +5549,7 @@ class JoglPipeline extends Pipeline {
     //
     // TextureCubeMapRetained methods
     //
-
+  //IN USE BY MORROWIND
     @Override
     void bindTextureCubeMap(Context ctx, int objectId, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.bindTextureCubeMap()");
@@ -5548,7 +5564,7 @@ class JoglPipeline extends Pipeline {
             gl.glEnable(GL.GL_TEXTURE_CUBE_MAP);
         }
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapImage(Context ctx,
             int face, int numLevels, int level,
@@ -5562,7 +5578,7 @@ class JoglPipeline extends Pipeline {
                 numLevels, level, textureFormat, imageFormat,
                 width, height, boundaryWidth, dataType, data, useAutoMipMap);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapSubImage(Context ctx,
             int face, int level, int xoffset, int yoffset,
@@ -5580,7 +5596,7 @@ class JoglPipeline extends Pipeline {
                 imageFormat, imgXOffset, imgYOffset, tilew,
                 width, height, dataType, data);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapLodRange(Context ctx,
             int baseLevel, int maximumLevel,
@@ -5592,7 +5608,7 @@ class JoglPipeline extends Pipeline {
                 baseLevel, maximumLevel,
                 minimumLod, maximumLod);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapLodOffset(Context ctx,
             float lodOffsetS, float lodOffsetT,
@@ -5603,7 +5619,7 @@ class JoglPipeline extends Pipeline {
                 GL.GL_TEXTURE_CUBE_MAP,
                 lodOffsetS, lodOffsetT, lodOffsetR);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapBoundary(Context ctx,
             int boundaryModeS, int boundaryModeT,
@@ -5617,7 +5633,7 @@ class JoglPipeline extends Pipeline {
                 boundaryRed, boundaryGreen,
                 boundaryBlue, boundaryAlpha);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapFilterModes(Context ctx,
             int minFilter, int magFilter) {
@@ -5627,7 +5643,7 @@ class JoglPipeline extends Pipeline {
                 GL.GL_TEXTURE_CUBE_MAP,
                 minFilter, magFilter);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapSharpenFunc(Context ctx,
             int numSharpenTextureFuncPts,
@@ -5638,7 +5654,7 @@ class JoglPipeline extends Pipeline {
                 GL.GL_TEXTURE_CUBE_MAP,
                 numSharpenTextureFuncPts, sharpenTextureFuncPts);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapFilter4Func(Context ctx,
             int numFilter4FuncPts,
@@ -5649,7 +5665,7 @@ class JoglPipeline extends Pipeline {
                 GL.GL_TEXTURE_CUBE_MAP,
                 numFilter4FuncPts, filter4FuncPts);
     }
-
+  //IN USE BY MORROWIND
     @Override
     void updateTextureCubeMapAnisotropicFilter(Context ctx, float degree) {
         if (VERBOSE) System.err.println("JoglPipeline.updateTextureCubeMapAnisotropicFilter()");
@@ -5663,7 +5679,7 @@ class JoglPipeline extends Pipeline {
     //
     // Helper routines for above texture methods
     //
-
+  //IN USE BY MORROWIND
     private void updateTexture2DImage(Context ctx,
             int target,
             int numLevels,
@@ -5875,7 +5891,7 @@ break;
             assert false;
         }
     }
-
+  //IN USE BY MORROWIND
     private void updateTexture2DSubImage(Context ctx,
             int target,
             int level, int xoffset, int yoffset,
@@ -6044,7 +6060,7 @@ break;
         }
 
     }
-
+  //IN USE BY MORROWIND
     void updateTextureFilterModes(Context ctx,
             int target,
             int minFilter,
@@ -6133,7 +6149,7 @@ break;
                 break;
         }
     }
-
+  //IN USE BY MORROWIND
     void updateTextureBoundary(Context ctx,
             int target,
             int boundaryModeS,
@@ -6217,7 +6233,7 @@ break;
             gl.glTexParameterfv(target, GL2.GL_TEXTURE_BORDER_COLOR, color, 0);
         }
     }
-
+  //IN USE BY MORROWIND
     private static final String getFilterName(int filter) {
         switch (filter) {
             case Texture.FASTEST:
@@ -6250,7 +6266,7 @@ break;
                 return "(unknown)";
         }
     }
-
+  //IN USE BY MORROWIND
     private void updateTextureSharpenFunc(Context ctx,
             int target,
             int numPts,
@@ -6261,7 +6277,7 @@ break;
 //        GL gl = context(ctx).getGL();
 //        gl.glSharpenTexFuncSGIS(target, numPts, pts, 0);
     }
-
+  //IN USE BY MORROWIND
     private void updateTextureFilter4Func(Context ctx,
             int target,
             int numPts,
@@ -6273,7 +6289,7 @@ break;
 //        gl.glTexFilterFuncSGIS(target, GL.GL_FILTER4_SGIS,
 //                numPts, pts, 0);
     }
-
+  //IN USE BY MORROWIND
     // mapping from java enum to gl enum
     private static final int[] _gl_textureCubeMapFace = {
         GL.GL_TEXTURE_CUBE_MAP_POSITIVE_X,
@@ -6289,7 +6305,7 @@ break;
     //
     // MasterControl methods
     //
-
+  //IN USE BY MORROWIND
     // Maximum lights supported by the native API
     @Override
     int getMaximumLights() {
@@ -6310,6 +6326,7 @@ break;
     // Mac/JRE 7; called from Renderer when resizing is dedected
     // Implementation follows the approach in jogamp.opengl.GLDrawableHelper.resizeOffscreenDrawable(..)
     @Override
+  //IN USE BY MORROWIND
     void resizeOffscreenLayer(Canvas3D cv, int cvWidth, int cvHeight) {
 		if (!isOffscreenLayerSurfaceEnabled(cv))
 			return;
@@ -6408,6 +6425,7 @@ break;
     }
 
     // Fix for Bug 983
+  //IN USE BY MORROWIND
     private void checkAppContext() {
         if (mainThreadContext == null)
             return;
@@ -6433,6 +6451,7 @@ break;
 
     // This is the native method for creating the underlying graphics context.
     @Override
+  //IN USE BY MORROWIND
     Context createNewContext(Canvas3D cv, Drawable drawable,
             Context shareCtx, boolean isSharedCtx,
             boolean offScreen) {
@@ -6586,6 +6605,7 @@ break;
     }
 
     @Override
+  //NOT IN USE BY MORROWIND
     void createQueryContext(Canvas3D cv, Drawable drawable,
             boolean offScreen, int width, int height) {
         if (VERBOSE) System.err.println("JoglPipeline.createQueryContext()");
@@ -6657,6 +6677,7 @@ break;
 
     // This is the native for creating an offscreen buffer
     @Override
+  //NOT IN USE BY MORROWIND
     Drawable createOffScreenBuffer(Canvas3D cv, Context ctx, int width, int height) {
         if (VERBOSE) System.err.println("JoglPipeline.createOffScreenBuffer()");
 
@@ -6715,6 +6736,7 @@ break;
 
     // 'destroyContext' is called first if context exists
     @Override
+  //NOT IN USE BY MORROWIND
     void destroyOffScreenBuffer(Canvas3D cv, Context ctx, Drawable drawable) {
         if (VERBOSE) System.err.println("JoglPipeline.destroyOffScreenBuffer()");
 
@@ -6723,6 +6745,7 @@ break;
 
     // This is the native for reading the image from the offscreen buffer
     @Override
+  //NOT IN USE BY MORROWIND
     void readOffScreenBuffer(Canvas3D cv, Context ctx, int format, int dataType, Object data, int width, int height) {
         if (VERBOSE) System.err.println("JoglPipeline.readOffScreenBuffer()");
 
@@ -6855,6 +6878,7 @@ break;
 
 	// The native method for swapBuffers - onscreen only
 @Override
+//IN USE BY MORROWIND
 void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 	if (VERBOSE) System.err.println("JoglPipeline.swapBuffers()");
 	GLDrawable draw = drawable(drawable);
@@ -6863,6 +6887,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting Material when no material is present
     @Override
+  //IN USE BY MORROWIND
     void updateMaterialColor(Context ctx, float r, float g, float b, float a) {
         if (VERBOSE) System.err.println("JoglPipeline.updateMaterialColor()");
 
@@ -6872,6 +6897,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     @Override
+  //IN USE BY MORROWIND
     void destroyContext(Drawable drawable, Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.destroyContext()");
 
@@ -6928,6 +6954,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     // This is the native method for getting the number of lights the underlying
     // native library can support.
     @Override
+  //IN USE BY MORROWIND
     int getNumCtxLights(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.getNumCtxLights()");
 
@@ -6938,6 +6965,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // Native method for decal 1st child setup
+  //NOT IN USE BY MORROWIND
     @Override
     boolean decal1stChildSetup(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.decal1stChildSetup()");
@@ -6955,6 +6983,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // Native method for decal nth child setup
+  //NOT IN USE BY MORROWIND
     @Override
     void decalNthChildSetup(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.decalNthChildSetup()");
@@ -6966,6 +6995,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // Native method for decal reset
+  //NOT IN USE BY MORROWIND
     @Override
     void decalReset(Context ctx, boolean depthBufferEnable) {
         if (VERBOSE) System.err.println("JoglPipeline.decalReset()");
@@ -6977,6 +7007,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // Native method for eye lighting
+  //IN USE BY MORROWIND
     @Override
     void ctxUpdateEyeLightingEnable(Context ctx, boolean localEyeLightingEnable) {
         if (VERBOSE) System.err.println("JoglPipeline.ctxUpdateEyeLightingEnable()");
@@ -6994,6 +7025,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting blend color
     @Override
+  //IN USE BY MORROWIND
     void setBlendColor(Context ctx, float red, float green,
             float blue, float alpha) {
         if (VERBOSE) System.err.println("JoglPipeline.setBlendColor()");
@@ -7008,6 +7040,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
 	// native method for setting blend func
     @Override
+  //IN USE BY MORROWIND
     void setBlendFunc(Context ctx, int srcBlendFunction, int dstBlendFunction) {
         if (VERBOSE) System.err.println("JoglPipeline.setBlendFunc()");
 
@@ -7018,6 +7051,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // native method for setting fog enable flag
+  //IN USE BY MORROWIND
     @Override
     void setFogEnableFlag(Context ctx, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.setFogEnableFlag()");
@@ -7032,6 +7066,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // Setup the full scene antialising in D3D and ogl when GL_ARB_multisamle supported
     @Override
+  //IN USE BY MORROWIND
     void setFullSceneAntialiasing(Context absCtx, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.setFullSceneAntialiasing()");
 
@@ -7047,6 +7082,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // Native method to update separate specular color control
+  //IN USE BY MORROWIND
     @Override
     void updateSeparateSpecularColorEnable(Context ctx, boolean enable) {
         if (VERBOSE) System.err.println("JoglPipeline.updateSeparateSpecularColorEnable()");
@@ -7063,6 +7099,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     // True under Solaris,
     // False under windows when display mode <= 8 bit
     @Override
+  // IN USE BY MORROWIND - but probably pointless?
     boolean validGraphicsMode() {
         if (VERBOSE) System.err.println("JoglPipeline.validGraphicsMode()");
 
@@ -7083,6 +7120,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting light enables
     @Override
+  //IN USE BY MORROWIND
     void setLightEnables(Context ctx, long enableMask, int maxLights) {
         if (VERBOSE) System.err.println("JoglPipeline.setLightEnables()");
 
@@ -7098,6 +7136,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // native method for setting scene ambient
+  //IN USE BY MORROWIND
     @Override
     void setSceneAmbient(Context ctx, float red, float green, float blue) {
         if (VERBOSE) System.err.println("JoglPipeline.setSceneAmbient()");
@@ -7114,6 +7153,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for disabling fog
     @Override
+  //IN USE BY MORROWIND
     void disableFog(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.disableFog()");
 
@@ -7123,6 +7163,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for disabling modelClip
     @Override
+  //NOT IN USE BY MORROWIND
     void disableModelClip(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.disableModelClip()");
 
@@ -7138,6 +7179,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default RenderingAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetRenderingAttributes(Context ctx,
             boolean depthBufferWriteEnableOverride,
             boolean depthBufferEnableOverride) {
@@ -7159,6 +7201,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default texture
     @Override
+  //IN USE BY MORROWIND
     void resetTextureNative(Context ctx, int texUnitIndex) {
         if (VERBOSE) System.err.println("JoglPipeline.resetTextureNative()");
 
@@ -7177,6 +7220,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for activating a particular texture unit
     @Override
+  //IN USE BY MORROWIND
     void activeTextureUnit(Context ctx, int texUnitIndex) {
         if (VERBOSE) System.err.println("JoglPipeline.activeTextureUnit()");
 
@@ -7189,6 +7233,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default TexCoordGeneration
     @Override
+  //IN USE BY MORROWIND
     void resetTexCoordGeneration(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetTexCoordGeneration()");
 
@@ -7201,6 +7246,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default TextureAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetTextureAttributes(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetTextureAttributes()");
 
@@ -7229,6 +7275,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default PolygonAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetPolygonAttributes(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetPolygonAttributes()");
 
@@ -7249,6 +7296,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default LineAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetLineAttributes(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetLineAttributes()");
 
@@ -7262,6 +7310,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default PointAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetPointAttributes(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.resetPointAttributes()");
 
@@ -7274,6 +7323,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default TransparencyAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetTransparency(Context ctx, int geometryType,
             int polygonMode, boolean lineAA,
             boolean pointAA) {
@@ -7297,6 +7347,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // native method for setting default ColoringAttributes
     @Override
+  //IN USE BY MORROWIND
     void resetColoringAttributes(Context ctx,
             float r, float g,
             float b, float a,
@@ -7316,6 +7367,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
      *  gets done now.
      */
     @Override
+  //IN USE BY MORROWIND - render is it's own thread so finish stops nothing
     void syncRender(Context ctx, boolean wait) {
         if (VERBOSE) System.err.println("JoglPipeline.syncRender()");
 
@@ -7328,6 +7380,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     // The native method that sets this ctx to be the current one
+    // IN USE BY MORROWIND
     @Override
     boolean useCtx(Context ctx, Drawable drawable) {
         if (VERBOSE) System.err.println("JoglPipeline.useCtx()");
@@ -7338,6 +7391,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // Optionally release the context. Returns true if the context was released.
     @Override
+ // IN USE BY MORROWIND
     boolean releaseCtx(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.releaseCtx()");
         GLContext context = context(ctx);
@@ -7346,6 +7400,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     @Override
+ // IN USE BY MORROWIND
     void clear(Context ctx, float r, float g, float b, boolean clearStencil) {
         if (VERBOSE) System.err.println("JoglPipeline.clear()");
 
@@ -7396,6 +7451,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     @Override
+ // NOT IN USE BY MORROWIND
     void textureFillBackground(Context ctx, float texMinU, float texMaxU, float texMinV, float texMaxV,
             float mapMinX, float mapMaxX, float mapMinY, float mapMaxY, boolean useBilinearFilter)  {
         if (VERBOSE) System.err.println("JoglPipeline.textureFillBackground()");
@@ -7449,6 +7505,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     @Override
+ // NOT IN USE BY MORROWIND
     void textureFillRaster(Context ctx, float texMinU, float texMaxU, float texMinV, float texMaxV,
             float mapMinX, float mapMaxX, float mapMinY, float mapMaxY, float mapZ, float alpha,
             boolean useBilinearFilter)  {
@@ -7505,6 +7562,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
     }
 
     @Override
+ // NOT IN USE BY MORROWIND
     void executeRasterDepth(Context ctx, float posX, float posY, float posZ,
             int srcOffsetX, int srcOffsetY, int rasterWidth, int rasterHeight,
             int depthWidth, int depthHeight, int depthFormat, Object depthData) {
@@ -7569,6 +7627,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // The native method for setting the ModelView matrix.
     @Override
+ // IN USE BY MORROWIND
     void setModelViewMatrix(Context ctx, double[] viewMatrix, double[] modelMatrix) {
         if (VERBOSE) System.err.println("JoglPipeline.setModelViewMatrix()");
         GLContext context = context(ctx);
@@ -7591,6 +7650,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
 
     // The native method for setting the Projection matrix.
     @Override
+ // IN USE BY MORROWIND - just at start
     void setProjectionMatrix(Context ctx, double[] projMatrix) {
         if (VERBOSE) System.err.println("JoglPipeline.setProjectionMatrix()");
         GLContext context = context(ctx);
@@ -7624,7 +7684,7 @@ void swapBuffers(Canvas3D cv, Context ctx, Drawable drawable) {
             gl.glLoadMatrixd(p, 0);
         }
     }
-
+ // IN USE BY MORROWIND
 static boolean isOffscreenLayerSurfaceEnabled(Canvas3D cv) {
 	if (cv.drawable == null || cv.offScreen)
 		return false;
@@ -7636,7 +7696,7 @@ static boolean isOffscreenLayerSurfaceEnabled(Canvas3D cv) {
 
 	return jawtwindow.isOffscreenLayerSurfaceEnabled();
 }
-
+//NOT IN USE BY MORROWIND
 static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height) {
 	if (!(jdraw.getGLDrawable() instanceof GLFBODrawable))
 		return false;
@@ -7651,6 +7711,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // The native method for setting the Viewport.
     @Override
+ // IN USE BY MORROWIND
     void setViewport(Context ctx, int x, int y, int width, int height) {
         if (VERBOSE) System.err.println("JoglPipeline.setViewport()");
         GL gl = context(ctx).getGL();
@@ -7659,6 +7720,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // used for display Lists
     @Override
+ // NOT IN USE BY MORROWIND  NIO buffers prevent use
     void newDisplayList(Context ctx, int displayListId) {
         if (VERBOSE) System.err.println("JoglPipeline.newDisplayList()");
         if (displayListId <= 0) {
@@ -7670,6 +7732,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     @Override
+    // NOT IN USE BY MORROWIND  NIO buffers prevent use
     void endDisplayList(Context ctx) {
         if (VERBOSE) System.err.println("JoglPipeline.endDisplayList()");
 		GL2 gl = context(ctx).getGL().getGL2();
@@ -7678,6 +7741,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     int numInvalidLists = 0;
     @Override
+    // NOT IN USE BY MORROWIND  NIO buffers prevent use
     void callDisplayList(Context ctx, int id, boolean isNonUniformScale) {
         if (VERBOSE) System.err.println("JoglPipeline.callDisplayList()");
         if (id <= 0) {

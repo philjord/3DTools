@@ -14,6 +14,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
+import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.Material;
 import javax.media.j3d.QuadArray;
@@ -28,6 +29,7 @@ import javax.vecmath.Point3d;
 
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
+import tools3d.utils.Utils3D;
 
 /**
  * TODO: PS why the hell have I never looked into Raster shape3ds? it looks awesome...
@@ -286,9 +288,9 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 				-1f, 0f,//
 				-1f, 1f };
 
-		QuadArray rect = new QuadArray(4, GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2);
-		rect.setCoordinates(0, verts1);
-		rect.setTextureCoordinates(0, 0, texCoords);
+		QuadArray rect = new QuadArray(4, GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2| GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
+		rect.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts1)));
+		rect.setTexCoordRefBuffer(0, new J3DBuffer(Utils3D.makeFloatBuffer(texCoords)));
 
 		return rect;
 	}
