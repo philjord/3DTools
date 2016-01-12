@@ -105,19 +105,12 @@ class JoglPipeline extends Pipeline {
 
     private GLProfile profile;
 
-    private Object mainThreadContext;    // Fix for Bug 983
-
+    
     /**
      * Constructor for singleton JoglPipeline instance
      */
     protected JoglPipeline() {
-        // Fix for Bug 983
-        try {
-            // Retrieve main thread AppContext instance by reflection
-            mainThreadContext = Class.forName("sun.awt.AppContext").getMethod("getAppContext").invoke(null);
-        } catch (final Throwable ex) {
-            // Let's consider app context is not necessary for the program
-        }
+        
     }
 
     /**
@@ -6424,30 +6417,7 @@ break;
 		}
     }
 
-    // Fix for Bug 983
-  //IN USE BY MORROWIND
-    private void checkAppContext() {
-        if (mainThreadContext == null)
-            return;
-
-        try {
-            // Check by reflection that sun.awt.AppContext.getAppContext() doesn't return null
-            // (required by ImageIO.write() and other JMF internal calls) to apply workaround proposed at
-            // http://stackoverflow.com/questions/17223304/appcontext-is-null-from-rmi-thread-with-java-7-update-25
-            final Class<?> appContextClass = Class.forName("sun.awt.AppContext");
-            if (appContextClass.getMethod("getAppContext").invoke(null) == null) {
-                final Field field = appContextClass.getDeclaredField("threadGroup2appContext");
-                field.setAccessible(true);
-                final Map threadGroup2appContext = (Map)field.get(null);
-                final ThreadGroup currentThreadGroup = Thread.currentThread().getThreadGroup();
-                threadGroup2appContext.put(currentThreadGroup, mainThreadContext);
-            }
-        } catch (Throwable ex) {
-            // Let's consider app context is not necessary for the program
-        }
-        // Don't need mainThreadContext anymore
-        mainThreadContext = null;
-    }
+   
 
     // This is the native method for creating the underlying graphics context.
     @Override
@@ -6457,7 +6427,7 @@ break;
             boolean offScreen) {
         if (VERBOSE) System.err.println("JoglPipeline.createNewContext()");
 
-        checkAppContext();
+         
 	    GLDrawable	glDrawable 	= null;
 	    GLContext 	glContext	= null;
 
@@ -8658,6 +8628,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Methods to get actual capabilities from Canvas3D
     @Override
+    //Canvas3d calls it
     boolean hasDoubleBuffer(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.hasDoubleBuffer()");
         if (VERBOSE) System.err.println("  Returning " + caps(cv).getDoubleBuffered());
@@ -8665,19 +8636,20 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     @Override
+  //Canvas3d calls it
     boolean hasStereo(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.hasStereo()");
         if (VERBOSE) System.err.println("  Returning " + caps(cv).getStereo());
         return caps(cv).getStereo();
     }
-
+  //Canvas3d calls it
     @Override
     int getStencilSize(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.getStencilSize()");
         if (VERBOSE) System.err.println("  Returning " + caps(cv).getStencilBits());
         return caps(cv).getStencilBits();
     }
-
+  //Canvas3d calls it
     @Override
     boolean hasSceneAntialiasingMultisample(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.hasSceneAntialiasingMultisample()");
@@ -8685,7 +8657,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
         return caps(cv).getSampleBuffers();
     }
-
+  //Canvas3d calls it
     @Override
     boolean hasSceneAntialiasingAccum(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.hasSceneAntialiasingAccum()");
@@ -8701,6 +8673,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     private boolean checkedForGetScreenMethod = false;
     private Method getScreenMethod = null;
     @Override
+  //Screen3d calls it
     int getScreen(final GraphicsDevice graphicsDevice) {
         if (VERBOSE) System.err.println("JoglPipeline.getScreen()");
 
@@ -8747,6 +8720,8 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     // GLCanvas in order to be able to set up a temporary pixel format
     // and OpenGL context. Apparently simply turning off the
     // single-threaded mode isn't enough to do this.
+    
+    //USED BY GET BEST CONFIGURATION
     private final class QueryCanvas extends Canvas {
 
         private GLDrawable glDrawable;
@@ -8812,6 +8787,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
         }
     }
 
+    // Used by get best configuration
     private static AWTGraphicsConfiguration createAwtGraphicsConfiguration(GLCapabilities capabilities,
             CapabilitiesChooser chooser,
             AbstractGraphicsScreen screen) {
@@ -8823,6 +8799,8 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Used in conjunction with IndexCapabilitiesChooser in pixel format
     // selection -- see getBestConfiguration
+    
+    //Used by getBestConfiguration
     static class CapabilitiesCapturer extends DefaultGLCapabilitiesChooser implements ExtendedCapabilitiesChooser {
         private boolean done;
         private GLCapabilities capabilities;
@@ -8872,6 +8850,8 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Used to support the query context mechanism -- needs to be more
     // than just a GLCapabilitiesChooser
+    
+    //ONLY used by createQuerycontext above, hence unused
     private final class ContextQuerier extends DefaultGLCapabilitiesChooser
                                               implements ExtendedCapabilitiesChooser {
         private Canvas3D canvas;
@@ -8905,6 +8885,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
         }
     }
 
+    //used by createQueryContext and getBestConfiguration above
     private void disposeOnEDT(final Frame f) {
         Runnable r = new Runnable() {
             @Override
@@ -8929,6 +8910,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Method to construct a new DrawingSurfaceObject
     @Override
+    //USED in Canvas3D init
     DrawingSurfaceObject createDrawingSurfaceObject(Canvas3D cv) {
         if (VERBOSE) System.err.println("JoglPipeline.createDrawingSurfaceObject()");
         return new JoglDrawingSurfaceObject(cv);
@@ -8936,6 +8918,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Method to free the drawing surface object
     @Override
+    //NOOP
     void freeDrawingSurface(Canvas3D cv, DrawingSurfaceObject drawingSurfaceObject) {
         if (VERBOSE) System.err.println("JoglPipeline.freeDrawingSurface()");
         // This method is a no-op
@@ -8943,6 +8926,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Method to free the native drawing surface object
     @Override
+  //NOOP
     void freeDrawingSurfaceNative(Object o) {
         if (VERBOSE) System.err.println("JoglPipeline.freeDrawingSurfaceNative()");
         // This method is a no-op
@@ -8953,6 +8937,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     //
 
     // Helper used everywhere
+    //USED heaps
     GLContext context(Context ctx) {
         if (ctx == null)
             return null;
@@ -8960,12 +8945,14 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     // Helper used everywhere
+    //USed a small amount
     GLDrawable drawable(Drawable drawable) {
         if (drawable == null)
             return null;
         return ((JoglDrawable) drawable).getGLDrawable();
     }
 
+    //Used to get caps for the canvas3d
     GLCapabilities caps(Canvas3D ctx) {
     	if (ctx.drawable != null) {
     		// latest state for on- and offscreen drawables
@@ -9146,7 +9133,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
     
     
-    ///PJPJPJPJ requesting caps is expensive caps are unliekly to change during live times
+    ///PJPJPJPJ requesting caps is expensive caps are unlikely to change during live times
     private int glisExtensionAvailableGL_VERSION_1_3 = 0;
     private boolean isExtensionAvailableGL_VERSION_1_3(GL2 gl)
 	{
@@ -9195,6 +9182,6 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     	
 		return isExtensionAvailableGL_ARB_imaging==1;
    	}
-    private int isExtensionAvailableGL_ARB_vertex_shader = 0;
+     
  
 }
