@@ -143,7 +143,7 @@ class JoglPipeline extends Pipeline {
     //
 
     // used for GeometryArrays by Copy or interleaved
-    //NOT USED BY MORROWIND - but drawTrivial uses it
+    //NOT USED BY MORROWIND - but drawTrivial used it
     @Override
     void execute(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -168,7 +168,7 @@ class JoglPipeline extends Pipeline {
     }
 
     // used by GeometryArray by Reference with java arrays
-    //NOT USED BY MORROWIND
+    // USED BY MORROWIND
     @Override
     void executeVA(Context ctx,
             GeometryArrayRetained geo, int geo_type,
@@ -7720,7 +7720,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // used for display Lists
     @Override
- // NOT IN USE BY MORROWIND  NIO buffers prevent use
+ // NOT IN USE BY MORROWIND  NIO buffers prevent use (possibly by ref also)
     void newDisplayList(Context ctx, int displayListId) {
         if (VERBOSE) System.err.println("JoglPipeline.newDisplayList()");
         if (displayListId <= 0) {
@@ -7770,6 +7770,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     @Override
+ // NOT IN USE BY MORROWIND  NIO buffers prevent use
     void freeDisplayList(Context ctx, int id) {
         if (VERBOSE) System.err.println("JoglPipeline.freeDisplayList()");
         if (id <= 0) {
@@ -7781,6 +7782,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     @Override
+ // IN USE BY MORROWIND
     void freeTexture(Context ctx, int id) {
         if (VERBOSE) System.err.println("JoglPipeline.freeTexture()");
 
@@ -7796,6 +7798,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
 	@Override
+	 // IN USE BY MORROWIND
 	int generateTexID(Context ctx) {
 		if (VERBOSE) System.err.println("JoglPipeline.generateTexID()");
 
@@ -7810,6 +7813,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 	}
 
     @Override
+    //NOT IN USE BY MORROWIND and nothing seems to call this in Canvas3D either
     void texturemapping(Context ctx,
             int px, int py,
             int minX, int minY, int maxX, int maxY,
@@ -7905,6 +7909,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
     @Override
+  //NOT IN USE BY MORROWIND and nothing seems to call this in Canvas3D either
     boolean initTexturemapping(Context ctx, int texWidth,
             int texHeight, int objectId) {
         if (VERBOSE) System.err.println("JoglPipeline.initTexturemapping()");
@@ -7940,6 +7945,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     // FIELD_RIGHT.  The boolean isTRUE for double buffered mode, FALSE
     // foe single buffering.
     @Override
+  //IN USE BY MORROWIND 
     void setRenderMode(Context ctx, int mode, boolean doubleBuffer) {
         if (VERBOSE) System.err.println("JoglPipeline.setRenderMode()");
 
@@ -7978,6 +7984,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Set glDepthMask.
     @Override
+    //IN USE BY MORROWIND 
     void setDepthBufferWriteEnable(Context ctx, boolean mode) {
         if (VERBOSE) System.err.println("JoglPipeline.setDepthBufferWriteEnable()");
 
@@ -7992,7 +7999,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     //----------------------------------------------------------------------
     // Helper private functions for Canvas3D
     //
-
+//USED BY CONTEXT QUERIER BELOW which is used for create new context
     private boolean getPropertiesFromCurrentContext(JoglContext ctx, GL2 gl) {
 
         // FIXME: this is a heavily abridged set of the stuff in Canvas3D.c;
@@ -8013,7 +8020,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     }
 
    
-
+//Used by createNewContext above
 	private int[] extractVersionInfo(String versionString) {
         StringTokenizer tok = new StringTokenizer(versionString, ". ");
         int major = Integer.valueOf(tok.nextToken()).intValue();
@@ -8056,7 +8063,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 //        return tmp[0];
 //    }
 
-
+	//Used by createNewContext above
     private void checkTextureExtensions(Canvas3D cv,
             JoglContext ctx,
             GL gl,
@@ -8150,7 +8157,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
 
   
-
+  //Used by createNewContext above
 	private void checkGLSLShaderExtensions(Canvas3D cv,
             JoglContext ctx,
             GL gl,
@@ -8185,7 +8192,8 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
             cv.shadingLanguageGLSL = true;
         }
     }
-
+	
+	//Used by createNewContext above
     private void setupCanvasProperties(Canvas3D cv, JoglContext ctx, GL gl) {
         // Note: this includes relevant portions from both the
         // NativePipeline's getPropertiesFromCurrentContext and setupCanvasProperties
@@ -8353,6 +8361,10 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
    * caller must save/restore the attributes with
    * pushAttrib(GL_ENABLE_BIT|...) and popAttrib()
    */
+    
+    // NOT IN USE BY MORROWIND
+    //used by texturemapping which is dead code and textureFillBackground, which can be dropped
+    
     private void disableAttribFor2D(GL gl) {
         gl.glDisable(GL2.GL_ALPHA_TEST);
         gl.glDisable(GL.GL_BLEND);
@@ -8388,7 +8400,8 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 //            gl.glDisable(GL.GL_TEXTURE_COLOR_TABLE_SGI);
 //        }
     }
-
+    // NOT IN USE BY MORROWIND
+    //only called by textureFillRaster which will be dropped 
     private void disableAttribForRaster(GL gl) {
 
         gl.glDisable(GL2.GL_COLOR_MATERIAL);
@@ -8403,7 +8416,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 //      }
 
     }
-
+    // IN USE BY MORROWIND
     private void copyTranspose(double[] src, double[] dst) {
         dst[0] = src[0];
         dst[1] = src[4];
@@ -8436,6 +8449,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
     // This method must return a valid GraphicsConfig, or else it must throw
     // an exception if one cannot be returned.
     @Override
+    // IN USE BY MORROWIND during Canvas3D init
     GraphicsConfiguration getGraphicsConfig(GraphicsConfiguration gconfig) {
         if (VERBOSE) System.err.println("JoglPipeline.getGraphicsConfig()");
 
@@ -8453,6 +8467,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Get best graphics config from pipeline
     @Override
+ // IN USE BY MORROWIND during Canvas3D2D init
     GraphicsConfiguration getBestConfiguration(GraphicsConfigTemplate3D gct,
             GraphicsConfiguration[] gc) {
         if (VERBOSE) System.err.println("JoglPipeline.getBestConfiguration()");
@@ -8617,6 +8632,7 @@ static boolean hasFBObjectSizeChanged(JoglDrawable jdraw, int width, int height)
 
     // Determine whether specified graphics config is supported by pipeline
     @Override
+ // APPEARS TO BE NOT USED but Renderer has a special call for it
     boolean isGraphicsConfigSupported(GraphicsConfigTemplate3D gct,
             GraphicsConfiguration gc) {
         if (VERBOSE) System.err.println("JoglPipeline.isGraphicsConfigSupported()");

@@ -4,8 +4,11 @@
 package tools3d.utils.leafnode;
 
 import javax.media.j3d.GeometryArray;
+import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.Shape3D;
+
+import tools3d.utils.Utils3D;
 
 /**
  * @author Administrator
@@ -48,10 +51,11 @@ public class Cube extends Shape3D
 	 */
 	public Cube()
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
-		cube.setCoordinates(0, verts);
-		cube.setColors(0, colors);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts)));
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
 	}
@@ -63,29 +67,31 @@ public class Cube extends Shape3D
 	 */
 	public Cube(double scale)
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
 		for (int i = 0; i < verts.length; i++)
 			scaledVerts[i] = verts[i] * (float) scale;
 
-		cube.setCoordinates(0, scaledVerts);
-		cube.setColors(0, colors);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
 	}
 
 	public Cube(double scale, float r, float g, float b)
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
 		for (int i = 0; i < verts.length; i++)
 			scaledVerts[i] = verts[i] * (float) scale;
 
-		cube.setCoordinates(0, scaledVerts);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
 
-		float colorsSet[] = new float[24*3];
+		float colorsSet[] = new float[24 * 3];
 		for (int i = 0; i < 24; i++)
 		{
 			colorsSet[i * 3 + 0] = r;
@@ -93,7 +99,7 @@ public class Cube extends Shape3D
 			colorsSet[i * 3 + 2] = b;
 		}
 
-		cube.setColors(0, colorsSet);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
 
 		this.setGeometry(cube);
 	}
@@ -105,7 +111,8 @@ public class Cube extends Shape3D
 		 */
 	public Cube(double xScale, double yScale, double zScale)
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
 		for (int i = 0; i < verts.length; i += 3)
@@ -115,15 +122,16 @@ public class Cube extends Shape3D
 			scaledVerts[i + 2] = verts[i + 2] * (float) zScale;
 		}
 
-		cube.setCoordinates(0, scaledVerts);
-		cube.setColors(0, colors);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
 	}
-	
+
 	public Cube(double xScale, double yScale, double zScale, float r, float g, float b)
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
 		for (int i = 0; i < verts.length; i += 3)
@@ -133,9 +141,9 @@ public class Cube extends Shape3D
 			scaledVerts[i + 2] = verts[i + 2] * (float) zScale;
 		}
 
-		cube.setCoordinates(0, scaledVerts);
-		
-		float colorsSet[] = new float[24*3];
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
+
+		float colorsSet[] = new float[24 * 3];
 		for (int i = 0; i < 24; i++)
 		{
 			colorsSet[i * 3 + 0] = r;
@@ -143,14 +151,15 @@ public class Cube extends Shape3D
 			colorsSet[i * 3 + 2] = b;
 		}
 
-		cube.setColors(0, colorsSet);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
 
 		this.setGeometry(cube);
 	}
 
 	public Cube(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
 	{
-		QuadArray cube = new QuadArray(24, GeometryArray.COORDINATES | GeometryArray.COLOR_3);
+		QuadArray cube = new QuadArray(24,
+				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[] {
 				// front face
@@ -166,8 +175,8 @@ public class Cube extends Shape3D
 				// bottom face
 				xMin, yMin, zMax, xMin, yMin, zMin, xMax, yMin, zMin, xMax, yMin, zMax, };
 
-		cube.setCoordinates(0, scaledVerts);
-		cube.setColors(0, colors);
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
+		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
 	}
