@@ -3,10 +3,15 @@
  */
 package tools3d.utils.leafnode;
 
+import javax.media.j3d.Appearance;
+import javax.media.j3d.GLSLShaderProgram;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.QuadArray;
+import javax.media.j3d.Shader;
+import javax.media.j3d.ShaderAppearance;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.SourceCodeShader;
 
 import tools3d.utils.Utils3D;
 
@@ -55,9 +60,10 @@ public class Cube extends Shape3D
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts)));
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
+		this.setAppearance(makeAppearance());
 	}
 
 	/**
@@ -75,10 +81,14 @@ public class Cube extends Shape3D
 			scaledVerts[i] = verts[i] * (float) scale;
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
+
+		this.setAppearance(makeAppearance());
 	}
+
+	
 
 	public Cube(double scale, float r, float g, float b)
 	{
@@ -99,9 +109,10 @@ public class Cube extends Shape3D
 			colorsSet[i * 3 + 2] = b;
 		}
 
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
 
 		this.setGeometry(cube);
+		this.setAppearance(makeAppearance());
 	}
 
 	/**
@@ -123,9 +134,10 @@ public class Cube extends Shape3D
 		}
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
+		this.setAppearance(makeAppearance());
 	}
 
 	public Cube(double xScale, double yScale, double zScale, float r, float g, float b)
@@ -151,9 +163,10 @@ public class Cube extends Shape3D
 			colorsSet[i * 3 + 2] = b;
 		}
 
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colorsSet)));
 
 		this.setGeometry(cube);
+		this.setAppearance(makeAppearance());
 	}
 
 	public Cube(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
@@ -176,8 +189,27 @@ public class Cube extends Shape3D
 				xMin, yMin, zMax, xMin, yMin, zMin, xMax, yMin, zMin, xMax, yMin, zMax, };
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
-		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
+		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));
 
 		this.setGeometry(cube);
+		this.setAppearance(makeAppearance());
+	}
+	
+	private static Appearance makeAppearance()
+	{
+		ShaderAppearance app = new ShaderAppearance();
+		app.setMaterial(null);
+
+		String vertexProgram = "void main( void ){gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;gl_FrontColor = gl_Color;}";
+		String fragmentProgram = "void main( void ){gl_FragColor = gl_Color;}";
+
+		Shader[] shaders = new Shader[2];
+		shaders[0] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_VERTEX, vertexProgram);
+		shaders[1] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_FRAGMENT, fragmentProgram);
+
+		GLSLShaderProgram shaderProgram = new GLSLShaderProgram();
+		shaderProgram.setShaders(shaders);
+		app.setShaderProgram(shaderProgram);
+		return app;
 	}
 }
