@@ -11,18 +11,21 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
+import javax.media.j3d.GLSLShaderProgram;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
-import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.ImageComponent2D.Updater;
-import javax.media.j3d.Material;
+import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.RenderingAttributes;
+import javax.media.j3d.Shader;
+import javax.media.j3d.ShaderAppearance;
+import javax.media.j3d.ShaderProgram;
 import javax.media.j3d.Shape3D;
+import javax.media.j3d.SourceCodeShader;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
-import javax.media.j3d.TextureAttributes;
 import javax.media.j3d.TransparencyAttributes;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
@@ -32,7 +35,6 @@ import tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.utils.Utils3D;
 
 /**
- * TODO: PS why the hell have I never looked into Raster shape3ds? it looks awesome...
  * @author philip
  *
  */
@@ -51,7 +53,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	private Shape3D hudShape = new Shape3D();
 
-	private Appearance hudShapeApp = new Appearance();
+	private ShaderAppearance app;
 
 	private Texture2D tex;
 
@@ -61,34 +63,75 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	private boolean finalClearRequired = false;
 
+	private static ShaderProgram shaderProgram = null;
+
+	private static String vertexProgram = null;
+
+	private static String fragmentProgram = null;
+
 	public HudShape3D(Canvas3D2D canvas)
 	{
 		this.canvas = canvas;
 
 		this.setCapability(BranchGroup.ALLOW_DETACH);
-		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_READ);
-		hudShapeApp.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+
+		app = new ShaderAppearance();
+
+		app.setCapability(Appearance.ALLOW_TEXTURE_READ);
+		app.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
+
+		if (shaderProgram == null)
+		{
+			vertexProgram = "#version 120" + //
+					"void main( void )" + //
+					"{			" + //
+					"   gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;" + // 	
+					"	gl_Position = ftransform();	" + //
+					"}";
+			fragmentProgram = "#version 120" + //
+					"uniform sampler2D baseMap;" + //
+					"void main( void )" + //
+					"{		" + //
+					"	vec4 baseMapTex = texture2D( baseMap, gl_TexCoord[0].st );" + //
+					"	gl_FragColor = baseMapTex;	" + //
+					"}";
+
+			Shader[] shaders = new Shader[2];
+			shaders[0] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_VERTEX, vertexProgram) {
+				public String toString()
+				{
+					return "vertexProgram";
+				}
+			};
+			shaders[1] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_FRAGMENT, fragmentProgram) {
+				public String toString()
+				{
+					return "fragmentProgram";
+				}
+			};
+
+			shaderProgram = new GLSLShaderProgram() {
+				public String toString()
+				{
+					return "HUD Shader Program";
+				}
+			};
+			shaderProgram.setShaders(shaders);
+
+		}
 
 		TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
 		transparencyAttributes.setTransparencyMode(TransparencyAttributes.NICEST);
 		transparencyAttributes.setTransparency(0.0f);
-		hudShapeApp.setTransparencyAttributes(transparencyAttributes);
-
-		TextureAttributes textureAttributes = new TextureAttributes();
-		textureAttributes.setTextureMode(TextureAttributes.REPLACE);
-		hudShapeApp.setTextureAttributes(textureAttributes);
-
-		Material m = new Material();
-		m.setLightingEnable(false);
-		hudShapeApp.setMaterial(m);
+		app.setTransparencyAttributes(transparencyAttributes);
 
 		//keep stencil gear in check
 		RenderingAttributes ra = new RenderingAttributes();
 		ra.setDepthBufferEnable(false);
-		hudShapeApp.setRenderingAttributes(ra);
+		app.setRenderingAttributes(ra);
 
 		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
-		hudShape.setAppearance(hudShapeApp);
+		hudShape.setAppearance(app);
 		addChild(hudShape);
 
 		UpdateHudTextureBehavior hudTextureBehave = new UpdateHudTextureBehavior();
@@ -144,7 +187,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			hudShapeIc2d.setCapability(ImageComponent.ALLOW_IMAGE_WRITE);
 
 			tex.setImage(0, hudShapeIc2d);
-			hudShapeApp.setTexture(tex);
+			app.setTexture(tex);
 
 		}
 	}
@@ -260,7 +303,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			//g.drawRect(4, 4, SHAPE_TEX_WIDTH - 8, SHAPE_TEX_HEIGHT - 8);
 
 			// must reset so the image displays, before TextureRetained mip level fix this wasn't needed
-			hudShapeApp.setTexture(tex);
+			app.setTexture(tex);
 		}
 		else if (finalClearRequired)
 		{
@@ -268,7 +311,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
 			g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOTE fillRect doesn't work
 			finalClearRequired = false;
-			hudShapeApp.setTexture(tex);
+			app.setTexture(tex);
 		}
 
 	}
@@ -278,17 +321,16 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		float hW = rectWidth / 2f;
 		float hH = rectHeight / 2f;
 
-		float[] verts1 =
-		{ hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
+		float[] verts1 = { hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
 
 		//-1 flip the y axis so yUp
-		float[] texCoords =
-		{ 0f, 1f, //
-				0f, 0f,//
-				-1f, 0f,//
+		float[] texCoords = { 0f, 1f, //
+				0f, 0f, //
+				-1f, 0f, //
 				-1f, 1f };
 
-		QuadArray rect = new QuadArray(4, GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2| GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
+		QuadArray rect = new QuadArray(4,
+				GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 		rect.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts1)));
 		rect.setTexCoordRefBuffer(0, new J3DBuffer(Utils3D.makeFloatBuffer(texCoords)));
 
@@ -330,8 +372,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			wakeupOn(wakeupCriterion);
 		}
 
-		@SuppressWarnings(
-		{ "unchecked", "rawtypes" })
+		@SuppressWarnings({ "rawtypes" })
 		public void processStimulus(Enumeration critiria)
 		{
 			updateHudShapeTexture();
