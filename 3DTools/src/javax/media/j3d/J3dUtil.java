@@ -8,7 +8,7 @@ public class J3dUtil
 	{
 		try
 		{
-			boolean b = JoglPipeline.TOOLS3D_MARKER;
+			boolean b = JoglesPipeline.TOOLS3D_MARKER;
 			// I must hang on to b otherwise this call doesn't happen
 			b = !!b;// haha!
 		}
