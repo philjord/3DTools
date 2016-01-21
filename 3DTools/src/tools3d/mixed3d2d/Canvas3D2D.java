@@ -114,10 +114,10 @@ public class Canvas3D2D extends Canvas3D
 	}
 
 	// For reseting the texture binding in the pipeline (trust me)
-	private static Shape3D trivialShape = new Cube(0.01f);
+	//private static Shape3D trivialShape = new Cube(0.01f);
 
-	@Override
-	public void postRender()
+	//@Override
+	public void postRender2()
 	{
 		//applyPostEffect();
 

@@ -11,7 +11,6 @@ import javax.media.j3d.Appearance;
 import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
-import javax.media.j3d.GLSLShaderProgram;
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
@@ -19,11 +18,8 @@ import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.RenderingAttributes;
-import javax.media.j3d.Shader;
 import javax.media.j3d.ShaderAppearance;
-import javax.media.j3d.ShaderProgram;
 import javax.media.j3d.Shape3D;
-import javax.media.j3d.SourceCodeShader;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.TransparencyAttributes;
@@ -32,6 +28,7 @@ import javax.vecmath.Point3d;
 
 import tools3d.mixed3d2d.hud.HUDElement;
 import tools3d.mixed3d2d.overlay.swing.Panel3D;
+import tools3d.utils.SimpleShaderAppearance;
 import tools3d.utils.Utils3D;
 
 /**
@@ -63,11 +60,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	private boolean finalClearRequired = false;
 
-	private static ShaderProgram shaderProgram = null;
-
-	private static String vertexProgram = null;
-
-	private static String fragmentProgram = null;
+ 
 
 	public HudShape3D(Canvas3D2D canvas)
 	{
@@ -75,50 +68,10 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 		this.setCapability(BranchGroup.ALLOW_DETACH);
 
-		app = new ShaderAppearance();
+		app = new SimpleShaderAppearance(true);
 
 		app.setCapability(Appearance.ALLOW_TEXTURE_READ);
 		app.setCapability(Appearance.ALLOW_TEXTURE_WRITE);
-
-		if (shaderProgram == null)
-		{
-			vertexProgram = "#version 120" + //
-					"void main( void )" + //
-					"{			" + //
-					"   gl_TexCoord[0] = gl_TextureMatrix[0] * gl_MultiTexCoord0;" + // 	
-					"	gl_Position = ftransform();	" + //
-					"}";
-			fragmentProgram = "#version 120" + //
-					"uniform sampler2D baseMap;" + //
-					"void main( void )" + //
-					"{		" + //
-					"	vec4 baseMapTex = texture2D( baseMap, gl_TexCoord[0].st );" + //
-					"	gl_FragColor = baseMapTex;	" + //
-					"}";
-
-			Shader[] shaders = new Shader[2];
-			shaders[0] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_VERTEX, vertexProgram) {
-				public String toString()
-				{
-					return "vertexProgram";
-				}
-			};
-			shaders[1] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_FRAGMENT, fragmentProgram) {
-				public String toString()
-				{
-					return "fragmentProgram";
-				}
-			};
-
-			shaderProgram = new GLSLShaderProgram() {
-				public String toString()
-				{
-					return "HUD Shader Program";
-				}
-			};
-			shaderProgram.setShaders(shaders);
-
-		}
 
 		TransparencyAttributes transparencyAttributes = new TransparencyAttributes();
 		transparencyAttributes.setTransparencyMode(TransparencyAttributes.NICEST);
