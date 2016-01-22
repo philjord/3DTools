@@ -13,10 +13,12 @@ import javax.vecmath.Color3f;
 
 public class SimpleShaderAppearance extends ShaderAppearance
 {
-	private static GLSLShaderProgram shaderProgram;
+	private static GLSLShaderProgram flatShaderProgram;
+	private static GLSLShaderProgram textureShaderProgram;
+	private static GLSLShaderProgram colorLineShaderProgram;
 
 	/**
-	 * Polygons no texture
+	 * Polygons no texture, no single color, must have color vertex attribute
 	 */
 	public SimpleShaderAppearance()
 	{
@@ -24,7 +26,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	}
 
 	/**
-	 * Lines with color no texture
+	 * Lines with a single color no texture, ignores vertex attribute of color
 	 * @param color
 	 */
 	public SimpleShaderAppearance(Color3f color)
@@ -33,7 +35,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	}
 
 	/**
-	 * Polygons texture if hasTexture
+	 * Polygons  if hasTexture is true a texture otherwise vertex attribute colors for face color
 	 */
 	public SimpleShaderAppearance(boolean hasTexture)
 	{
@@ -46,57 +48,120 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	 */
 	private SimpleShaderAppearance(Color3f color, boolean hasTexture)
 	{
-		if (color != null)
-		{
-			PolygonAttributes polyAtt = new PolygonAttributes(PolygonAttributes.POLYGON_LINE, PolygonAttributes.CULL_NONE, 0.0f);
-			polyAtt.setPolygonOffset(0.1f);
-			setPolygonAttributes(polyAtt);
-			LineAttributes lineAtt = new LineAttributes(1, LineAttributes.PATTERN_SOLID, false);
-			setLineAttributes(lineAtt);
-
-			ColoringAttributes colorAtt = new ColoringAttributes(color, ColoringAttributes.FASTEST);
-			setColoringAttributes(colorAtt);
-		}
-
-		if (shaderProgram == null)
-		{
-			shaderProgram = new GLSLShaderProgram();
-			String vertexProgram = "uniform mat4 glProjectionMatrix;uniform mat4 glModelViewMatrix;";
-			if (hasTexture)
-				vertexProgram += "varying vec2 glTexCoord0;";
-			vertexProgram += "void main( void ){gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;";
-			if (hasTexture)
-				vertexProgram += "glTexCoord0 = gl_MultiTexCoord0.st;";
-			vertexProgram += "gl_FrontColor = gl_Color;}";
-
-			String fragmentProgram = "";
-			if (hasTexture)
-			{
-				fragmentProgram += "varying vec2 glTexCoord0;uniform sampler2D BaseMap;";
-				fragmentProgram += "void main( void ){gl_FragColor = texture2D( BaseMap, glTexCoord0.st );}";
-			}
-			else
-			{
-				fragmentProgram += "void main( void ){gl_FragColor = gl_Color;}";
-			}
-
-			Shader[] shaders = new Shader[2];
-			shaders[0] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_VERTEX, vertexProgram);
-			shaders[1] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_FRAGMENT, fragmentProgram);
-
-			shaderProgram.setShaders(shaders);
-			
-			if(hasTexture)
-				shaderProgram.setShaderAttrNames(new String[]{"BaseMap"});
-		}
-
-		setShaderProgram(shaderProgram);
 		if (hasTexture)
 		{
+			if (textureShaderProgram == null)
+			{
+				textureShaderProgram = new GLSLShaderProgram() {
+					public String toString()
+					{
+						return "SimpleShaderAppearance textureShaderProgram";
+					}
+				};
+				String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+				vertexProgram += "varying vec2 glTexCoord0;\n";
+				vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
+				vertexProgram += "glTexCoord0 = gl_MultiTexCoord0.st;\n";
+				vertexProgram += "}";
+
+				String fragmentProgram = "";
+				fragmentProgram += "varying vec2 glTexCoord0;uniform sampler2D BaseMap;\n";
+				fragmentProgram += "void main( void ){\n gl_FragColor = texture2D( BaseMap, glTexCoord0.st );\n}";
+
+				textureShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
+				textureShaderProgram.setShaderAttrNames(new String[] { "BaseMap" });
+			}
+
+			setShaderProgram(textureShaderProgram);
+
 			ShaderAttributeSet shaderAttributeSet = new ShaderAttributeSet();
 			shaderAttributeSet.put(new ShaderAttributeValue("BaseMap", new Integer(0)));
 			setShaderAttributeSet(shaderAttributeSet);
+
+		}
+		else
+		{
+			if (color != null)
+			{
+				PolygonAttributes polyAtt = new PolygonAttributes(PolygonAttributes.POLYGON_LINE, PolygonAttributes.CULL_NONE, 0.0f);
+				polyAtt.setPolygonOffset(0.1f);
+				setPolygonAttributes(polyAtt);
+				LineAttributes lineAtt = new LineAttributes(1, LineAttributes.PATTERN_SOLID, false);
+				setLineAttributes(lineAtt);
+
+				ColoringAttributes colorAtt = new ColoringAttributes(color, ColoringAttributes.FASTEST);
+				setColoringAttributes(colorAtt);
+
+				if (colorLineShaderProgram == null)
+				{
+					colorLineShaderProgram = new GLSLShaderProgram() {
+						public String toString()
+						{
+							return "SimpleShaderAppearance colorLineShaderProgram";
+						}
+					};
+					String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+					vertexProgram += "uniform vec4 singleColor;\n";
+					vertexProgram += "varying vec4 glFrontColor;\n";
+					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
+					vertexProgram += "glFrontColor = singleColor;\n";
+					vertexProgram += "}";
+
+					String fragmentProgram = "varying vec4 glFrontColor;\n";
+					fragmentProgram += "void main( void ){\n gl_FragColor = glFrontColor;\n}";
+
+					colorLineShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
+
+				}
+
+				setShaderProgram(colorLineShaderProgram);
+
+			}
+			else
+			{
+				if (flatShaderProgram == null)
+				{
+					flatShaderProgram = new GLSLShaderProgram() {
+						public String toString()
+						{
+							return "SimpleShaderAppearance flatShaderProgram";
+						}
+					};
+					String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+					vertexProgram += "varying vec4 glFrontColor;\n";
+					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
+					vertexProgram += "glFrontColor = gl_Color;\n";
+					vertexProgram += "}";
+
+					String fragmentProgram = "varying vec4 glFrontColor;\n";
+					fragmentProgram += "void main( void ){\n gl_FragColor = glFrontColor;\n}";
+
+					flatShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
+
+				}
+
+				setShaderProgram(flatShaderProgram);
+
+			}
 		}
 
+	}
+
+	private static Shader[] makeShaders(String vertexProgram, String fragmentProgram)
+	{
+		Shader[] shaders = new Shader[2];
+		shaders[0] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_VERTEX, vertexProgram) {
+			public String toString()
+			{
+				return "vertexProgram";
+			}
+		};
+		shaders[1] = new SourceCodeShader(Shader.SHADING_LANGUAGE_GLSL, Shader.SHADER_TYPE_FRAGMENT, fragmentProgram) {
+			public String toString()
+			{
+				return "fragmentProgram";
+			}
+		};
+		return shaders;
 	}
 }

@@ -18,7 +18,6 @@ import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.J3DBuffer;
 import javax.media.j3d.QuadArray;
 import javax.media.j3d.RenderingAttributes;
-import javax.media.j3d.ShaderAppearance;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
@@ -50,7 +49,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	private Shape3D hudShape = new Shape3D();
 
-	private ShaderAppearance app;
+	private Appearance app;
 
 	private Texture2D tex;
 
