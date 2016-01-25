@@ -17,6 +17,17 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	private static GLSLShaderProgram textureShaderProgram;
 	private static GLSLShaderProgram colorLineShaderProgram;
 
+	public static String alphaTestUniforms = "uniform int alphaTestEnabled;\n" + "uniform int alphaTestFunction;\n"
+			+ "uniform float alphaTestValue;\n";
+
+	public static String alphaTestMethod = "if(alphaTestEnabled != 0)\n" + "{	\n" + " 	if(alphaTestFunction==516)//>\n"
+			+ "		if(baseMap.a<=alphaTestValue)discard;	\n" + "	else if(alphaTestFunction==518)//>=\n"
+			+ "		if(baseMap.a<alphaTestValue)discard;\n" + "	else if(alphaTestFunction==514)//==\n"
+			+ "		if(baseMap.a!=alphaTestValue)discard;\n" + "	else if(alphaTestFunction==517)//!=\n"
+			+ "		if(baseMap.a==alphaTestValue)discard;\n" + "	else if(alphaTestFunction==513)//<\n"
+			+ "		if(baseMap.a>=alphaTestValue)discard;\n" + "	else if(alphaTestFunction==515)//<=\n"
+			+ "		if(baseMap.a>alphaTestValue)discard;\n" + "	else if(alphaTestFunction==512)//never	\n" + "		discard;	\n" + "}\n";
+
 	/**
 	 * Polygons no texture, no single color, must have color vertex attribute
 	 */
@@ -58,15 +69,24 @@ public class SimpleShaderAppearance extends ShaderAppearance
 						return "SimpleShaderAppearance textureShaderProgram";
 					}
 				};
-				String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+				String vertexProgram = "#version 120\n";
+				vertexProgram += "attribute vec4 glVertex;\n";
+				vertexProgram += "attribute vec4 glColor;\n";
+				vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 				vertexProgram += "varying vec2 glTexCoord0;\n";
-				vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
+				vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
 				vertexProgram += "glTexCoord0 = gl_MultiTexCoord0.st;\n";
+				//vertexProgram += "if(glVertex != gl_Vertex) glTexCoord0 = vec2(0,0);\n"
+				//vertexProgram += "if(glColor != gl_Color) glTexCoord0 = vec2(0,0);\n"; 	
 				vertexProgram += "}";
 
 				String fragmentProgram = "";
+				fragmentProgram += alphaTestUniforms;
 				fragmentProgram += "varying vec2 glTexCoord0;uniform sampler2D BaseMap;\n";
-				fragmentProgram += "void main( void ){\n gl_FragColor = texture2D( BaseMap, glTexCoord0.st );\n}";
+				fragmentProgram += "void main( void ){\n ";
+				fragmentProgram += "vec4 baseMap = texture2D( BaseMap, glTexCoord0.st );\n";
+				fragmentProgram += alphaTestMethod;
+				fragmentProgram += "gl_FragColor = baseMap;\n}";
 
 				textureShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
 				textureShaderProgram.setShaderAttrNames(new String[] { "BaseMap" });
@@ -100,15 +120,21 @@ public class SimpleShaderAppearance extends ShaderAppearance
 							return "SimpleShaderAppearance colorLineShaderProgram";
 						}
 					};
-					String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+					String vertexProgram = "#version 120\n";
+					vertexProgram += "attribute vec4 glVertex;\n";
+					vertexProgram += "attribute vec4 glColor;\n";
+					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 					vertexProgram += "uniform vec4 singleColor;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
-					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
-					vertexProgram += "glFrontColor = singleColor;\n";
+					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
+					vertexProgram += " glFrontColor = singleColor;\n";
+					//vertexProgram += "if(glVertex != gl_Vertex) glFrontColor = vec4(1,0,1,1);\n"
+					//vertexProgram += "if(glColor != glColor) glFrontColor = vec4(1,0,1,1); \n"; 	
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
-					fragmentProgram += "void main( void ){\n gl_FragColor = glFrontColor;\n}";
+					fragmentProgram += "void main( void ){\n";
+					fragmentProgram += "gl_FragColor = glFrontColor;\n}";
 
 					colorLineShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
 
@@ -127,10 +153,15 @@ public class SimpleShaderAppearance extends ShaderAppearance
 							return "SimpleShaderAppearance flatShaderProgram";
 						}
 					};
-					String vertexProgram = "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+					String vertexProgram = "#version 120\n";
+					vertexProgram += "attribute vec4 glVertex;\n";
+					vertexProgram += "attribute vec4 glColor;\n";
+					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
-					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * gl_Vertex;\n";
+					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
 					vertexProgram += "glFrontColor = gl_Color;\n";
+					//vertexProgram += "if(glVertex != gl_Vertex) glFrontColor = vec4(1,0,1,1);\n"					
+					//vertexProgram += "if(glColor != gl_Color) glFrontColor = vec4(1,0,1,1); \n"; 	
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
