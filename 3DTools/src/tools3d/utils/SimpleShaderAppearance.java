@@ -3,7 +3,9 @@ package tools3d.utils;
 import javax.media.j3d.ColoringAttributes;
 import javax.media.j3d.GLSLShaderProgram;
 import javax.media.j3d.LineAttributes;
+import javax.media.j3d.Material;
 import javax.media.j3d.PolygonAttributes;
+import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Shader;
 import javax.media.j3d.ShaderAppearance;
 import javax.media.j3d.ShaderAttributeSet;
@@ -11,6 +13,11 @@ import javax.media.j3d.ShaderAttributeValue;
 import javax.media.j3d.SourceCodeShader;
 import javax.vecmath.Color3f;
 
+/**
+ * Note all of these are no lighting shaders, so materials are always ignored
+ * @author phil
+ *
+ */
 public class SimpleShaderAppearance extends ShaderAppearance
 {
 	private static GLSLShaderProgram flatShaderProgram;
@@ -21,7 +28,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 			+ "uniform float alphaTestValue;\n";
 
 	public static String alphaTestMethod = "if(alphaTestEnabled != 0)\n" + "{	\n" + " 	if(alphaTestFunction==516)//>\n"
-			+ "		if(baseMap.a<=alphaTestValue)discard;	\n" + "	else if(alphaTestFunction==518)//>=\n"
+			+ "		if(baseMap.a<=alphaTestValue)discard;\n" + "	else if(alphaTestFunction==518)//>=\n"
 			+ "		if(baseMap.a<alphaTestValue)discard;\n" + "	else if(alphaTestFunction==514)//==\n"
 			+ "		if(baseMap.a!=alphaTestValue)discard;\n" + "	else if(alphaTestFunction==517)//!=\n"
 			+ "		if(baseMap.a==alphaTestValue)discard;\n" + "	else if(alphaTestFunction==513)//<\n"
@@ -61,6 +68,9 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	{
 		if (hasTexture)
 		{
+			RenderingAttributes ra = new RenderingAttributes();
+			setRenderingAttributes(ra);
+
 			if (textureShaderProgram == null)
 			{
 				textureShaderProgram = new GLSLShaderProgram() {
@@ -71,13 +81,10 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				};
 				String vertexProgram = "#version 120\n";
 				vertexProgram += "attribute vec4 glVertex;\n";
-				vertexProgram += "attribute vec4 glColor;\n";
 				vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 				vertexProgram += "varying vec2 glTexCoord0;\n";
 				vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
 				vertexProgram += "glTexCoord0 = gl_MultiTexCoord0.st;\n";
-				//vertexProgram += "if(glVertex != gl_Vertex) glTexCoord0 = vec2(0,0);\n"
-				//vertexProgram += "if(glColor != gl_Color) glTexCoord0 = vec2(0,0);\n"; 	
 				vertexProgram += "}";
 
 				String fragmentProgram = "";
@@ -112,6 +119,13 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				ColoringAttributes colorAtt = new ColoringAttributes(color, ColoringAttributes.FASTEST);
 				setColoringAttributes(colorAtt);
 
+				RenderingAttributes ra = new RenderingAttributes();
+				ra.setIgnoreVertexColors(true);
+				setRenderingAttributes(ra);
+
+				Material mat = new Material();
+				setMaterial(mat);
+
 				if (colorLineShaderProgram == null)
 				{
 					colorLineShaderProgram = new GLSLShaderProgram() {
@@ -123,13 +137,13 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					String vertexProgram = "#version 120\n";
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
+					vertexProgram += "uniform int ignoreVertexColors;\n";
+					vertexProgram += "attribute vec4 objectColor;\n";
 					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 					vertexProgram += "uniform vec4 singleColor;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
 					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
-					vertexProgram += " glFrontColor = singleColor;\n";
-					//vertexProgram += "if(glVertex != gl_Vertex) glFrontColor = vec4(1,0,1,1);\n"
-					//vertexProgram += "if(glColor != glColor) glFrontColor = vec4(1,0,1,1); \n"; 	
+					vertexProgram += "if( ignoreVertexColors != 0 )\nglFrontColor = objectColor;\nelse\nglFrontColor = glColor;\n";
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
@@ -137,7 +151,6 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					fragmentProgram += "gl_FragColor = glFrontColor;\n}";
 
 					colorLineShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
-
 				}
 
 				setShaderProgram(colorLineShaderProgram);
@@ -145,6 +158,9 @@ public class SimpleShaderAppearance extends ShaderAppearance
 			}
 			else
 			{
+				RenderingAttributes ra = new RenderingAttributes();
+				setRenderingAttributes(ra);
+
 				if (flatShaderProgram == null)
 				{
 					flatShaderProgram = new GLSLShaderProgram() {
@@ -156,12 +172,12 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					String vertexProgram = "#version 120\n";
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
+					vertexProgram += "uniform int ignoreVertexColors;\n";
+					vertexProgram += "attribute vec4 objectColor;\n";
 					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
 					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
-					vertexProgram += "glFrontColor = gl_Color;\n";
-					//vertexProgram += "if(glVertex != gl_Vertex) glFrontColor = vec4(1,0,1,1);\n"					
-					//vertexProgram += "if(glColor != gl_Color) glFrontColor = vec4(1,0,1,1); \n"; 	
+					vertexProgram += "if( ignoreVertexColors != 0 )\nglFrontColor = objectColor;\nelse\nglFrontColor = glColor;\n";
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
