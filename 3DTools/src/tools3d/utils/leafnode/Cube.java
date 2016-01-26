@@ -5,7 +5,7 @@ package tools3d.utils.leafnode;
 
 import javax.media.j3d.GeometryArray;
 import javax.media.j3d.J3DBuffer;
-import javax.media.j3d.QuadArray;
+import javax.media.j3d.TriangleArray;
 import javax.media.j3d.Shape3D;
 
 import tools3d.utils.SimpleShaderAppearance;
@@ -20,31 +20,91 @@ public class Cube extends Shape3D
 
 	private static final float[] verts = {
 			// front face
-			1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, 1.0f,//1
+			1.0f, 1.0f, 1.0f,//2
+			-1.0f, 1.0f, 1.0f, //3
+			1.0f, -1.0f, 1.0f,//1
+			-1.0f, 1.0f, 1.0f, //3
+			-1.0f, -1.0f, 1.0f,//4
 			// back face
-			-1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,//1
+			-1.0f, 1.0f, -1.0f,//2
+			1.0f, 1.0f, -1.0f,//3
+			-1.0f, -1.0f, -1.0f,//1
+			1.0f, 1.0f, -1.0f,//3
+			1.0f, -1.0f, -1.0f,//4
 			// right face
-			1.0f, -1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, 1.0f,
+			1.0f, -1.0f, -1.0f,//1
+			1.0f, 1.0f, -1.0f, //2
+			1.0f, 1.0f, 1.0f,//3
+			1.0f, -1.0f, -1.0f,//1
+			1.0f, 1.0f, 1.0f,//3
+			1.0f, -1.0f, 1.0f,//4
 			// left face
-			-1.0f, -1.0f, 1.0f, -1.0f, 1.0f, 1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f, 1.0f,//1
+			-1.0f, 1.0f, 1.0f, //2
+			-1.0f, 1.0f, -1.0f,//3
+			-1.0f, -1.0f, 1.0f,//1
+			-1.0f, 1.0f, -1.0f,//3
+			-1.0f, -1.0f, -1.0f,//4
 			// top face
-			1.0f, 1.0f, 1.0f, 1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, 1.0f,
+			1.0f, 1.0f, 1.0f, //1
+			1.0f, 1.0f, -1.0f,//2
+			-1.0f, 1.0f, -1.0f, //3
+			1.0f, 1.0f, 1.0f, //1
+			-1.0f, 1.0f, -1.0f, //3
+			-1.0f, 1.0f, 1.0f,//4			
 			// bottom face
-			-1.0f, -1.0f, 1.0f, -1.0f, -1.0f, -1.0f, 1.0f, -1.0f, -1.0f, 1.0f, -1.0f, 1.0f, };
+			-1.0f, -1.0f, 1.0f, //1
+			-1.0f, -1.0f, -1.0f,//2
+			1.0f, -1.0f, -1.0f, //3
+			-1.0f, -1.0f, 1.0f, //1
+			1.0f, -1.0f, -1.0f, //3
+			1.0f, -1.0f, 1.0f, };//4
 
 	private static final float[] colors = {
 			// front face (red)
-			1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+			1.0f, 0.0f, 0.0f, //1
+			1.0f, 0.0f, 0.0f, //2
+			1.0f, 0.0f, 0.0f, //3
+			1.0f, 0.0f, 0.0f, //1
+			1.0f, 0.0f, 0.0f, //3
+			1.0f, 0.0f, 0.0f,//4
 			// back face (green)
-			0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 1.0f, 0.0f,//1
+			0.0f, 1.0f, 0.0f,//2
+			0.0f, 1.0f, 0.0f, //3
+			0.0f, 1.0f, 0.0f,//1
+			0.0f, 1.0f, 0.0f, //3
+			0.0f, 1.0f, 0.0f,//4			
 			// right face (blue)
-			0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,//1
+			0.0f, 0.0f, 1.0f,//2
+			0.0f, 0.0f, 1.0f,//3
+			0.0f, 0.0f, 1.0f,//1
+			0.0f, 0.0f, 1.0f,//3
+			0.0f, 0.0f, 1.0f,//4
 			// left face (yellow)
-			1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f,//1
+			1.0f, 1.0f, 0.0f,//2
+			1.0f, 1.0f, 0.0f,//3
+			1.0f, 1.0f, 0.0f,//1
+			1.0f, 1.0f, 0.0f,//3
+			1.0f, 1.0f, 0.0f,//4
 			// top face (magenta)
-			1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f,
+			1.0f, 0.0f, 1.0f,//1
+			1.0f, 0.0f, 1.0f,//2
+			1.0f, 0.0f, 1.0f,//3
+			1.0f, 0.0f, 1.0f,//1
+			1.0f, 0.0f, 1.0f,//3
+			1.0f, 0.0f, 1.0f,//4
 			// bottom face (cyan)
-			0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, };
+			0.0f, 1.0f, 1.0f,//1
+			0.0f, 1.0f, 1.0f,//2
+			0.0f, 1.0f, 1.0f,//3
+			0.0f, 1.0f, 1.0f,//1
+			0.0f, 1.0f, 1.0f,//3
+			0.0f, 1.0f, 1.0f, };//4
 
 	/**
 	 * Constructs a color cube with unit scale.  The corners of the
@@ -52,7 +112,7 @@ public class Cube extends Shape3D
 	 */
 	public Cube()
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts)));
@@ -69,7 +129,7 @@ public class Cube extends Shape3D
 	 */
 	public Cube(double scale)
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
@@ -86,7 +146,7 @@ public class Cube extends Shape3D
 
 	public Cube(double scale, float r, float g, float b)
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
@@ -95,8 +155,8 @@ public class Cube extends Shape3D
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
 
-		float colorsSet[] = new float[24 * 3];
-		for (int i = 0; i < 24; i++)
+		float colorsSet[] = new float[36 * 3];
+		for (int i = 0; i < 36; i++)
 		{
 			colorsSet[i * 3 + 0] = r;
 			colorsSet[i * 3 + 1] = g;
@@ -116,7 +176,7 @@ public class Cube extends Shape3D
 		 */
 	public Cube(double xScale, double yScale, double zScale)
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
@@ -136,7 +196,7 @@ public class Cube extends Shape3D
 
 	public Cube(double xScale, double yScale, double zScale, float r, float g, float b)
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[verts.length];
@@ -149,8 +209,8 @@ public class Cube extends Shape3D
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
 
-		float colorsSet[] = new float[24 * 3];
-		for (int i = 0; i < 24; i++)
+		float colorsSet[] = new float[36 * 3];
+		for (int i = 0; i < 36; i++)
 		{
 			colorsSet[i * 3 + 0] = r;
 			colorsSet[i * 3 + 1] = g;
@@ -165,22 +225,52 @@ public class Cube extends Shape3D
 
 	public Cube(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
 	{
-		QuadArray cube = new QuadArray(24,
+		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
 		float scaledVerts[] = new float[] {
 				// front face
-				xMax, yMin, zMax, xMax, yMax, zMax, xMin, yMax, zMax, xMin, yMin, zMax,
+				xMax, yMin, zMax,//1
+				xMax, yMax, zMax,//2
+				xMin, yMax, zMax,//3
+				xMax, yMin, zMax,//1
+				xMin, yMax, zMax,//3
+				xMin, yMin, zMax,//4
 				// back face
-				xMin, yMin, zMin, xMin, yMax, zMin, xMax, yMax, zMin, xMax, yMin, zMin,
+				xMin, yMin, zMin,//1
+				xMin, yMax, zMin,//2
+				xMax, yMax, zMin,//3				
+				xMin, yMin, zMin,//1
+				xMax, yMax, zMin,//3
+				xMax, yMin, zMin,//4
 				// right face
-				xMax, yMin, zMin, xMax, yMax, zMin, xMax, yMax, zMax, xMax, yMin, zMax,
+				xMax, yMin, zMin,//1
+				xMax, yMax, zMin,//2
+				xMax, yMax, zMax,//3
+				xMax, yMin, zMin,//1
+				xMax, yMax, zMax,//3
+				xMax, yMin, zMax,//4
 				// left face
-				xMin, yMin, zMax, xMin, yMax, zMax, xMin, yMax, zMin, xMin, yMin, zMin,
+				xMin, yMin, zMax,//1
+				xMin, yMax, zMax,//2
+				xMin, yMax, zMin,//3
+				xMin, yMin, zMax,//1
+				xMin, yMax, zMin,//3
+				xMin, yMin, zMin,//4				
 				// top face
-				xMax, yMax, zMax, xMax, yMax, zMin, xMin, yMax, zMin, xMin, yMax, zMax,
+				xMax, yMax, zMax,//1
+				xMax, yMax, zMin,//2
+				xMin, yMax, zMin,//3
+				xMax, yMax, zMax,//1
+				xMin, yMax, zMin,//3
+				xMin, yMax, zMax,//4
 				// bottom face
-				xMin, yMin, zMax, xMin, yMin, zMin, xMax, yMin, zMin, xMax, yMin, zMax, };
+				xMin, yMin, zMax,//1
+				xMin, yMin, zMin,//2
+				xMax, yMin, zMin,//3
+				xMin, yMin, zMax,//1
+				xMax, yMin, zMin,//3
+				xMax, yMin, zMax, };//4
 
 		cube.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(scaledVerts)));
 		cube.setColorRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(colors)));

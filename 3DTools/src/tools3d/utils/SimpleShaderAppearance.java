@@ -81,10 +81,12 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				};
 				String vertexProgram = "#version 120\n";
 				vertexProgram += "attribute vec4 glVertex;\n";
-				vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+				vertexProgram += "attribute vec2 glMultiTexCoord0;";
+				vertexProgram += "uniform mat4 glModelViewProjectionMatrix;\n";
 				vertexProgram += "varying vec2 glTexCoord0;\n";
-				vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
-				vertexProgram += "glTexCoord0 = gl_MultiTexCoord0.st;\n";
+				vertexProgram += "void main( void ){\n";
+				vertexProgram += "gl_Position = glModelViewProjectionMatrix * glVertex;\n";
+				vertexProgram += "glTexCoord0 = glMultiTexCoord0.st;\n";
 				vertexProgram += "}";
 
 				String fragmentProgram = "";
@@ -93,7 +95,8 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				fragmentProgram += "void main( void ){\n ";
 				fragmentProgram += "vec4 baseMap = texture2D( BaseMap, glTexCoord0.st );\n";
 				fragmentProgram += alphaTestMethod;
-				fragmentProgram += "gl_FragColor = baseMap;\n}";
+				fragmentProgram += "gl_FragColor = baseMap;\n";
+				fragmentProgram += "}";
 
 				textureShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
 				textureShaderProgram.setShaderAttrNames(new String[] { "BaseMap" });
@@ -138,17 +141,18 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
 					vertexProgram += "uniform int ignoreVertexColors;\n";
-					vertexProgram += "attribute vec4 objectColor;\n";
-					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
-					vertexProgram += "uniform vec4 singleColor;\n";
+					vertexProgram += "uniform vec4 objectColor;\n";
+					vertexProgram += "uniform mat4 glModelViewProjectionMatrix;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
-					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
+					vertexProgram += "void main( void ){\n";
+					vertexProgram += "gl_Position = glModelViewProjectionMatrix * glVertex;\n";
 					vertexProgram += "if( ignoreVertexColors != 0 )\nglFrontColor = objectColor;\nelse\nglFrontColor = glColor;\n";
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
 					fragmentProgram += "void main( void ){\n";
-					fragmentProgram += "gl_FragColor = glFrontColor;\n}";
+					fragmentProgram += "gl_FragColor = glFrontColor;\n";
+					fragmentProgram += "}";
 
 					colorLineShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
 				}
@@ -173,15 +177,18 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
 					vertexProgram += "uniform int ignoreVertexColors;\n";
-					vertexProgram += "attribute vec4 objectColor;\n";
-					vertexProgram += "uniform mat4 glProjectionMatrix;\nuniform mat4 glModelViewMatrix;\n";
+					vertexProgram += "uniform vec4 objectColor;\n";
+					vertexProgram += "uniform mat4 glModelViewProjectionMatrix;\n";
 					vertexProgram += "varying vec4 glFrontColor;\n";
-					vertexProgram += "void main( void ){\n gl_Position = glProjectionMatrix * glModelViewMatrix * glVertex;\n";
+					vertexProgram += "void main( void ){\n";
+					vertexProgram += "gl_Position = glModelViewProjectionMatrix * glVertex;\n";
 					vertexProgram += "if( ignoreVertexColors != 0 )\nglFrontColor = objectColor;\nelse\nglFrontColor = glColor;\n";
 					vertexProgram += "}";
 
 					String fragmentProgram = "varying vec4 glFrontColor;\n";
-					fragmentProgram += "void main( void ){\n gl_FragColor = glFrontColor;\n}";
+					fragmentProgram += "void main( void ){\n";
+					fragmentProgram += "gl_FragColor = glFrontColor;\n";
+					fragmentProgram += "}";
 
 					flatShaderProgram.setShaders(makeShaders(vertexProgram, fragmentProgram));
 

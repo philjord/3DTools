@@ -16,12 +16,12 @@ import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.J3DBuffer;
-import javax.media.j3d.QuadArray;
 import javax.media.j3d.RenderingAttributes;
 import javax.media.j3d.Shape3D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 import javax.media.j3d.TransparencyAttributes;
+import javax.media.j3d.TriangleArray;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 
@@ -268,20 +268,27 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 	}
 
-	private static QuadArray createGeometry(float rectWidth, float rectHeight, float z)
+	private static GeometryArray createGeometry(float rectWidth, float rectHeight, float z)
 	{
 		float hW = rectWidth / 2f;
 		float hH = rectHeight / 2f;
 
-		float[] verts1 = { hW, -hH, z, hW, hH, z, -hW, hH, z, -hW, -hH, z };
+		float[] verts1 = { hW, -hH, z, //1
+				hW, hH, z, //2
+				-hW, hH, z, //3
+				hW, -hH, z, //1
+				-hW, hH, z, //3
+				-hW, -hH, z };//4
 
 		//-1 flip the y axis so yUp
 		float[] texCoords = { 0f, 1f, //
 				0f, 0f, //
 				-1f, 0f, //
+				 0f, 1f, //
+				 -1f, 0f, //
 				-1f, 1f };
 
-		QuadArray rect = new QuadArray(4,
+		TriangleArray rect = new TriangleArray(6,
 				GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 		rect.setCoordRefBuffer(new J3DBuffer(Utils3D.makeFloatBuffer(verts1)));
 		rect.setTexCoordRefBuffer(0, new J3DBuffer(Utils3D.makeFloatBuffer(texCoords)));
