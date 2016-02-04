@@ -8,8 +8,9 @@ import javax.media.j3d.Canvas3D;
 //<AND>import javax.media.j3d.J3DGraphics2D;
 import javax.media.j3d.Shape3D;
 
-import tools3d.mixed3d2d.hud.HUDElement;
-import tools3d.mixed3d2d.overlay.swing.Panel3D;
+import awt.tools3d.mixed3d2d.HudShape3D;
+import awt.tools3d.mixed3d2d.hud.HUDElement;
+import awt.tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.utils.leafnode.Cube;
 
 /**

@@ -1,7 +1,5 @@
 package javax.media.j3d;
 
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
@@ -10,6 +8,9 @@ import tools.ddstexture.DDSImage;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+
+import javaawt.image.BufferedImage;
+import javaawt.image.RenderedImage;
 
 /**
  * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that

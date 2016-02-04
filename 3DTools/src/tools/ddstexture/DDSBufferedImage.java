@@ -1,17 +1,21 @@
 package tools.ddstexture;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ImageObserver;
-import java.awt.image.Raster;
-import java.awt.image.RenderedImage;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.nio.ByteBuffer;
 import java.util.Vector;
+
+import javaawt.Graphics;
+import javaawt.Graphics2D;
+import javaawt.Point;
+import javaawt.Rectangle;
+import javaawt.image.BufferedImage;
+import javaawt.image.ColorModel;
+import javaawt.image.ImageObserver;
+import javaawt.image.Raster;
+import javaawt.image.RenderedImage;
+import javaawt.image.SampleModel;
+import javaawt.image.WritableRaster;
+
+ 
 
 /**
  * This is NOT A bufferedImage! you can't use it as one. If you get UnsupportedOperationException then you 
@@ -292,7 +296,7 @@ public class DDSBufferedImage extends BufferedImage
 	}
 
 	@Override
-	public java.awt.Graphics getGraphics()
+	public Graphics getGraphics()
 	{
 		throw new UnsupportedOperationException();
 	}

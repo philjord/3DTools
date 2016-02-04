@@ -40,8 +40,8 @@ public class HMDCameraPanel2 extends CameraPanel
 		// put  -Dj3d.stencilClear=true in your vm arguments!!!  
 
 		// antialiasing REQUIRED is good to have
-		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
-		template.setStereo(GraphicsConfigTemplate.PREFERRED);//can't say required! kills AA
+		template.setSceneAntialiasing(GraphicsConfigTemplate3D.REQUIRED);
+		template.setStereo(GraphicsConfigTemplate3D.PREFERRED);//can't say required! kills AA
 		//Note do not use until // chosenCaps.setStereo((gct.getStereo() == GraphicsConfigTemplate.PREFERRED));
 		//in joglpipeline is reversed (big job)
 

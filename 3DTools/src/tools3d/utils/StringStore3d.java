@@ -1,10 +1,5 @@
 package tools3d.utils;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Rectangle;
-
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Color3f;
@@ -15,6 +10,8 @@ import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
+import javaawt.Dimension;
+import javaawt.Rectangle;
 import tools.StringStore;
 
 public class StringStore3d extends StringStore
@@ -26,9 +23,7 @@ public class StringStore3d extends StringStore
 		System.out.println("" + o);
 		o = new Dimension();
 		System.out.println("" + o);
-		o = new Color(10, 10, 10);
-		System.out.println("" + o);
-		o = new Font("name", 1, 2);
+		o = new Color3f(10, 10, 10);
 		System.out.println("" + o);
 		o = new Vector3d();
 		System.out.println("" + o);

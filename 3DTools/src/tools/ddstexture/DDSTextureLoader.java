@@ -1,6 +1,5 @@
 package tools.ddstexture;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +12,7 @@ import javax.media.j3d.ImageComponent;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 
+import javaawt.image.BufferedImage;
 import tools.WeakValueHashMap;
 import tools.io.FastByteArrayInputStream;
 

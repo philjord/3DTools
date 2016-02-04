@@ -1,6 +1,5 @@
 package tools.ddstexture.utils;
 
-import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfigTemplate;
@@ -9,6 +8,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -40,13 +40,13 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
 
+import com.sun.j3d.utils.universe.SimpleUniverse;
+
+import awt.tools3d.resolution.GraphicsSettings;
+import awt.tools3d.resolution.ScreenResolution;
 import tools.ddstexture.DDSImage;
 import tools.ddstexture.DDSTextureLoader;
 import tools.swing.DetailsFileChooser;
-import tools3d.resolution.GraphicsSettings;
-import tools3d.resolution.ScreenResolution;
-
-import com.sun.j3d.utils.universe.SimpleUniverse;
 
 /**
  * dds image loading tester, note this use teh decompress to buffered image util system
