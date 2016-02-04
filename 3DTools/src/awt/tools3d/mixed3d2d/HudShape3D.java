@@ -85,7 +85,11 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 
 		hudShape.setCapability(Shape3D.ALLOW_GEOMETRY_WRITE);
 		hudShape.setAppearance(app);
-		addChild(hudShape);
+		//FIXME: haha having this guy attached was causing crazy texture to smash across the shape
+		// so having texcoords and everything, but no texture unit might be destruction
+		// which I can imagine as the shader just draws something from a Sampler, whatever's 
+		//last attached or something
+//		addChild(hudShape);
 
 		UpdateHudTextureBehavior hudTextureBehave = new UpdateHudTextureBehavior();
 		addChild(hudTextureBehave);

@@ -86,7 +86,6 @@ public class NavigationInputNewtKey implements KeyListener
 		}
 		else if (e.getKeyCode() == FORWARD_KEY && !walkHeldDown)
 		{
-			System.out.println("walk");
 			walkHeldDown = true;
 			setTranslationChange();
 		}
