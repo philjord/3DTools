@@ -24,7 +24,7 @@ import javax.vecmath.Vector3d;
 import tools3d.utils.YawPitch;
 
 import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
+import com.sun.j3d.utils.behaviors.mouse.newt.MouseRotate;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
@@ -67,7 +67,7 @@ public class SimpleCameraHandler extends BranchGroup
 		this.viewingPlatform = _viewingPlatform;
 		this.canvas3D = _canvas3D;
 		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
-		freeLookMouseRotate = new MyMouseRotater(canvas3D, viewingPlatform.getViewPlatformTransform());
+		freeLookMouseRotate = new MyMouseRotater(canvas3D.getGLWindow(), viewingPlatform.getViewPlatformTransform());
 
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -76,7 +76,7 @@ public class SimpleCameraHandler extends BranchGroup
 		 freeLookMouseRotate.setEnable(true);
 		 addChild(freeLookMouseRotate);
 
-		 modelRotateMouseRotate = new MouseRotate(canvas3D, modelRotateTransformGroup);
+		 modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup);
 		 modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
 		 modelRotateMouseRotate.setEnable(false);
 		 addChild(modelRotateMouseRotate);

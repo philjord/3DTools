@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.Texture;
 
-import com.sun.j3d.utils.image.TextureLoader;
+import com.sun.j3d.utils.image.awt.TextureLoader;
 
 /**
  * Separated out from SimpleIamgeLoader, so servers don't have to load up the full j3d jar set

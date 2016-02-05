@@ -68,7 +68,8 @@ public class DDSImageComponent2DRetained extends ImageComponent2DRetained
 		}
 		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_ATI2)
 		{		 
-			return GL2.GL_COMPRESSED_RG_RGTC2;
+			//System.out.println("GL_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT image type, is this fallout4?");
+			return GL2.GL_COMPRESSED_LUMINANCE_ALPHA_LATC2_EXT;
 		}
 		else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
 				ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //

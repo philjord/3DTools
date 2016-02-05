@@ -1,8 +1,7 @@
 package tools3d.camera.simple;
 
  
-import java.awt.Component;
-import java.awt.event.MouseEvent;
+ 
 import java.util.Enumeration;
 
 import javax.media.j3d.TransformGroup;
@@ -12,8 +11,10 @@ import javax.media.j3d.WakeupOnBehaviorPost;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
 
-import com.sun.j3d.utils.behaviors.mouse.MouseBehavior;
+import com.jogamp.newt.Window;
+import com.jogamp.newt.event.MouseEvent;
 import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import com.sun.j3d.utils.behaviors.mouse.newt.MouseBehavior;
 
 public class MyMouseRotater extends MouseBehavior
 {
@@ -25,7 +26,7 @@ public class MyMouseRotater extends MouseBehavior
 
 	private MouseBehaviorCallback callback = null;
 
-	public MyMouseRotater(Component c, TransformGroup transformGroup)
+	public MyMouseRotater(Window c, TransformGroup transformGroup)
 	{
 		super(c, transformGroup);
 		flags = flags | INVERT_INPUT;
@@ -68,8 +69,8 @@ public class MyMouseRotater extends MouseBehavior
 							break;
 						evt = (MouseEvent) mouseq.remove(0);
 						// consolidate MOUSE_DRAG events
-						while ((evt.getID() == MouseEvent.MOUSE_DRAGGED) && !mouseq.isEmpty()
-								&& (((MouseEvent) mouseq.get(0)).getID() == MouseEvent.MOUSE_DRAGGED))
+						while ((evt.getEventType() == MouseEvent.EVENT_MOUSE_DRAGGED) && !mouseq.isEmpty()
+								&& (((MouseEvent) mouseq.get(0)).getEventType() == MouseEvent.EVENT_MOUSE_DRAGGED))
 						{
 							evt = (MouseEvent) mouseq.remove(0);
 						}
@@ -90,8 +91,8 @@ public class MyMouseRotater extends MouseBehavior
 		processMouseEvent(evt);
 		if (((buttonPress) && ((flags & MANUAL_WAKEUP) == 0)) || ((wakeUp) && ((flags & MANUAL_WAKEUP) != 0)))
 		{
-			id = evt.getID();
-			if ((id == MouseEvent.MOUSE_DRAGGED) && !evt.isMetaDown() && !evt.isAltDown())
+			id = evt.getEventType();
+			if ((id == MouseEvent.EVENT_MOUSE_DRAGGED) && !evt.isMetaDown() && !evt.isAltDown())
 			{
 				x = evt.getX();
 				y = evt.getY();
@@ -146,7 +147,7 @@ public class MyMouseRotater extends MouseBehavior
 				x_last = x;
 				y_last = y;
 			}
-			else if (id == MouseEvent.MOUSE_PRESSED)
+			else if (id == MouseEvent.EVENT_MOUSE_PRESSED)
 			{
 				x_last = evt.getX();
 				y_last = evt.getY();
