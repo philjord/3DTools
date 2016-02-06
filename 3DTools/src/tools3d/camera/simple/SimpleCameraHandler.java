@@ -1,12 +1,5 @@
 package tools3d.camera.simple;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
-
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.Bounds;
 import javax.media.j3d.BranchGroup;
@@ -23,6 +16,10 @@ import javax.vecmath.Vector3d;
 
 import tools3d.utils.YawPitch;
 
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
 import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
 import com.sun.j3d.utils.behaviors.mouse.newt.MouseRotate;
 import com.sun.j3d.utils.pickfast.PickCanvas;
@@ -72,16 +69,16 @@ public class SimpleCameraHandler extends BranchGroup
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
 
-		 freeLookMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
-		 freeLookMouseRotate.setEnable(true);
-		 addChild(freeLookMouseRotate);
+		freeLookMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
+		freeLookMouseRotate.setEnable(true);
+		addChild(freeLookMouseRotate);
 
-		 modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup);
-		 modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
-		 modelRotateMouseRotate.setEnable(false);
-		 addChild(modelRotateMouseRotate);
+		modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup);
+		modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
+		modelRotateMouseRotate.setEnable(false);
+		addChild(modelRotateMouseRotate);
 
-		 freeLookMouseRotate.setupCallback(new MouseBehaviorCallback() {
+		freeLookMouseRotate.setupCallback(new MouseBehaviorCallback() {
 			@Override
 			public void transformChanged(int type, Transform3D transform)
 			{
@@ -102,7 +99,7 @@ public class SimpleCameraHandler extends BranchGroup
 		selectPickCanvas.setTolerance(0.0f);
 		selectPickCanvas.setFlags(PickInfo.CLOSEST_INTERSECTION_POINT);
 
-		canvas3D.addMouseListener(new MouseAdapter() {
+		canvas3D.getGLWindow().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
@@ -114,14 +111,12 @@ public class SimpleCameraHandler extends BranchGroup
 				{
 					setFreeLook(!isFreeLook);
 				}
+
 			}
 
-		});
-
-		canvas3D.addMouseWheelListener(new MouseWheelListener() {
-			public void mouseWheelMoved(MouseWheelEvent e)
+			public void mouseWheelMoved(MouseEvent e)
 			{
-				if (e.getWheelRotation() < 0)
+				if (e.getRotation()[1] < 0)
 				{
 					forward();
 				}
@@ -130,9 +125,10 @@ public class SimpleCameraHandler extends BranchGroup
 					back();
 				}
 			}
+
 		});
 
-		canvas3D.addKeyListener(new KeyAdapter() {
+		canvas3D.getGLWindow().addKeyListener(new KeyAdapter() {
 
 			public void keyPressed(KeyEvent e)
 			{
@@ -269,6 +265,8 @@ public class SimpleCameraHandler extends BranchGroup
 		if (eye.x == center.x && eye.y == center.y)
 		{
 			center.y += 0.01;
+			center.x += 0.01;
+			center.z -= 0.01;
 		}
 
 		t.lookAt(eye, center, up);

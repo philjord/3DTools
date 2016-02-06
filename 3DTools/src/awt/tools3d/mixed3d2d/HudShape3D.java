@@ -30,6 +30,7 @@ import awt.tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.SimpleShaderAppearance;
 import tools3d.utils.Utils3D;
+import com.jogamp.graph.curve.opengl.TextRegionUtil;
 
 /**
  * @author philip
@@ -96,6 +97,12 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		hudTextureBehave.setEnable(true);
 
 		canvas.addComponentListener(this);
+		
+		
+	//	com.jogamp.opengl.test.junit.graph.demos.ui.LabelButton fred;
+	//	  final GPUTextGLListener0A textGLListener = new GPUTextGLListener0A(rs, rmode, sampleCount, true, DEBUG, TRACE);
+	        // ((TextRenderer)textGLListener.getRenderer()).setCacheLimit(32);
+	//	  canvas.getGLWindow().addGLEventListener(textGLListener);
 	}
 
 	public void screenResized()
