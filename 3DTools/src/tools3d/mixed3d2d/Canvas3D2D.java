@@ -1,17 +1,25 @@
 package tools3d.mixed3d2d;
 
 import java.awt.GraphicsConfiguration;
-import java.util.ArrayList;
+import java.io.IOException;
+import java.util.Arrays;
 
-import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
-//<AND>import javax.media.j3d.J3DGraphics2D;
-import javax.media.j3d.Shape3D;
 
-import awt.tools3d.mixed3d2d.HudShape3D;
-import awt.tools3d.mixed3d2d.hud.HUDElement;
-import awt.tools3d.mixed3d2d.overlay.swing.Panel3D;
-import tools3d.utils.leafnode.Cube;
+import com.jogamp.graph.curve.opengl.RegionRenderer;
+import com.jogamp.graph.curve.opengl.RenderState;
+import com.jogamp.graph.font.Font;
+import com.jogamp.graph.font.FontFactory;
+import com.jogamp.graph.geom.SVertex;
+import com.jogamp.graph.geom.Vertex;
+import com.jogamp.graph.geom.Vertex.Factory;
+import com.jogamp.newt.MonitorDevice;
+import com.jogamp.newt.Window;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.test.junit.graph.demos.ui.CrossHair;
+import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
+import com.jogamp.opengl.test.junit.graph.demos.ui.SceneUIController;
+import com.jogamp.opengl.test.junit.graph.demos.ui.UIShape;
 
 /**
  * TODO: a write up, hud and overlay are seperate
@@ -41,291 +49,126 @@ import tools3d.utils.leafnode.Cube;
  */
 public class Canvas3D2D extends Canvas3D
 {
-	private ArrayList<HUDElement> hudElements = new ArrayList<HUDElement>();
-
-	private ArrayList<Panel3D> panel3ds = new ArrayList<Panel3D>();
-
-	// for a last clear call
-	private ArrayList<HUDElement> removedHudElements = new ArrayList<HUDElement>();
-
-	private ArrayList<Panel3D> removedPanel3ds = new ArrayList<Panel3D>();
-
-	private HudShape3D hudShapeBG;
+	public boolean isLeft = false;
 
 	public Canvas3D2D(GraphicsConfiguration gc)
 	{
 		super(gc);
-		hudShapeBG = new HudShape3D(this);
 
+		initOverlySystem();
 	}
 
-	/**
-	 * When the returned tree is live in the scene graph all hud lement output will go to it's 
-	 * texture, and the behaviour will keep it updated. If this is not attached to the view platform then all
-	 * hud element output will go to the (slower) overlay system.
-	 * 
-	 * This should be attached to the viewing platform like so:
-	 * viewingPlatform.getPlatformGeometry().addChild(canvas3D2D.getHudShapeRoot());
-	 * 
-	 * @return a tree wiht a hud shape and a behavior for updating the texture
-	 */
-	public BranchGroup getHudShapeRoot()
-	{
-		return hudShapeBG;
-	}
+	private RenderState rs;
+	private SceneUIController sceneUIController;
+	private final float sceneDist = 1000f;
+	private final float zNear = 0.1f, zFar = 7000f;
 
-	public void addElement(HUDElement element)
+	private int renderModes = 0;
+	private RegionRenderer renderer;
+	private final int fontSet = FontFactory.UBUNTU;//TODO: add morrowind fonts
+	private Font font;
+	private final float fontSizeFpsPVP = 0.038f;
+	private float dpiH = 96;
+
+
+	public void initOverlySystem()
 	{
-		if (element != null && !hudElements.contains(element))
+		final Object upObj = this.getGLWindow().getUpstreamWidget();
+
+		if (upObj instanceof Window)
 		{
-			synchronized (hudElements)
-			{
-				hudElements.add(element);
-			}
+			//FIXME:
+			// this right here is the screen 3d gear graphics device stuff
+			final Window upWin = (Window) upObj;
+			final MonitorDevice mm = upWin.getMainMonitor();
+			final float[] monitorDPI = mm.getPixelsPerMM(new float[2]);
+			monitorDPI[0] *= 25.4f;
+			monitorDPI[1] *= 25.4f;
+			final float[] sDPI = upWin.getPixelsPerMM(new float[2]);
+			sDPI[0] *= 25.4f;
+			sDPI[1] *= 25.4f;
+			dpiH = sDPI[1];
+			System.err.println("Monitor detected: " + mm);
+			System.err.println("Monitor dpi: " + monitorDPI[0] + " x " + monitorDPI[1]);
+			System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
+					+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
+			System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);
 		}
-	}
-
-	public void removeElement(HUDElement element)
-	{
-		synchronized (hudElements)
+		else
 		{
-			hudElements.remove(element);
-			removedHudElements.add(element);
-		}
-	}
-
-	public void addPanel3D(Panel3D panel3D)
-	{
-		if (panel3D != null && !panel3ds.contains(panel3D))
-		{
-			synchronized (panel3ds)
-			{
-				panel3ds.add(panel3D);
-			}
-		}
-	}
-
-	public void removePanel3D(Panel3D panel3D)
-	{
-		synchronized (panel3ds)
-		{
-			panel3ds.remove(panel3D);
-			removedPanel3ds.add(panel3D);
-		}
-	}
-
-	// For reseting the texture binding in the pipeline (trust me)
-	//private static Shape3D trivialShape = new Cube(0.01f);
-
-	//@Override
-	public void postRender2()
-	{
-		//applyPostEffect();
-
-		//	J3dUtil.postProcessFrameBuffer(distortionOffset, this);
-
-		// we only draw if the hud is not in the scene live or any panel3d are enabled
-		if (!hudShapeBG.isLive() || hasEnabledPanel3D())
-		{
-			// Oh my god. Long story short, don't touch this if doing overlays.
-			// Longer version, if the last rendered texture on a canvas3d has a transformation
-			// then calls to the J3DGraphics2D will inherit it. Easy way to ensure last texture is plain, render trival cube.
-			//RAISE_BUG:
-//			getGraphicsContext3D().draw(trivialShape);
-
-			//<AND>	J3DGraphics2D g = getGraphics2D();
-
-//			synchronized (hudElements)
-//			{
-//				for (HUDElement e : hudElements)
-//				{
-//					if (e != null && e.isEnabled())
-//					{
-//						g.drawImage(e.getBufferedImage(), e.getAbsoluteX(), e.getAbsoluteY(), null);
-//					}
-//				}
-//			}
-//
-//			synchronized (panel3ds)
-//			{
-//				for (Panel3D p : panel3ds)
-//				{
-//					if (p != null && p.isEnabled())
-//					{
-//						g.drawImage(p.getBufferedImage(), p.getX(), p.getY(), null);
-//					}
-//				}
-//			}
-//
-//			g.flush(false);
+			System.err.println("Using default DPI of " + dpiH);
 		}
 
-	}
+		//System.err.println("Chosen: " + drawable.getChosenGLCapabilities());
 
-	public ArrayList<HUDElement> getHudElements()
-	{
-		return hudElements;
-	}
-
-	public ArrayList<Panel3D> getPanel3ds()
-	{
-		return panel3ds;
-	}
-
-	public ArrayList<HUDElement> getRemovedHudElements()
-	{
-		return removedHudElements;
-	}
-
-	public ArrayList<Panel3D> getRemovedPanel3ds()
-	{
-		return removedPanel3ds;
-	}
-
-	public boolean hasEnabledPanel3D()
-	{
-		boolean enabledPanel3D = false;
-		for (Panel3D p : panel3ds)
+		try
 		{
-			if (p != null && p.isEnabled())
-			{
-				enabledPanel3D = true;
-				break;
-			}
+			font = FontFactory.get(fontSet).getDefault();
 		}
-		return enabledPanel3D;
-	}
-	
-	
-	
-	
-	public boolean isLeft = true;
-	/*
-
-	public static boolean applyPostEffect = false;
-
-	public float distortionOffset = 0.25f;
-
-	private BufferedImage img = null;
-
-	private BufferedImage img2 = null;
-
-	private BufferedImage img3 = null;
-
-	private Raster ras = null;
-
-	private AffineTransform tx = null;
-
-	public void applyPostEffect()
-	{
-		if (applyPostEffect)
+		catch (final IOException ioe)
 		{
-			if (img == null)
-			{
-
-				Rectangle rect = this.getBounds();
-				img = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
-				img2 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
-				img3 = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_RGB);
-
-				tx = new AffineTransform();
-				tx.setToScale(1, -1);
-				tx.translate(0, -img.getHeight(null));
-
-				//((Graphics2D) img2.getGraphics()).setTransform(af);
-
-				ImageComponent2D comp = new ImageComponent2D(ImageComponent.FORMAT_RGB, img, true, true);
-
-				// The raster components need all be set!
-				ras = new Raster(new Point3f(-1.0f, -1.0f, -1.0f), Raster.RASTER_COLOR, 0, 0, rect.width, rect.height, comp, null);
-			}
-
-			getGraphicsContext3D().readRaster(ras);
-			((Graphics2D) img2.getGraphics()).drawImage(img, tx, null);
-
-			float LensOffset = 0.1453f;//see docs based on physicals sizes
-			//TODO: chekc if left/right are swapped somehow?
-			if (isLeft)
-			{
-				LensCenterLocation.set(-LensOffset, 0.0f);
-			}
-			else
-			{
-				LensCenterLocation.set(+LensOffset, 0.0f);
-			}
-
-			Vector2f texIn = new Vector2f();
-			for (int x = 0; x < img2.getWidth(); x++)
-			{
-				for (int y = 0; y < img2.getHeight(); y++)
-				{
-					texIn.set((float) x / (float) img2.getWidth(), (float) y / (float) img2.getHeight());
-					Tuple2f tc = HmdWarp(texIn);
-					if (x == 0 && y == 0 && false)
-					{
-						System.out.println("x " + ((float) x / (float) img2.getWidth()) + " y " + ((float) y / (float) img2.getHeight()));
-						System.out.println(" tc.x " + tc.x + " tc.y " + tc.y);
-					}
-					tc.x *= img2.getWidth();
-					tc.y *= img2.getHeight();
-					if ((int) tc.x >= 0 && (int) tc.x < img3.getWidth() && (int) tc.y >= 0 && (int) tc.y < img3.getHeight())
-					{
-						img3.setRGB(x, y, img2.getRGB((int) tc.x, (int) tc.y));
-					}
-
-				}
-			}
-
-			getGraphics2D().drawAndFlushImage(img3, 0, 0, null);
+			throw new RuntimeException(ioe);
 		}
+
+		sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
+		this.rs = RenderState.createRenderState(SVertex.factory());
+
+		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
+		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
+
+		GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
+		renderer.init(gl, renderModes);
+
+		sceneUIController.setRenderer(renderer);
+
+		sceneUIController.init(this.getGLWindow());
+
 	}
 
-
-
-	private Vector2f theta = new Vector2f();
-
-	private Tuple2f HmdWarp(Tuple2f texIn)
+	public void postRender()
 	{
-		theta.set(texIn);// range 0 to 1
-
-		theta.x -= 0.5;
-		theta.y -= 0.5;//range now -0.5 to 0.5
-
-		theta.scale(2);//range now -1 to 1
-
-		theta.y /= 1.25; // y over size remove
-
-		theta.add(LensCenterLocation); // add lens offset
-
-		float rSq = (theta.x * theta.x) + (theta.y * theta.y);
-		float distort = K0 + //
-				(K1 * rSq) + //
-				(K2 * rSq * rSq);//
-		//+	 (K3 * rSq * rSq * rSq);		
-		theta.scale(distort);
-		theta.sub(LensCenterLocation);//remove lens offset
-
-		theta.y *= 1.25; // y over size remove
-
-		theta.scale(0.5f);//range now -0.5 to 0.5
-
-		theta.x += 0.5;
-		theta.y += 0.5;//range 0 to 1
-
-		//now scale back up to full screen???
-
-		return theta;
+		sceneUIController.display(this.getGLWindow());
 	}
 
-	public static float K0 = 1.0f;
+	public Label createLabel()
+	{
+		/**
+		 * [Label] Display 112.88889 dpi, fontSize 12.0 ppi -> pixelSize 18.814816
+		 * [FPS] Display 112.88889 dpi, fontSize 12.0 ppi -> pixelSize 15.679012
+		 */
+		final float pixelSizeFPS = fontSizeFpsPVP * this.getGLWindow().getSurfaceHeight();
+		Label ret = new Label(renderer.getRenderState().getVertexFactory(), renderModes, font, pixelSizeFPS * 0.1f, "Nothing there yet");
 
-	public static float K1 = 0.22f;
+		sceneUIController.addShape(ret);
 
-	public static float K2 = 0.24f;
+		return ret;
+	}
 
-	public static float K3 = 0.0f;
+	public void addUIShape(UIShape uiShape)
+	{
+		sceneUIController.addShape(uiShape);
+	}
 
-	private Tuple2f LensCenterLocation = new Vector2f(0f, 0f);
-	*/
+	public void removeUIShape(UIShape uiShape)
+	{
+		sceneUIController.removeShape(uiShape);
+	}
+
+	public Factory<? extends Vertex> getVertexFactory()
+	{
+		return renderer.getRenderState().getVertexFactory();
+	}
+
+	public void addElement(awt.tools3d.mixed3d2d.hud.HUDElement textElement)
+	{
+		// TODO Auto-generated method stub
+
+	}
+
+	public void removeElement(awt.tools3d.mixed3d2d.hud.HUDElement textElement)
+	{
+		// TODO Auto-generated method stub
+
+	}
 
 }

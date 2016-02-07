@@ -1,9 +1,7 @@
 package awt.tools3d.mixed3d2d;
 
-import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Enumeration;
 
@@ -12,7 +10,6 @@ import javax.media.j3d.Behavior;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.GeometryArray;
-import javax.media.j3d.ImageComponent;
 import javax.media.j3d.ImageComponent2D;
 import javax.media.j3d.ImageComponent2D.Updater;
 import javax.media.j3d.J3DBuffer;
@@ -25,18 +22,15 @@ import javax.media.j3d.TriangleArray;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 
-import awt.tools3d.mixed3d2d.hud.HUDElement;
-import awt.tools3d.mixed3d2d.overlay.swing.Panel3D;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.SimpleShaderAppearance;
 import tools3d.utils.Utils3D;
-import com.jogamp.graph.curve.opengl.TextRegionUtil;
 
 /**
  * @author philip
  *
  */
-
+//TODO: if I use a ortho projection, then there is just 0,0,0,1,1,1 coords perfect for screen no matte what, no scale
 public class HudShape3D extends BranchGroup implements Updater, ComponentListener
 {
 	public static int SHAPE_TEX_WIDTH = 1024;
@@ -60,8 +54,6 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 	private Canvas3D2D canvas;
 
 	private boolean finalClearRequired = false;
-
- 
 
 	public HudShape3D(Canvas3D2D canvas)
 	{
@@ -90,19 +82,14 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		// so having texcoords and everything, but no texture unit might be destruction
 		// which I can imagine as the shader just draws something from a Sampler, whatever's 
 		//last attached or something
-//		addChild(hudShape);
-
+		//		addChild(hudShape);
+		
 		UpdateHudTextureBehavior hudTextureBehave = new UpdateHudTextureBehavior();
 		addChild(hudTextureBehave);
 		hudTextureBehave.setEnable(true);
 
+		
 		canvas.addComponentListener(this);
-		
-		
-	//	com.jogamp.opengl.test.junit.graph.demos.ui.LabelButton fred;
-	//	  final GPUTextGLListener0A textGLListener = new GPUTextGLListener0A(rs, rmode, sampleCount, true, DEBUG, TRACE);
-	        // ((TextRenderer)textGLListener.getRenderer()).setCacheLimit(32);
-	//	  canvas.getGLWindow().addGLEventListener(textGLListener);
 	}
 
 	public void screenResized()
@@ -146,12 +133,11 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			tex.setMagFilter(Texture.LINEAR_SHARPEN_RGB);//Texture.BASE_LEVEL_LINEAR);
 			tex.setMinFilter(Texture.BASE_LEVEL_LINEAR);
 
-			
 			//FIXME:!!!!! failure to communicate!
 			/*hudShapeIc2d = new ImageComponent2D(ImageComponent.FORMAT_RGBA, hudShapeBufferedImage, true, true);
 			hudShapeIc2d.setCapability(ImageComponent.ALLOW_IMAGE_READ);
 			hudShapeIc2d.setCapability(ImageComponent.ALLOW_IMAGE_WRITE);
-
+			
 			tex.setImage(0, hudShapeIc2d);
 			app.setTexture(tex);*/
 
@@ -175,18 +161,18 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 			// so these hudelements won't be drawn as overlays
 			Graphics2D g = hudShapeIc2d.getImage().createGraphics();
 			g.setBackground(new Color(0.0f, 0.0f, 0.0f, 0.0f));// for clear Rect to work
-
+		
 			//I'm  way better off clearing the individual hud elements little squares worth
 			//g.clearRect(0, 0, SHAPE_TEX_WIDTH, SHAPE_TEX_HEIGHT); //NOT fillRect doesn't work
-
+		
 			//ok I've got it, the hud sizes are for screen coords, but for hud shape texture
 			// I've got a fixed width of 1024, so the draws need to account for that properly
-
+		
 			float hW = (float) SHAPE_TEX_WIDTH / (float) canvas.getWidth();
 			float hH = (float) SHAPE_TEX_HEIGHT / (float) canvas.getHeight();
 			//System.out.println("hW " + hW + " = " + SHAPE_TEX_WIDTH + "/" + canvas.getWidth());
 			//	System.out.println("hH " + hH + " = " + SHAPE_TEX_HEIGHT + "/" + canvas.getHeight());
-
+		
 			//final clear for all previously removed hud elements
 			synchronized (canvas.getRemovedHudElements())
 			{
@@ -209,7 +195,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 					}
 				}
 			}
-
+		
 			//do all clears first in case of overlapping elements
 			synchronized (canvas.getHudElements())
 			{
@@ -221,7 +207,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 					}
 				}
 			}
-
+		
 			//see below never actually called
 			synchronized (canvas.getPanel3ds())
 			{
@@ -233,7 +219,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 					}
 				}
 			}
-
+		
 			// now draw
 			synchronized (canvas.getHudElements())
 			{
@@ -246,7 +232,7 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 					}
 				}
 			}
-
+		
 			//TODO: Note this is never in fact called, because of teh check above
 			// I can't put nice Panel3D in the hud shape because teh scaling (hW and hH) make it
 			// look too terrible
@@ -261,15 +247,15 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 					}
 				}
 			}
-
+		
 			// in case we flip to post render system due to panel3Ds arriving
 			finalClearRequired = true;
-
+		
 			// Enable to help place hud elements
 			//g.setColor(new Color(1.0f, 1.0f, 1.0f, 1.0f));
 			//g.drawRect(3, 3, SHAPE_TEX_WIDTH - 6, SHAPE_TEX_HEIGHT - 6);
 			//g.drawRect(4, 4, SHAPE_TEX_WIDTH - 8, SHAPE_TEX_HEIGHT - 8);
-
+		
 			// must reset so the image displays, before TextureRetained mip level fix this wasn't needed
 			app.setTexture(tex);
 		}
@@ -302,8 +288,8 @@ public class HudShape3D extends BranchGroup implements Updater, ComponentListene
 		float[] texCoords = { 0f, 1f, //
 				0f, 0f, //
 				-1f, 0f, //
-				 0f, 1f, //
-				 -1f, 0f, //
+				0f, 1f, //
+				-1f, 0f, //
 				-1f, 1f };
 
 		TriangleArray rect = new TriangleArray(6,
