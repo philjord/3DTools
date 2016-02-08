@@ -1,7 +1,5 @@
 package tools3d.universe;
 
-import java.awt.GraphicsConfiguration;
-
 import javax.media.j3d.AutoOffScreenCanvas3D;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.ImageComponent;
@@ -11,13 +9,14 @@ import com.sun.j3d.utils.universe.SimpleUniverse;
 import com.sun.j3d.utils.universe.Viewer;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
+import java2.awt.GraphicsConfiguration;
 import javaawt.image.BufferedImage;
 
 public class HeadlessUniverse extends SimpleUniverse
 {
 	public static Viewer createView()
 	{
-		Canvas3D c3D = new InternalCanvas3D(SimpleUniverse.getPreferredConfiguration(), true);
+		Canvas3D c3D = new InternalCanvas3D();
 		BufferedImage bImage = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 		ImageComponent2D imageCom = new ImageComponent2D(ImageComponent.FORMAT_RGBA, bImage);
 		c3D.setOffScreenBuffer(imageCom);
@@ -25,7 +24,7 @@ public class HeadlessUniverse extends SimpleUniverse
 		// NOTE: the size, physical width, and physical height of the associated Screen3D must be set explicitly prior
 		// to rendering.
 		// Failure to do so will result in an exception.
-		
+
 		//NOTE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! this screen is literally the same device as ALL other universes and canvas etc.
 		// so dicking with it here changes tehm to, ha, so off screen is not being understood
 		c3D.getScreen3D().setSize(16, 16);
@@ -55,9 +54,9 @@ public class HeadlessUniverse extends SimpleUniverse
 
 	static class InternalCanvas3D extends Canvas3D implements AutoOffScreenCanvas3D
 	{
-		public InternalCanvas3D(GraphicsConfiguration config, boolean offscreen)
+		public InternalCanvas3D()
 		{
-			super(config, offscreen);
+			super();
 		}
 	}
 }

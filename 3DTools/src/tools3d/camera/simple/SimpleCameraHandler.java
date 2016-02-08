@@ -43,7 +43,7 @@ public class SimpleCameraHandler extends BranchGroup
 
 	private Transform3D viewTransform = new Transform3D();
 
-	private JFrame parentFrame;
+	//private JFrame parentFrame;
 
 	private YawPitch yawPitch = new YawPitch();
 
@@ -63,7 +63,7 @@ public class SimpleCameraHandler extends BranchGroup
 		System.out.println("SimpleCameraHandler right mouse to change from model spin to freelook");
 		this.viewingPlatform = _viewingPlatform;
 		this.canvas3D = _canvas3D;
-		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
+		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
 		freeLookMouseRotate = new MyMouseRotater(canvas3D.getGLWindow(), viewingPlatform.getViewPlatformTransform());
 
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
@@ -87,7 +87,7 @@ public class SimpleCameraHandler extends BranchGroup
 				yawPitch.set(viewTransform);
 				viewTransform.setRotation(yawPitch.get(new Quat4d()));
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 		});
 
@@ -177,8 +177,8 @@ public class SimpleCameraHandler extends BranchGroup
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				if (parentFrame != null)
-					parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+				 
+					canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 
 		});
@@ -196,8 +196,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += 1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		if (parentFrame != null)
-			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+		 
+		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 	}
 
 	private void back()
@@ -206,8 +206,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += -1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		if (parentFrame != null)
-			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+		 
+		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 
 	}
 
@@ -273,7 +273,7 @@ public class SimpleCameraHandler extends BranchGroup
 		t.invert();
 		viewTransform.set(t);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
+		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
 	}
 
 	public void viewBounds(Bounds bounds)

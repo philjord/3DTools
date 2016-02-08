@@ -1,13 +1,8 @@
 package awt.tools3d.resolution;
 
-import java.awt.GraphicsConfigTemplate;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+ 
 
 import javax.media.j3d.Alpha;
 import javax.media.j3d.Appearance;
@@ -15,7 +10,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GeometryArray;
-import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.Shape3D;
@@ -31,14 +25,14 @@ import javax.vecmath.Color3f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import tools.ddstexture.DDSTextureLoader;
 
 public final class ResolutionTest
 {
-	private final GraphicsDevice gd;
-
 	private final JFrame win;
 
 	private Canvas3D canvas3D;
@@ -57,19 +51,13 @@ public final class ResolutionTest
 		menubar.add(fileMenu);
 		win.setJMenuBar(menubar);
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		gd = ge.getDefaultScreenDevice();
-		GraphicsConfiguration[] gc = gd.getConfigurations();
-		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-		// antialiasing REQUIRED is good to have
-		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
-		GraphicsConfiguration config = template.getBestConfiguration(gc);
-		canvas3D = new Canvas3D(config);
-		win.add(canvas3D);
+		canvas3D = new Canvas3D();
+		//win.add(canvas3D);
+		canvas3D.addNotify();
 
 		GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, true, true);
 
-		canvas3D.addKeyListener(new KeyAdapter() {
+		canvas3D.getGLWindow().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e)
 			{
 				final int keyCode = e.getKeyCode();

@@ -1,10 +1,7 @@
 package awt.tools3d.resolution;
 
 import java.awt.Component;
-import java.awt.DisplayMode;
 import java.awt.Frame;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -12,6 +9,10 @@ import java.util.prefs.Preferences;
 
 import javax.media.j3d.J3dUtil;
 import javax.swing.JOptionPane;
+
+import java2.awt.DisplayMode;
+import java2.awt.GraphicsDevice;
+import java2.awt.GraphicsEnvironment;
 
 public class ScreenResolution
 {

@@ -1,13 +1,8 @@
 package tools3d.camera;
 
-import java.awt.GraphicsConfigTemplate;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.awt.GridLayout;
 
 import javax.media.j3d.Canvas3D;
-import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.PhysicalBody;
 import javax.media.j3d.PhysicalEnvironment;
 import javax.media.j3d.Transform3D;
@@ -18,8 +13,8 @@ import javax.vecmath.Vector3f;
 
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;
-import tools3d.ovr.HmdInfo;
 import tools3d.ovr.HmdDesc;
+import tools3d.ovr.HmdInfo;
 import tools3d.universe.VisualPhysicalUniverse;
 
 public class HMDCameraPanel extends JPanel implements ICameraPanel
@@ -60,31 +55,15 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		this.universe = universe;
 		hmdInfo = HMDCamDolly.getOculusRift().getHMDInfo();
 		hmdDesc = HMDCamDolly.getOculusRift().getHmdDesc();
-		
+
 		setLayout(new GridLayout(1, 2));
 		physicalBody = new PhysicalBody(new Point3d(-0.033, 0, 0), new Point3d(0.033, 0, 0));
 		physicalEnvironment = new PhysicalEnvironment();
 
-		//This stuff has to be in synch with the ScreenResolution class
-		// I must do this in order to enable the stencil buffer
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		GraphicsConfiguration[] gc = gd.getConfigurations();
-		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-		//stencil setup stuff
-		//template.setStencilSize(8);		
-		// we must also set the stencil buffer to clear each frame (madness!)
-		// put  -Dj3d.stencilClear=true in your vm arguments!!!  
-
-		// antialiasing REQUIRED is good to have
-		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
-
-		GraphicsConfiguration config = template.getBestConfiguration(gc);
-
-		leftCanvas3D2D = new Canvas3D2D(config);
+		leftCanvas3D2D = new Canvas3D2D();
 		leftCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
 
-		rightCanvas3D2D = new Canvas3D2D(config);
+		rightCanvas3D2D = new Canvas3D2D();
 		rightCanvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
 		rightCanvas3D2D.isLeft = false;
 
@@ -153,14 +132,14 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		if (leftCanvas3D2D.isRendererRunning())
 		{
 			//leftCanvas3D2D.stopRenderer();
-			if (this.isAncestorOf(leftCanvas3D2D))
+			//if (this.isAncestorOf(leftCanvas3D2D))
 			{
-				remove(leftCanvas3D2D);
+			//	remove(leftCanvas3D2D);
 			}
 			//rightCanvas3D2D.stopRenderer();
-			if (this.isAncestorOf(rightCanvas3D2D))
+			//if (this.isAncestorOf(rightCanvas3D2D))
 			{
-				remove(rightCanvas3D2D);
+			//	remove(rightCanvas3D2D);
 			}
 			isRendering = false;
 		}
@@ -170,10 +149,10 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 	{
 		if (!isRendering())
 		{
-			if (leftCanvas3D2D.getParent() != this)
+			//if (leftCanvas3D2D.getParent() != this)
 			{
-				add(leftCanvas3D2D);
-				add(rightCanvas3D2D);
+				//add(leftCanvas3D2D);
+				//add(rightCanvas3D2D);
 				validate();
 				leftCanvas3D2D.startRenderer();
 				rightCanvas3D2D.startRenderer();
@@ -246,7 +225,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 	{
 		setHMDCamDolly((HMDCamDolly) dolly);
 	}
-	
+
 	private void setProjectionMatrix(View view, boolean left)
 	{
 		// Compute Aspect Ratio. Stereo mode cuts width in half.
@@ -262,9 +241,8 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		//System.out.println("halfHalfScreenDistanceH " + halfHalfScreenDistanceH);
 		//xfov = (float) (2.0f * Math.atan(halfHalfScreenDistanceH / hmdInfo.EyeToScreenDistance));
 		//System.out.println("xfov " + xfov);
-		xfov = hmdDesc.defaultEyeFovR+hmdDesc.defaultEyeFovL;
-		
-		
+		xfov = hmdDesc.defaultEyeFovR + hmdDesc.defaultEyeFovL;
+
 		// Post-projection viewport coordinates range from (-1.0, 1.0), with the
 		// center of the left viewport falling at (1/4) of horizontal screen size.
 		// We need to shift this projection center to match with the lens center.
@@ -289,6 +267,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		view.setCompatibilityModeEnable(true);
 		view.setLeftProjection(left ? projLeft : projRight);
 	}
+
 	private void setProjectionMatrixB(View view, boolean left)
 	{
 		// Compute Aspect Ratio. Stereo mode cuts width in half.

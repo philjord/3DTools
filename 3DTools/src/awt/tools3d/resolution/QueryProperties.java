@@ -3,8 +3,6 @@ package awt.tools3d.resolution;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.awt.GraphicsConfigTemplate;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
 import java.awt.Dimension;
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +21,9 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+
+import java2.awt.GraphicsConfiguration;
+import java2.awt.GraphicsEnvironment;
 
 @SuppressWarnings("all")
 public class QueryProperties extends JFrame
@@ -102,7 +103,7 @@ public class QueryProperties extends JFrame
 	public static boolean checkForInstalledJ3d()
 	{
 		//the JVM property -Djava.ext.dirs=.\fred\ disables extension completely!
-		
+
 		// check for java3d installed
 		String extProp = System.getProperties().getProperty("java.ext.dirs");
 		if (extProp != null)
@@ -147,8 +148,8 @@ public class QueryProperties extends JFrame
 					for (File jf : preinstalledJ3dJars)
 					{
 						boolean fileIsNotLocked = jf.renameTo(jf);
-						
-						System.out.println("jf " + jf + " " +fileIsNotLocked);
+
+						System.out.println("jf " + jf + " " + fileIsNotLocked);
 						success &= jf.delete();
 					}
 					JOptionPane.showMessageDialog(null, success ? "Sucess!" : "Failed, please remove manually and restart");
@@ -184,9 +185,8 @@ public class QueryProperties extends JFrame
 
 		//VirtualUniverse vu = new VirtualUniverse();
 		Map vuMap = VirtualUniverse.getProperties();
-		final String[] vuPropList =
-		{ "j3d.version", "j3d.vendor", "j3d.specification.version", "j3d.specification.vendor", "j3d.*"
-		// Just print all other properties in alphabetical order
+		final String[] vuPropList = { "j3d.version", "j3d.vendor", "j3d.specification.version", "j3d.specification.vendor", "j3d.*"
+				// Just print all other properties in alphabetical order
 		};
 
 		printProps(textArea, vuMap, vuPropList);
@@ -200,15 +200,14 @@ public class QueryProperties extends JFrame
 		template.setStereo(GraphicsConfigTemplate.PREFERRED);
 		template.setSceneAntialiasing(GraphicsConfigTemplate.PREFERRED);
 
-		GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getBestConfiguration(template);
+		//	GraphicsConfiguration config = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
+		//		.getBestConfiguration(template);
 
-		Map c3dMap = new Canvas3D(config).queryProperties();
-		final String[] c3dPropList =
-		{ "native.*", "doubleBufferAvailable", "stereoAvailable", "sceneAntialiasing*", "compressedGeometry.majorVersionNumber",
-				"compressedGeometry.minorVersionNumber", "compressedGeometry.*", "textureUnitStateMax", "textureWidthMax",
-				"textureHeightMax",
-		// Just print all other properties in alphabetical order
+		Map c3dMap = new Canvas3D().queryProperties();
+		final String[] c3dPropList = { "native.*", "doubleBufferAvailable", "stereoAvailable", "sceneAntialiasing*",
+				"compressedGeometry.majorVersionNumber", "compressedGeometry.minorVersionNumber", "compressedGeometry.*",
+				"textureUnitStateMax", "textureWidthMax", "textureHeightMax",
+				// Just print all other properties in alphabetical order
 		};
 
 		printProps(textArea, c3dMap, c3dPropList);
@@ -220,8 +219,7 @@ public class QueryProperties extends JFrame
 	public static void main(String args[])
 	{
 		//new Java3dLinker2();
-		EventQueue.invokeLater(new Runnable()
-		{
+		EventQueue.invokeLater(new Runnable() {
 			public void run()
 			{
 				new QueryProperties().setVisible(true);

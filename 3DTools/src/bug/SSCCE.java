@@ -72,8 +72,8 @@ public final class SSCCE
 
 		universe.addBranchGraph(group);
 		
-		JFrame f = (JFrame) universe.getViewer().getCanvas3D().getParent().getParent().getParent().getParent().getParent();
-		f.validate();
+		//JFrame f = (JFrame) universe.getViewer().getCanvas3D().getParent().getParent().getParent().getParent().getParent();
+		//f.validate();
 		
 		try
 		{
@@ -83,9 +83,9 @@ public final class SSCCE
 		{
 		}
 // ok this doesn't crash nothing yet, need to push it harder?
-		f.removeNotify();
-		f.setUndecorated(true);
-		f.addNotify();
+	//	f.removeNotify();
+	///	f.setUndecorated(true);
+	//f.addNotify();
 
 		try
 		{

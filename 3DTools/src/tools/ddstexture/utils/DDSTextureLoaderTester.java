@@ -1,14 +1,9 @@
 package tools.ddstexture.utils;
 
+import java.awt.Color;
 import java.awt.FlowLayout;
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfigTemplate;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.Color;
+
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -23,7 +18,6 @@ import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.GeometryArray;
-import javax.media.j3d.GraphicsConfigTemplate3D;
 import javax.media.j3d.PolygonAttributes;
 import javax.media.j3d.RotationInterpolator;
 import javax.media.j3d.Shape3D;
@@ -40,6 +34,8 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.TexCoord2f;
 
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
 import com.sun.j3d.utils.universe.SimpleUniverse;
 
 import awt.tools3d.resolution.GraphicsSettings;
@@ -62,8 +58,7 @@ public class DDSTextureLoaderTester
 	{
 		prefs = Preferences.userNodeForPackage(DDSTextureLoaderTester.class);
 
-		DetailsFileChooser dfc = new DetailsFileChooser(prefs.get("DDSToTexture", ""), new DetailsFileChooser.Listener()
-		{
+		DetailsFileChooser dfc = new DetailsFileChooser(prefs.get("DDSToTexture", ""), new DetailsFileChooser.Listener() {
 			@Override
 			public void directorySelected(File dir)
 			{
@@ -181,8 +176,7 @@ public class DDSTextureLoaderTester
 		f.setVisible(true);
 		f.setSize(width + f.getInsets().left + f.getInsets().right, height + f.getInsets().top + f.getInsets().bottom);
 
-		Thread t = new Thread()
-		{
+		Thread t = new Thread() {
 			public void run()
 			{
 				try
@@ -205,20 +199,13 @@ public class DDSTextureLoaderTester
 		JFrame win = new JFrame("Fullscreen Example");
 		win.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		GraphicsConfiguration[] gc = gd.getConfigurations();
-		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-		// antialiasing REQUIRED is good to have
-		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
-		GraphicsConfiguration config = template.getBestConfiguration(gc);
-		Canvas3D canvas3D = new Canvas3D(config);
-		win.add(canvas3D);
-
+		Canvas3D canvas3D = new Canvas3D();
+		//win.add(canvas3D);
+		canvas3D.addNotify();
+		
 		GraphicsSettings gs = ScreenResolution.organiseResolution(null, win, false, true, true);
 
-		canvas3D.addKeyListener(new KeyAdapter()
-		{
+		canvas3D.getGLWindow().addKeyListener(new KeyAdapter() {
 			public void keyPressed(KeyEvent e)
 			{
 				final int keyCode = e.getKeyCode();
