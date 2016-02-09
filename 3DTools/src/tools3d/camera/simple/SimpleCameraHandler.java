@@ -8,13 +8,9 @@ import javax.media.j3d.CapabilityNotSetException;
 import javax.media.j3d.PickInfo;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.TransformGroup;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 import javax.vecmath.Point3d;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
-
-import tools3d.utils.YawPitch;
 
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
@@ -24,6 +20,8 @@ import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
 import com.sun.j3d.utils.behaviors.mouse.newt.MouseRotate;
 import com.sun.j3d.utils.pickfast.PickCanvas;
 import com.sun.j3d.utils.universe.ViewingPlatform;
+
+import tools3d.utils.YawPitch;
 
 public class SimpleCameraHandler extends BranchGroup
 {
@@ -177,8 +175,8 @@ public class SimpleCameraHandler extends BranchGroup
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				 
-					canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
+
+				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 
 		});
@@ -196,7 +194,7 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += 1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		 
+
 		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 	}
 
@@ -206,7 +204,7 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += -1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		 
+
 		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 
 	}

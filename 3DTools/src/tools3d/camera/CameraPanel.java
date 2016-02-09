@@ -1,15 +1,11 @@
 package tools3d.camera;
 
-import java.awt.GridLayout;
-
-import javax.swing.JPanel;
-
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.universe.VisualPhysicalUniverse;
 
-public class CameraPanel extends JPanel implements ICameraPanel
+public class CameraPanel implements ICameraPanel
 {
 	protected VisualPhysicalUniverse universe;
 
@@ -28,8 +24,6 @@ public class CameraPanel extends JPanel implements ICameraPanel
 	public CameraPanel(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
-
-		setLayout(new GridLayout(1, 1));
 
 		canvas3D2D = new Canvas3D2D();
 		camera = new Camera(canvas3D2D);
@@ -121,9 +115,9 @@ public class CameraPanel extends JPanel implements ICameraPanel
 			//canvas3D2D.stopRenderer();
 
 			// stop rendering by removing the canvas
-	//		if (this.isAncestorOf(canvas3D2D))
+			//		if (this.isAncestorOf(canvas3D2D))
 			{
-	//			remove(canvas3D2D);
+				//			remove(canvas3D2D);
 				isRendering = false;
 			}
 		}
@@ -133,12 +127,12 @@ public class CameraPanel extends JPanel implements ICameraPanel
 	{
 		if (!isRendering)
 		{
-	//		if (canvas3D2D.getParent() != this)
+			//		if (canvas3D2D.getParent() != this)
 			{
 
 				// start rendering by adding the canvas
-	//			add(canvas3D2D);
-				validate();
+				//			add(canvas3D2D);
+				//			validate();
 				//canvas3D2D.addNotify();
 			}
 

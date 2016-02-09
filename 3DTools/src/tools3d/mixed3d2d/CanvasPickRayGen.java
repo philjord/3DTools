@@ -1,7 +1,5 @@
 package tools3d.mixed3d2d;
 
- 
-
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.PickConeRay;
 import javax.media.j3d.PickCylinderRay;
@@ -12,7 +10,7 @@ import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
- 
+import com.jogamp.newt.event.MouseEvent;
 
 /**
  * Rip off of PickCanvas which will set the appropriate pick shape for use by so0methign else (like physics based picking)
@@ -77,16 +75,7 @@ public class CanvasPickRayGen //extends PickTool
 		return tolerance;
 	}
 
-	/** Set the pick location. Defines the location on the canvas where the
-	   pick is to be performed.
-	  @param mevent The MouseEvent for the picking point
-	*/
-	public void setShapeLocation(java.awt.event.MouseEvent mevent)
-	{
-		setShapeLocation(mevent.getX(), mevent.getY());
-	}
-	
-	public void setShapeLocation(com.jogamp.newt.event.MouseEvent mevent)
+	public void setShapeLocation(MouseEvent mevent)
 	{
 		setShapeLocation(mevent.getX(), mevent.getY());
 	}

@@ -1,23 +1,21 @@
 package tools3d.camera;
 
-import java.awt.GridLayout;
-
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.PhysicalBody;
 import javax.media.j3d.PhysicalEnvironment;
 import javax.media.j3d.Transform3D;
 import javax.media.j3d.View;
-import javax.swing.JPanel;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
+import android.widget.GridLayout;
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.ovr.HmdDesc;
 import tools3d.ovr.HmdInfo;
 import tools3d.universe.VisualPhysicalUniverse;
 
-public class HMDCameraPanel extends JPanel implements ICameraPanel
+public class HMDCameraPanel implements ICameraPanel
 {
 	public static float FRONT_CLIP = 0.1f;
 
@@ -56,7 +54,6 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 		hmdInfo = HMDCamDolly.getOculusRift().getHMDInfo();
 		hmdDesc = HMDCamDolly.getOculusRift().getHmdDesc();
 
-		setLayout(new GridLayout(1, 2));
 		physicalBody = new PhysicalBody(new Point3d(-0.033, 0, 0), new Point3d(0.033, 0, 0));
 		physicalEnvironment = new PhysicalEnvironment();
 
@@ -134,12 +131,12 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 			//leftCanvas3D2D.stopRenderer();
 			//if (this.isAncestorOf(leftCanvas3D2D))
 			{
-			//	remove(leftCanvas3D2D);
+				//	remove(leftCanvas3D2D);
 			}
 			//rightCanvas3D2D.stopRenderer();
 			//if (this.isAncestorOf(rightCanvas3D2D))
 			{
-			//	remove(rightCanvas3D2D);
+				//	remove(rightCanvas3D2D);
 			}
 			isRendering = false;
 		}
@@ -153,7 +150,7 @@ public class HMDCameraPanel extends JPanel implements ICameraPanel
 			{
 				//add(leftCanvas3D2D);
 				//add(rightCanvas3D2D);
-				validate();
+				//				validate();
 				leftCanvas3D2D.startRenderer();
 				rightCanvas3D2D.startRenderer();
 			}

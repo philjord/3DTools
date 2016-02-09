@@ -1,7 +1,5 @@
 package tools3d.camera;
 
-import java.awt.GridLayout;
-
 import javax.media.j3d.PhysicalBody;
 import javax.media.j3d.PhysicalEnvironment;
 import javax.media.j3d.View;
@@ -20,8 +18,6 @@ public class HMDCameraPanel2 extends CameraPanel
 	public HMDCameraPanel2(VisualPhysicalUniverse universe)
 	{
 		this.universe = universe;
-
-		setLayout(new GridLayout(1, 2));
 
 		canvas3D2D = new Canvas3D2D();
 		canvas3D2D.setStereoEnable(true);
@@ -69,9 +65,9 @@ public class HMDCameraPanel2 extends CameraPanel
 		if (canvas3D2Db.isRendererRunning())
 		{
 			canvas3D2Db.stopRenderer();
-		//	if (this.isAncestorOf(canvas3D2Db))
+			//	if (this.isAncestorOf(canvas3D2Db))
 			{
-		//		remove(canvas3D2Db);
+				//		remove(canvas3D2Db);
 			}
 		}
 	}
@@ -82,10 +78,10 @@ public class HMDCameraPanel2 extends CameraPanel
 		if (!isRendering())
 		{
 			super.startRendering();
-		//	if (canvas3D2Db.getParent() != this)
+			//	if (canvas3D2Db.getParent() != this)
 			{
-			//	add(canvas3D2Db);
-				validate();
+				//	add(canvas3D2Db);
+				//validate();
 			}
 			canvas3D2Db.startRenderer();
 		}
