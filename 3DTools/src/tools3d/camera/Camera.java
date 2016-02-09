@@ -3,11 +3,12 @@ package tools3d.camera;
 import javax.media.j3d.Canvas3D;
 import javax.media.j3d.View;
 
-import tools3d.audio.JOALMixer;
-
 import com.sun.j3d.utils.universe.Viewer;
 
+import tools3d.audio.JOALMixer;
+
 //TODO: Camera really doesn't need to extend the utility class viewer
+// but I'd need to reproduce the ViewingPlatfrom business too
 public class Camera extends Viewer
 {
 	// front and back clips, for 16bit should be ratio of no more than 3000:1 
@@ -20,10 +21,12 @@ public class Camera extends Viewer
 
 	public static JOALMixer mixer = null;
 
+
 	public Camera(Canvas3D canvas3D)
 	{
 		// create a viewer with the given canvas, physical environemnt and physical body are defaulted
 		super(canvas3D);
+
 
 		getView().setTransparencySortingPolicy(View.TRANSPARENCY_SORT_GEOMETRY);
 

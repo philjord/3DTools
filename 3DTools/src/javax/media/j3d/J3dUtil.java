@@ -6,15 +6,15 @@ public class J3dUtil
 {
 	public static void checkJarLoadVersion()
 	{
-		try
+	//	try
 		{
-			boolean b = JoglesPipeline.TOOLS3D_MARKER;
+			//boolean b = JoglesPipeline.TOOLS3D_MARKER;
 			// I must hang on to b otherwise this call doesn't happen
-			b = !!b;// haha!
+			//b = !!b;// haha!
 		}
-		catch (Error e)
+	//	catch (Error e)
 		{
-			System.out.println("Bad load order jogl java3d is loaded ahead of 3Dtools.jar!");
+		//	System.out.println("Bad load order jogl java3d is loaded ahead of 3Dtools.jar!");
 		}
 	}
 

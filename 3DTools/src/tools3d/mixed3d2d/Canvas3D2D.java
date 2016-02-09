@@ -98,7 +98,6 @@ public class Canvas3D2D extends Canvas3D
 	public void postRender()
 	{
 		sceneUIController.display(this.getGLWindow());
-
 	}
 
 	public Label createLabel()
