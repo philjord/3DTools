@@ -1,11 +1,9 @@
 package tools3d.mixed3d2d;
 
 import java.io.IOException;
-import java.net.URLConnection;
 
 import javax.media.j3d.Canvas3D;
 
-import com.jogamp.common.util.IOUtil;
 import com.jogamp.graph.curve.opengl.RegionRenderer;
 import com.jogamp.graph.curve.opengl.RenderState;
 import com.jogamp.graph.font.Font;
@@ -16,7 +14,6 @@ import com.jogamp.graph.geom.Vertex.Factory;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.test.junit.graph.FontSet01;
 import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
 import com.jogamp.opengl.test.junit.graph.demos.ui.SceneUIController;
 import com.jogamp.opengl.test.junit.graph.demos.ui.UIShape;
@@ -34,12 +31,12 @@ public class Canvas3D2D extends Canvas3D
 
 	private RenderState rs;
 	private SceneUIController sceneUIController;
-	private final float sceneDist = 1000f;
-	private final float zNear = 0.1f, zFar = 7000f;
+	private final float sceneDist = 10f;
+	private final float zNear = 0.1f, zFar = 100f;
 
 	private int renderModes = 0;
 	private RegionRenderer renderer;
-	private final int fontSet = FontFactory.UBUNTU;//TODO: add morrowind fonts
+
 	private Font font;
 	private final float fontSizeFpsPVP = 0.038f;
 	private float dpiH = 96;
@@ -74,7 +71,7 @@ public class Canvas3D2D extends Canvas3D
 
 		try
 		{
-			font = FontFactory.get(fontSet).getDefault();
+			font = FontFactory.get(FontFactory.UBUNTU).getDefault();
 			//URLConnection u = IOUtil.getResource("fonts/freefont/Pelagiad.ttf", FontSet01.class.getClassLoader());
 			//font = FontFactory.get(u.getInputStream(), true);
 		}
@@ -111,7 +108,7 @@ public class Canvas3D2D extends Canvas3D
 		 * [FPS] Display 112.88889 dpi, fontSize 12.0 ppi -> pixelSize 15.679012
 		 */
 		final float pixelSizeFPS = fontSizeFpsPVP * this.getGLWindow().getSurfaceHeight();
-		Label ret = new Label(renderer.getRenderState().getVertexFactory(), renderModes, font, pixelSizeFPS * 0.1f, "Nothing there yet");
+		Label ret = new Label(renderer.getRenderState().getVertexFactory(), renderModes, font, pixelSizeFPS * 0.1f, "");
 
 		sceneUIController.addShape(ret);
 
@@ -131,18 +128,6 @@ public class Canvas3D2D extends Canvas3D
 	public Factory<? extends Vertex> getVertexFactory()
 	{
 		return renderer.getRenderState().getVertexFactory();
-	}
-
-	public void addElement(awt.tools3d.mixed3d2d.hud.HUDElement textElement)
-	{
-		// TODO Auto-generated method stub
-
-	}
-
-	public void removeElement(awt.tools3d.mixed3d2d.hud.HUDElement textElement)
-	{
-		// TODO Auto-generated method stub
-
 	}
 
 }

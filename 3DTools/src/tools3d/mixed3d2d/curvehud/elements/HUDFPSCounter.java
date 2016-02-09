@@ -9,11 +9,10 @@ import javax.media.j3d.WakeupOnElapsedTime;
 
 import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
 
-import awt.tools3d.mixed3d2d.hud.HUDElementContainer;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.Utils3D;
 
-public class HUDFPSCounter extends HUDElementContainer
+public class HUDFPSCounter  
 {
 	//see http://websemantics.co.uk/resources/font_size_conversion_chart/ points to pixels
 	//private static double pixelToPnt = 1.4;

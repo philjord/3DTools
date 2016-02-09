@@ -2,10 +2,9 @@ package tools3d.mixed3d2d.curvehud.elements;
 
 import com.jogamp.opengl.test.junit.graph.demos.ui.CrossHair;
 
-import awt.tools3d.mixed3d2d.hud.HUDElementContainer;
 import tools3d.mixed3d2d.Canvas3D2D;
 
-public class HUDCrossHair extends HUDElementContainer
+public class HUDCrossHair
 {
 	private CrossHair crossHairCtr;
 

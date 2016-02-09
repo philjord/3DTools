@@ -5,11 +5,10 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
 
-import awt.tools3d.mixed3d2d.hud.HUDElementContainer;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.scenegraph.LocationUpdateListener;
 
-public class HUDPosition extends HUDElementContainer implements LocationUpdateListener
+public class HUDPosition   implements LocationUpdateListener
 {
 
 	private Label posLabel;
