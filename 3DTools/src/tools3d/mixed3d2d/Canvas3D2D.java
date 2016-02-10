@@ -13,6 +13,7 @@ import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.Vertex.Factory;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.Window;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
 import com.jogamp.opengl.test.junit.graph.demos.ui.SceneUIController;
@@ -97,6 +98,9 @@ public class Canvas3D2D extends Canvas3D
 
 	public void postRender()
 	{
+		//Stenciled things might be teh last displayed in the renderer, so turn off the stencil in case it's on
+		GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
+		gl.glDisable(GL2.GL_STENCIL_TEST);
 		sceneUIController.display(this.getGLWindow());
 	}
 

@@ -126,7 +126,7 @@ public class SceneUIController implements GLEventListener{
 
     @Override
     public void init(final GLAutoDrawable drawable) {
-        System.err.println("SceneUIController: init");
+        //System.err.println("SceneUIController: init");
         cDrawable = drawable;
     }
 

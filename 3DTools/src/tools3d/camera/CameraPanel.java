@@ -108,11 +108,12 @@ public class CameraPanel implements ICameraPanel
 	{
 		if (canvas3D2D.isRendererRunning())
 		{
-			System.out.println("NEVER CALL THIS METHOD DAMN IT! it is a major memory leak; find a solution!");
+			//System.out.println("NEVER CALL THIS METHOD DAMN IT! it is a major memory leak; find a solution!");
 			//new Exception("called by").printStackTrace();
 
 			// maybe try Canvas3D.stopRenderer()
-			//canvas3D2D.stopRenderer();
+			canvas3D2D.stopRenderer();
+			canvas3D2D.removeNotify();
 
 			// stop rendering by removing the canvas
 			//		if (this.isAncestorOf(canvas3D2D))
