@@ -8,7 +8,7 @@ import javax.vecmath.Point2f;
 import com.jogamp.graph.font.Font;
 import com.jogamp.graph.font.FontFactory;
 import com.jogamp.graph.font.FontSet;
-import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 

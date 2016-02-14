@@ -15,9 +15,9 @@ import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.Window;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
-import com.jogamp.opengl.test.junit.graph.demos.ui.SceneUIController;
-import com.jogamp.opengl.test.junit.graph.demos.ui.UIShape;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.SceneUIController;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.UIShape;
 
 public class Canvas3D2D extends Canvas3D
 {

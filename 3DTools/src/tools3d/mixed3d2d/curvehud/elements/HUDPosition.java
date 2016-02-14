@@ -3,7 +3,7 @@ package tools3d.mixed3d2d.curvehud.elements;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
-import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.scenegraph.LocationUpdateListener;

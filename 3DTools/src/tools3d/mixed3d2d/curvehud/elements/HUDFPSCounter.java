@@ -7,7 +7,7 @@ import javax.media.j3d.BranchGroup;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.media.j3d.WakeupOnElapsedTime;
 
-import com.jogamp.opengl.test.junit.graph.demos.ui.Label;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.Utils3D;

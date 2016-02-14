@@ -1,6 +1,6 @@
 package tools3d.mixed3d2d.curvehud.elements;
 
-import com.jogamp.opengl.test.junit.graph.demos.ui.CrossHair;
+import com.jogamp.opengl.hudbasics.graph.demos.ui.CrossHair;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 
