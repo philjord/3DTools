@@ -1,4 +1,4 @@
-package tools.ddstexture;
+package tools.compressedtexture;
 
 import java.nio.ByteBuffer;
 import java.util.Vector;
@@ -15,8 +15,6 @@ import javaawt.image.RenderedImage;
 import javaawt.image.SampleModel;
 import javaawt.image.WritableRaster;
 
- 
-
 /**
  * This is NOT A bufferedImage! you can't use it as one. If you get UnsupportedOperationException then you 
  * are trying to use it as a BufferedImage, do not. You might need {@code DDSDecompressor}.
@@ -24,21 +22,16 @@ import javaawt.image.WritableRaster;
  * and finally arrive at the gl.glCompressedTexImage2D call in JoglPipeline.updateTexture2DImage.
  * It is what the DDSImageComponent2D constructor requires.
  */
-public class DDSBufferedImage extends BufferedImage
+public class CompressedBufferedImage extends BufferedImage
 {
-	public static final int BLOCK_SIZE = 4;
 
-	public DDSImage ddsImage;
+	protected ByteBuffer buffer;
 
-	private DDSImage.ImageInfo imageInfo;
+	protected int width;
 
-	private ByteBuffer buffer;
+	protected int height;
 
-	private int width;
-
-	private int height;
-
-	private String imageName = "";
+	protected String imageName = "";
 
 	/**
 	 * see {@code DDSTextureLoader} for example usage
@@ -46,53 +39,11 @@ public class DDSBufferedImage extends BufferedImage
 	 * @param mipNumber
 	 * @param imageName
 	 */
-	public DDSBufferedImage(DDSImage ddsImage, int mipNumber, String imageName)
+	public CompressedBufferedImage()
 	{
 		// minimal impact BufferedImage constructor
 		super(1, 1, BufferedImage.TYPE_INT_ARGB);
 
-		this.ddsImage = ddsImage;
-		this.imageInfo = ddsImage.getAllMipMaps()[mipNumber];
-		this.imageName = imageName;
-		this.width = imageInfo.getWidth();
-		this.height = imageInfo.getHeight();
-
-		if (width < 1 || height < 1)
-		{
-			throw new IllegalArgumentException("Height or Width == 0");
-		}
-		else
-		{
-
-			if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT2)
-			{
-				System.out.println("DXT2 not supported; " + imageName + "; mip num = " + mipNumber);
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT4)
-			{
-				System.out.println("DXT4 not supported; " + imageName + "; mip num = " + mipNumber);
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_UNKNOWN)
-			{
-				System.out.println("D3DFMT_UNKNOWN not supported; " + imageName + "; mip num = " + mipNumber);
-			}
-			else if (ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT1 || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT3 || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_DXT5 || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_R8G8B8 || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_A8R8G8B8 || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_X8R8G8B8 || //
-					ddsImage.getPixelFormat() == DDSImage.DDS_A16B16G16R16F || //
-					ddsImage.getPixelFormat() == DDSImage.D3DFMT_ATI2)
-			{
-				//good
-			}
-			else
-			{
-				System.out.println("not DDS format; " + ddsImage.getPixelFormat() + "; " + imageName + "; mip num = " + mipNumber);
-			}
-		}
-		this.buffer = imageInfo.getData();
 	}
 
 	public String getImageName()

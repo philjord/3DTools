@@ -1,6 +1,5 @@
-package tools.ddstexture;
+package tools.compressedtexture.dds;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -13,8 +12,7 @@ import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
 
 import javaawt.image.BufferedImage;
-import tools.WeakValueHashMap;
-import tools.io.FastByteArrayInputStream;
+import tools.compressedtexture.CompressedTextureLoader;
 
 /**
  * DDS support onto the jogl pipeline.
@@ -31,23 +29,9 @@ import tools.io.FastByteArrayInputStream;
  * Also some helpful utils for debug (not needed to use DXT textures)
  * {@code DSSTextureLoaderTester}, {@code DDSDecompressor}, {@code Color24} and {@code MiniFloat}
  */
-public class DDSTextureLoader
+public class DDSTextureLoader extends CompressedTextureLoader
 {
-	private static int anisotropicFilterDegree = 0;
-
-	public static void setAnisotropicFilterDegree(int d)
-	{
-		System.out.println("setAnisotropicFilterDegree=" + d);
-		anisotropicFilterDegree = d;
-	}
-
-	/**
-	 * A hashmap of the loaded {@code Texture2D} instances. Weak so that we can discard them if they are not
-	 * in use by at least one Appearence node in the scene graph
-	 * Note WeakValueHashMap are self expunging
-	 */
-	private static WeakValueHashMap<String, Texture2D> loadedTextures = new WeakValueHashMap<String, Texture2D>();
-
+	
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -63,12 +47,12 @@ public class DDSTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out
-					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			System.out.println(
+					"" + CompressedTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 	}
-
+	
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -94,8 +78,8 @@ public class DDSTextureLoader
 			}
 			catch (IOException e)
 			{
-				System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " "
-						+ e.getStackTrace()[0]);
+				System.out.println(
+						"" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 				return null;
 			}
 		}
@@ -109,6 +93,7 @@ public class DDSTextureLoader
 	 * @param inputBuffer
 	 * @return
 	 */
+ 
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
@@ -125,8 +110,8 @@ public class DDSTextureLoader
 			}
 			catch (IOException e)
 			{
-				System.out.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " "
-						+ e.getStackTrace()[0]);
+				System.out.println(
+						"" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 				return null;
 			}
 		}
@@ -188,76 +173,6 @@ public class DDSTextureLoader
 
 		return tex;
 
-	}
-
-	//private static RequestStats requestStats = new RequestStats(loadedTextures);
-
-	/**
-	* Called to early out in case of cache hit, very likely to return null!
-	* @param filename
-	* @return Possibly a pre-loaded Texture, does not load if not found
-	*/
-	public static Texture checkCachedTexture(String filename)
-	{
-		//enable to test is caching is good
-		//requestStats.request(filename);
-
-		return loadedTextures.get(filename);
-	}
-
-	/**
-	 * For debug purposes
-	 */
-	public static void clearCache()
-	{
-		loadedTextures.clear();
-	}
-
-	private static int computeLog(int value)
-	{
-		int i = 0;
-
-		if (value == 0)
-			return -1;
-		for (;;)
-		{
-			if (value == 1)
-				return i;
-			value >>= 1;
-			i++;
-		}
-	}
-
-	private static int BUFSIZE = 16000;
-
-	public static ByteBuffer toByteBuffer(InputStream in) throws IOException
-	{
-		if (in instanceof FastByteArrayInputStream)
-		{
-			//NOTE there is no performance gain from this, but a definate copy time loss
-			//ByteBuffer out = ByteBuffer.allocateDirect(((FastByteArrayInputStream) in).getBuf().length);
-			//out.order(ByteOrder.nativeOrder());
-			//out.put(((FastByteArrayInputStream) in).getBuf());
-			//out.rewind();
-			//return out;
-			return ByteBuffer.wrap(((FastByteArrayInputStream) in).getBuf());
-		}
-		else
-		{
-			//note toByteArray trims to size
-			ByteArrayOutputStream out = new ByteArrayOutputStream(BUFSIZE);
-			byte[] tmp = new byte[BUFSIZE];
-			while (true)
-			{
-				int r = in.read(tmp);
-				if (r == -1)
-					break;
-
-				out.write(tmp, 0, r);
-			}
-
-			return ByteBuffer.wrap(out.toByteArray());
-		}
 	}
 
 }

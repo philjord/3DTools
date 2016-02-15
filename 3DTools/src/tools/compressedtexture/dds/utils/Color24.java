@@ -1,4 +1,4 @@
-package tools.ddstexture.utils;
+package tools.compressedtexture.dds.utils;
 
 /**
  * 24 bit 888 RGB color

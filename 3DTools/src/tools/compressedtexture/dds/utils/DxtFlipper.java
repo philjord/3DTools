@@ -1,9 +1,9 @@
-package tools.ddstexture.utils;
+package tools.compressedtexture.dds.utils;
 
 import java.nio.ByteBuffer;
 
-import tools.ddstexture.DDSImage;
-import tools.ddstexture.DDSImage.ImageInfo;
+import tools.compressedtexture.dds.DDSImage;
+import tools.compressedtexture.dds.DDSImage.ImageInfo;
 
 /**
  * This can be used to flip a Dxt image upside down in order to ensure y-up. It is not needed by any projects currently.
