@@ -8,7 +8,6 @@ import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3f;
 
-import android.widget.GridLayout;
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.ovr.HmdDesc;

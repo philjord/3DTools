@@ -13,6 +13,7 @@ import com.jogamp.graph.geom.Vertex;
 import com.jogamp.graph.geom.Vertex.Factory;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.Window;
+import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
@@ -23,10 +24,15 @@ public class Canvas3D2D extends Canvas3D
 {
 	public boolean isLeft = false;
 
+	public Canvas3D2D(GLWindow glwin)
+	{
+		super(glwin);
+		initOverlySystem();
+	}
+
 	public Canvas3D2D()
 	{
 		super();
-
 		initOverlySystem();
 	}
 
