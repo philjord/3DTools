@@ -168,6 +168,9 @@ public class SimpleCameraHandler extends BranchGroup
 				{
 					m.set(0, 0, 0);
 				}
+
+				
+
 				m.scale(moveAmount);
 
 				viewTransform.get(loc);
@@ -175,6 +178,16 @@ public class SimpleCameraHandler extends BranchGroup
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
+				
+				if (e.getKeyCode() == KeyEvent.VK_PLUS || e.getKeyCode() == KeyEvent.VK_2)
+				{
+					forward();
+				}
+				else if (e.getKeyCode() == KeyEvent.VK_MINUS || e.getKeyCode() == KeyEvent.VK_8)
+				{
+					back();
+				}
+				
 
 				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
