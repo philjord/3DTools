@@ -93,8 +93,10 @@ public class Canvas3D2D extends Canvas3D
 		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
 		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
 
-		GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
-		renderer.init(gl, renderModes);
+		
+		//ummmm....? this caused a crash and is apparently not needed?
+		//GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
+		//renderer.init(gl, renderModes);
 
 		sceneUIController.setRenderer(renderer);
 
