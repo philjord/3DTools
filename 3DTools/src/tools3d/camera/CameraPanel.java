@@ -1,5 +1,6 @@
 package tools3d.camera;
 
+import com.jogamp.newt.opengl.GLWindow;
 import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import tools3d.mixed3d2d.Canvas3D2D;
@@ -26,6 +27,15 @@ public class CameraPanel implements ICameraPanel
 		this.universe = universe;
 
 		canvas3D2D = new Canvas3D2D();
+		camera = new Camera(canvas3D2D);
+	}
+	
+	
+	public CameraPanel(VisualPhysicalUniverse universe, GLWindow gl_window)
+	{
+		this.universe = universe;
+
+		canvas3D2D = new Canvas3D2D(gl_window);
 		camera = new Camera(canvas3D2D);
 	}
 

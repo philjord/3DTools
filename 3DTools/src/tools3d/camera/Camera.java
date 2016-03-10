@@ -19,7 +19,11 @@ public class Camera extends Viewer
 
 	private double FOV = 80;
 
-	public static JOALMixer mixer = null;
+	//TODO: No sound at all now, but will be again one day 
+	// just needs com jogamp openal library included
+	//java.lang.NoClassDefFoundError: Failed resolution of: Lcom/jogamp/openal/util/ALut;
+   // at tools3d.audio.JOALMixer.initialize(JOALMixer.java:810)
+//	public static JOALMixer mixer = null;
 
 
 	public Camera(Canvas3D canvas3D)
@@ -44,7 +48,7 @@ public class Camera extends Viewer
 		getView().setFieldOfView(fov);
 
 		//other wise restricted access exception
-		if (mixer == null && getView().getUserHeadToVworldEnable())
+/*		if (mixer == null && getView().getUserHeadToVworldEnable())
 		{
 			// create and adds a joalmixer as the audio device
 			mixer = new JOALMixer(getPhysicalEnvironment());
@@ -57,7 +61,7 @@ public class Camera extends Viewer
 				// remove the audio device
 				getPhysicalEnvironment().setAudioDevice(null);
 			}
-		}
+		}*/
 
 	}
 
