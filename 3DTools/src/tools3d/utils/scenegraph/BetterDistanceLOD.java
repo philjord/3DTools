@@ -43,7 +43,6 @@ public class BetterDistanceLOD extends Behavior
 
 	public BetterDistanceLOD(Group parent, ArrayList<BranchGroup> roots, float[] distances)
 	{
-
 		this.parent = parent;
 		parent.setCapability(Group.ALLOW_CHILDREN_WRITE);
 		parent.setCapability(Group.ALLOW_CHILDREN_EXTEND);
