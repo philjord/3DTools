@@ -33,6 +33,43 @@ public class Utils3D
 	//	infinite bounds for fast decision making
 	public static BoundingSphere defaultBounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY);
 
+	public static float[] extractArrayFromFloatBuffer(final FloatBuffer original)
+	{
+		if (original.hasArray())
+		{
+			return original.array();
+		}
+		else
+		{
+			float[] ret = new float[original.capacity()];
+			original.rewind();
+			original.get(ret);
+			return ret;
+
+		}
+	}
+
+	public static FloatBuffer cloneFloatBuffer(final FloatBuffer original)
+	{
+		// Create clone with same capacity as original.
+		FloatBuffer clone = null;
+		if (original.isDirect())
+		{
+			ByteBuffer bb = ByteBuffer.allocateDirect(original.capacity() * 4);
+			bb.order(ByteOrder.nativeOrder());
+			clone = bb.asFloatBuffer();
+		}
+		else
+		{
+			clone = FloatBuffer.allocate(original.capacity());
+		}
+
+		original.rewind();
+		clone.put(original);
+
+		return clone;
+	}
+
 	public static FloatBuffer makeFloatBuffer(float[] arr)
 	{
 		ByteBuffer bb = ByteBuffer.allocateDirect(arr.length * 4);
@@ -225,7 +262,7 @@ public class Utils3D
 			q1.x = (float) ((rot[7] - rot[5]) * ww);
 			q1.y = (float) ((rot[2] - rot[6]) * ww);
 			q1.z = (float) ((rot[3] - rot[1]) * ww);
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
@@ -238,7 +275,7 @@ public class Utils3D
 			ww = 0.5 / q1.x;
 			q1.y = (float) (rot[3] * ww);
 			q1.z = (float) (rot[6] * ww);
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
@@ -249,14 +286,14 @@ public class Utils3D
 		{
 			q1.y = (float) Math.sqrt(ww);
 			q1.z = (float) (rot[7] / (2.0 * q1.y));
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
 
 		q1.y = 0.0f;
 		q1.z = 1.0f;
-		if(needsNormalize)
+		if (needsNormalize)
 			q1.normalize();
 	}
 
