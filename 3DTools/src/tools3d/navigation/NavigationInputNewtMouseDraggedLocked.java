@@ -6,19 +6,17 @@ import com.jogamp.newt.opengl.GLWindow;
 
 import tools.WeakListenerList;
 
-public class NavigationInputNewtMouseLocked implements MouseListener
+/**
+ * Dragged listener, for Android where no recenter can happen, so mouse down defines the center
+ * @author phil
+ *
+ */
+public class NavigationInputNewtMouseDraggedLocked implements MouseListener
 {
-
-	public static float MOUSE_SENSITIVITY = 1f;
-
 	// multiplyer to get from pixels difference to radian turnage
 	// eg 0.01f mean 100 pixels makes for 1 PI per second or 180 degrees
 
-	private static final float FREE_LOOK_GROSS_ROTATE_FACTOR = -0.002f;
-
-	private static final float FINE_RATIO_OF_GROSS = 0.3f;
-
-	private static final int MAX_PIXEL_FOR_FINE_MOVEMENT = 3;
+	private static final float FREE_LOOK_GROSS_ROTATE_FACTOR = -0.005f;
 
 	// The canvas this handler is operating on
 	private GLWindow glWindow;
@@ -33,7 +31,7 @@ public class NavigationInputNewtMouseLocked implements MouseListener
 
 	private WeakListenerList<NavigationRotationStateListener> navigationRotationStateListeners = new WeakListenerList<NavigationRotationStateListener>();
 
-	public NavigationInputNewtMouseLocked()
+	public NavigationInputNewtMouseDraggedLocked()
 	{
 
 		//	glwindow confinePointer(boolean grab) woot!
@@ -67,17 +65,13 @@ public class NavigationInputNewtMouseLocked implements MouseListener
 		// remove the old canvas listening
 		if (glWindow != null)
 		{
-			glWindow.confinePointer(false);
 			glWindow.removeMouseListener(this);
-			glWindow.setPointerVisible(true);
 		}
 
 		glWindow = newGlWindow;
 		if (glWindow != null)
 		{
-			glWindow.confinePointer(true);
 			glWindow.addMouseListener(this);
-			glWindow.setPointerVisible(false);
 		}
 	}
 
@@ -86,48 +80,29 @@ public class NavigationInputNewtMouseLocked implements MouseListener
 		return glWindow != null;
 	}
 
-	private void recenterMouse()
-	{
-		if (glWindow != null)
-		{
-			// work out where the mouse should be
-			glWindow.warpPointer(glWindow.getWidth() / 2, glWindow.getHeight() / 2);
-		}
-	}
-
-	//private int previousMouseLocationx;
-	//private int previousMouseLocationy;
+	private int mouseDownLocationx;
+	private int mouseDownLocationy;
 
 	public void mouseMoved(MouseEvent e)
 	{
-		// ignore the warpPointer event above
-		if (e.getX() != glWindow.getWidth() / 2 || e.getY() != glWindow.getHeight() / 2)
+		int dx = e.getX() - mouseDownLocationx;
+		int dy = e.getY() - mouseDownLocationy;
+
+		if (dx != 0 || dy != 0)
 		{
-			int dx = e.getX() - (glWindow.getWidth() / 2);
-			int dy = e.getY() - (glWindow.getHeight() / 2);
+			double scaledDeltaX = (double) dx * FREE_LOOK_GROSS_ROTATE_FACTOR;
+			double scaledDeltaY = (double) dy * FREE_LOOK_GROSS_ROTATE_FACTOR;
 
-			if (dx != 0 || dy != 0)
+			if (navigationProcesor != null)
 			{
-				double scaledDeltaX = (double) dx * FREE_LOOK_GROSS_ROTATE_FACTOR * MOUSE_SENSITIVITY;
-				double scaledDeltaY = (double) dy * FREE_LOOK_GROSS_ROTATE_FACTOR * MOUSE_SENSITIVITY;
-
-				if (Math.abs(dy) < MAX_PIXEL_FOR_FINE_MOVEMENT && Math.abs(dx) < MAX_PIXEL_FOR_FINE_MOVEMENT)
-				{
-					scaledDeltaY *= FINE_RATIO_OF_GROSS;
-					scaledDeltaX *= FINE_RATIO_OF_GROSS;
-				}
-
-				if (navigationProcesor != null)
-				{
-					navigationProcesor.changeRotation(scaledDeltaY, scaledDeltaX);
-				}
-
+				navigationProcesor.changeRotation(scaledDeltaY, scaledDeltaX);
 			}
-			//TODO: but how do I send all stopped messages? I'm on a move listener.
-			fireListeners(dx < 0, dx > 0, dy > 0, dy < 0);
 
-			recenterMouse();
+			mouseDownLocationx = e.getX();
+			mouseDownLocationy = e.getY();
+
 		}
+		fireListeners(dx < 0, dx > 0, dy > 0, dy < 0);
 	}
 
 	private void fireListeners(boolean turnLeft, boolean turnRight, boolean turnUp, boolean turnDown)
@@ -159,17 +134,19 @@ public class NavigationInputNewtMouseLocked implements MouseListener
 	@Override
 	public void mouseExited(MouseEvent evt)
 	{
-		recenterMouse();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e)
 	{
+		mouseDownLocationx = e.getX();
+		mouseDownLocationy = e.getY();
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
+		//ignored as a mouse down will need to happen
 	}
 
 	@Override

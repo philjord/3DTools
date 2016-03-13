@@ -71,10 +71,12 @@ public class NavigationInputNewtKey implements KeyListener
 
 	public void keyTyped(KeyEvent e)
 	{
+		System.out.println("Key typed " + e.getKeyChar());
 	}
 
 	public void keyPressed(KeyEvent e)
 	{
+		System.out.println("Key pressed " + e.getKeyChar());
 		//TODO: now on Newt the below may be incorrect
 		// NOTE keyPressed will occur multiple times if a key is
 		// held down by the auto repeat system.
@@ -172,7 +174,7 @@ public class NavigationInputNewtKey implements KeyListener
 
 	public void keyReleased(KeyEvent e)
 	{
-
+		System.out.println("keyReleased " + e.getKeyChar());
 		//To simulated the removed keyTyped(KeyEvent e) semantics, simply apply the following constraints 
 		//upfront and bail out if not matched, i.e.:
 		if (!e.isPrintableKey() || e.isAutoRepeat())
