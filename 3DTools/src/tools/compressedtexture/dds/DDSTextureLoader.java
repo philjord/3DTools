@@ -31,7 +31,7 @@ import tools.compressedtexture.CompressedTextureLoader;
  */
 public class DDSTextureLoader extends CompressedTextureLoader
 {
-	
+
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -52,7 +52,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -93,7 +93,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 	 * @param inputBuffer
 	 * @return
 	 */
- 
+
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
@@ -139,8 +139,9 @@ public class DDSTextureLoader extends CompressedTextureLoader
 		// always 1 level
 		levels = levels == 0 ? 1 : levels;
 
-		Texture2D tex = new Texture2D(ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP, Texture.RGBA,
-				ddsImage.getWidth(), ddsImage.getHeight());
+		int mipMapMode = ddsImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP;
+		//note Texture.RGBA is not used on the pipeline for compressed image, the buffered image holds that info
+		Texture2D tex = new Texture2D(mipMapMode, Texture.RGBA, ddsImage.getWidth(), ddsImage.getHeight());
 
 		tex.setName(filename);
 

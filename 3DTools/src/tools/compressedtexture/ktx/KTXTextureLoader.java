@@ -134,8 +134,10 @@ public class KTXTextureLoader extends CompressedTextureLoader
 		// always 1 level
 		levels = levels == 0 ? 1 : levels;
 
-		Texture2D tex = new Texture2D(ktxImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP, Texture.RGBA,
-				ktxImage.getWidth(), ktxImage.getHeight());
+		int mipMapMode = ktxImage.getNumMipMaps() <= 1 ? Texture.BASE_LEVEL : Texture.MULTI_LEVEL_MIPMAP;
+
+		//note Texture.RGBA is not used on the pipeline for compressed image, the buffered image holds that info
+		Texture2D tex = new Texture2D(mipMapMode, Texture.RGBA, ktxImage.getWidth(), ktxImage.getHeight());
 
 		tex.setName(filename);
 

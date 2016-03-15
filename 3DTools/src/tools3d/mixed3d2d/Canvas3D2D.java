@@ -1,6 +1,7 @@
 package tools3d.mixed3d2d;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.media.j3d.Canvas3D;
 
@@ -63,11 +64,25 @@ public class Canvas3D2D extends Canvas3D
 			sDPI[0] *= 25.4f;
 			sDPI[1] *= 25.4f;
 			dpiH = sDPI[1];
-			/*	System.err.println("Monitor detected: " + mm);
-				System.err.println("Monitor dpi: " + monitorDPI[0] + " x " + monitorDPI[1]);
-				System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
-						+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
-				System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);*/
+			System.err.println("Monitor detected: " + mm);
+			System.err.println("Monitor dpi: " + monitorDPI[0] + " x " + monitorDPI[1]);
+			System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
+					+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
+			System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);
+			
+			
+			//PC
+			//Monitor detected: Monitor[Id 0x0 [primary], 520 x 290 mm, pixelScale [1.0, 1.0], viewport [ 0 / 0  1920 x 1080 ] [pixels], [ 0 / 0  1920 x 1080 ] [window], orig [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], curr [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], modeChanged false, modeCount 148]
+			//Monitor dpi: 93.784615 x 94.5931
+			//Surface scale: native [1.0, 1.0], current [1.0, 1.0]
+			//Surface dpi 93.784615 x 94.5931
+			
+			
+			//Android
+			//Monitor detected: Monitor[Id 0x0 [primary], 61 x 101 mm, pixelScale [1.0, 1.0], viewport [ 0 / 0  1080 x 1776 ] [pixels], [ 0 / 0  1080 x 1776 ] [window], orig [Id 0x0, [ 1080 x 1776 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], curr [Id 0x0, [ 1080 x 1776 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], modeChanged false, modeCount 4]
+			//Monitor dpi: 449.7049 x 446.6376
+			//Surface scale: native [1.0, 1.0], current [1.0, 1.0]
+			//Surface dpi 449.7049 x 446.6376
 		}
 		else
 		{
@@ -93,7 +108,6 @@ public class Canvas3D2D extends Canvas3D
 		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
 		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
 
-		
 		//ummmm....? this caused a crash and is apparently not needed?
 		//GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
 		//renderer.init(gl, renderModes);
@@ -120,7 +134,6 @@ public class Canvas3D2D extends Canvas3D
 		 */
 		final float pixelSizeFPS = fontSizeFpsPVP * this.getGLWindow().getSurfaceHeight();
 		Label ret = new Label(renderer.getRenderState().getVertexFactory(), renderModes, font, pixelSizeFPS * 0.1f, "");
-
 		sceneUIController.addShape(ret);
 
 		return ret;
@@ -139,6 +152,21 @@ public class Canvas3D2D extends Canvas3D
 	public Factory<? extends Vertex> getVertexFactory()
 	{
 		return renderer.getRenderState().getVertexFactory();
+	}
+
+	public int getRenderMode()
+	{
+		return renderModes;
+	}
+
+	public float getPixelSize()
+	{
+		return fontSizeFpsPVP * this.getGLWindow().getSurfaceHeight();
+	}
+
+	public Font getFont()
+	{
+		return font;
 	}
 
 }
