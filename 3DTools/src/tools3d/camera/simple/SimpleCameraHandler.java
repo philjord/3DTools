@@ -39,9 +39,9 @@ public class SimpleCameraHandler extends BranchGroup
 
 	private boolean isFreeLook = true;
 
-	private Transform3D viewTransform = new Transform3D();
+	private boolean topHalfOnly = true;
 
-	//private JFrame parentFrame;
+	private Transform3D viewTransform = new Transform3D();
 
 	private YawPitch yawPitch = new YawPitch();
 
@@ -58,9 +58,16 @@ public class SimpleCameraHandler extends BranchGroup
 	public SimpleCameraHandler(ViewingPlatform _viewingPlatform, Canvas3D _canvas3D, BranchGroup modelGroup,
 			TransformGroup modelRotateTransformGroup, boolean defaultToFreeLook)
 	{
+		this(_viewingPlatform, _canvas3D, modelGroup, modelRotateTransformGroup, defaultToFreeLook, false);
+	}
+
+	public SimpleCameraHandler(ViewingPlatform _viewingPlatform, Canvas3D _canvas3D, BranchGroup modelGroup,
+			TransformGroup modelRotateTransformGroup, boolean defaultToFreeLook, boolean _topHalfOnly)
+	{
 		System.out.println("SimpleCameraHandler right mouse to change from model spin to freelook");
 		this.viewingPlatform = _viewingPlatform;
 		this.canvas3D = _canvas3D;
+		this.topHalfOnly = _topHalfOnly;
 		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
 		freeLookMouseRotate = new MyMouseRotater(canvas3D.getGLWindow(), viewingPlatform.getViewPlatformTransform());
 
@@ -71,7 +78,15 @@ public class SimpleCameraHandler extends BranchGroup
 		freeLookMouseRotate.setEnable(true);
 		addChild(freeLookMouseRotate);
 
-		modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup);
+		modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup) {
+			protected void doProcess(MouseEvent evt)
+			{
+				processMouseEvent(evt);
+				if (!topHalfOnly || evt.getY() < canvas3D.getGLWindow().getHeight() / 2)
+					super.doProcess(evt);
+
+			}
+		};
 		modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
 		modelRotateMouseRotate.setEnable(false);
 		addChild(modelRotateMouseRotate);
@@ -169,8 +184,6 @@ public class SimpleCameraHandler extends BranchGroup
 					m.set(0, 0, 0);
 				}
 
-				
-
 				m.scale(moveAmount);
 
 				viewTransform.get(loc);
@@ -178,7 +191,7 @@ public class SimpleCameraHandler extends BranchGroup
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				
+
 				if (e.getKeyCode() == KeyEvent.VK_PLUS || e.getKeyCode() == KeyEvent.VK_2)
 				{
 					forward();
@@ -187,7 +200,6 @@ public class SimpleCameraHandler extends BranchGroup
 				{
 					back();
 				}
-				
 
 				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
