@@ -90,6 +90,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				vertexProgram += "}";
 
 				String fragmentProgram = ShaderSourceIO.SWAP_VER120_TO_VER100 ? "#version 100\n" : "#version 120\n";
+				fragmentProgram += "precision mediump float;\n";
 				fragmentProgram += alphaTestUniforms;
 				fragmentProgram += "varying vec2 glTexCoord0;uniform sampler2D BaseMap;\n";
 				fragmentProgram += "void main( void ){\n ";
@@ -150,6 +151,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "}";
 
 					String fragmentProgram = ShaderSourceIO.SWAP_VER120_TO_VER100 ? "#version 100\n" : "#version 120\n";
+					fragmentProgram += "precision mediump float;\n";
 					fragmentProgram += "varying vec4 glFrontColor;\n";
 					fragmentProgram += "void main( void ){\n";
 					fragmentProgram += "gl_FragColor = glFrontColor;\n";
@@ -187,6 +189,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "}";
 
 					String fragmentProgram = ShaderSourceIO.SWAP_VER120_TO_VER100 ? "#version 100\n" : "#version 120\n";
+					fragmentProgram += "precision mediump float;\n";
 					fragmentProgram += "varying vec4 glFrontColor;\n";
 					fragmentProgram += "void main( void ){\n";
 					fragmentProgram += "gl_FragColor = glFrontColor;\n";

@@ -15,10 +15,10 @@ public class KTXImage
 
 	public KTXImage(ByteBuffer buf) throws IOException, KTXFormatException
 	{
-		KTXReader reader = KTXReader.getNew(buf);
+		KTXReader reader = new KTXReader(buf, false);
 		headers = reader.getHeaders();
 		textureData = reader.getTextureData();
-		reader.recycle();
+		 
 	}
 
 	public int getNumMipMaps()

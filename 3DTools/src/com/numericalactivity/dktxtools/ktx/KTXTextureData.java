@@ -14,12 +14,12 @@ import com.numericalactivity.dktxtools.utils.TextureUtils;
 public abstract class KTXTextureData
 {
 
-	ByteBuffer[][] _textureData; // données des textures classées par niveau mipmap puis par face
-	int[] _imageSize; // taille des images classées par niveau mipmap
-	short[] _width; // largeur des images classées par niveau mipmap
-	short[] _height; // hauteur des images classées par niveau mipmap
-	byte _numberOfMipmapLevels; // nombre de niveaux mipmap
-	byte _numberOfFaces; // nombre de face par niveau mipmap
+	protected ByteBuffer[][] _textureData; // données des textures classées par niveau mipmap puis par face
+	protected int[] _imageSize; // taille des images classées par niveau mipmap
+	protected short[] _width; // largeur des images classées par niveau mipmap
+	protected short[] _height; // hauteur des images classées par niveau mipmap
+	protected byte _numberOfMipmapLevels; // nombre de niveaux mipmap
+	protected byte _numberOfFaces; // nombre de face par niveau mipmap
 
 	/**
 	 * Retourne le nombre de niveaux mipmap
@@ -289,7 +289,7 @@ public abstract class KTXTextureData
 		/**
 		 * Constructeur
 		 */
-		Reader()
+		public Reader()
 		{
 		}
 
@@ -300,12 +300,12 @@ public abstract class KTXTextureData
 		 * @param ktxHeader headers du fichier
 		 * @throws IOException
 		 */
-		Reader(InputStream in, KTXHeader ktxHeader) throws IOException
+		public Reader(InputStream in, KTXHeader ktxHeader) throws IOException
 		{
 			read(in, ktxHeader);
 		}
 
-		Reader(ByteBuffer in, KTXHeader ktxHeader) throws IOException
+		public Reader(ByteBuffer in, KTXHeader ktxHeader) throws IOException
 		{
 			read(in, ktxHeader);
 		}
@@ -323,13 +323,10 @@ public abstract class KTXTextureData
 			// on ne les recrée pas s'ils ont déjà été initialisés et que le nombre de niveaux mipmap est identique
 			byte numberOfMipmapLevels = (byte) ktxHeader._numberOfMipmapLevels;
 
-			if (null == _textureData || numberOfMipmapLevels != _textureData.length)
-			{
-				_textureData = new ByteBuffer[numberOfMipmapLevels][ktxHeader._numberOfFaces];
-				_imageSize = new int[numberOfMipmapLevels];
-				_width = new short[numberOfMipmapLevels];
-				_height = new short[numberOfMipmapLevels];
-			}
+			_textureData = new ByteBuffer[numberOfMipmapLevels][ktxHeader._numberOfFaces];
+			_imageSize = new int[numberOfMipmapLevels];
+			_width = new short[numberOfMipmapLevels];
+			_height = new short[numberOfMipmapLevels];
 
 			// on récupère les données des textures
 			_numberOfMipmapLevels = numberOfMipmapLevels;
@@ -396,13 +393,10 @@ public abstract class KTXTextureData
 		// on ne les recrée pas s'ils ont déjà été initialisés et que le nombre de niveaux mipmap est identique
 		byte numberOfMipmapLevels = (byte) ktxHeader._numberOfMipmapLevels;
 
-		if (null == _textureData || numberOfMipmapLevels != _textureData.length)
-		{
-			_textureData = new ByteBuffer[numberOfMipmapLevels][ktxHeader._numberOfFaces];
-			_imageSize = new int[numberOfMipmapLevels];
-			_width = new short[numberOfMipmapLevels];
-			_height = new short[numberOfMipmapLevels];
-		}
+		_textureData = new ByteBuffer[numberOfMipmapLevels][ktxHeader._numberOfFaces];
+		_imageSize = new int[numberOfMipmapLevels];
+		_width = new short[numberOfMipmapLevels];
+		_height = new short[numberOfMipmapLevels];
 
 		// on récupère les données des textures
 		_numberOfMipmapLevels = numberOfMipmapLevels;
@@ -410,8 +404,8 @@ public abstract class KTXTextureData
 		_width[0] = (short) ktxHeader._pixelWidth;
 		_height[0] = (short) ktxHeader._pixelHeight;
 		long bytesRead = 0;
-	//	ByteBuffer bufferBytesPerFace = ByteBuffer.allocate(4);
-	//	ByteOrder byteOrder = ktxHeader._byteOrder;
+		//	ByteBuffer bufferBytesPerFace = ByteBuffer.allocate(4);
+		//	ByteOrder byteOrder = ktxHeader._byteOrder;
 		byte[] faceData;
 		byte mipPadding;
 		byte cubePadding;

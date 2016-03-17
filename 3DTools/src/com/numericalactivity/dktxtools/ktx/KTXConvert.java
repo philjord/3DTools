@@ -50,7 +50,7 @@ public class KTXConvert {
         byte numberOfFaces              = (byte) ((buffers.length > 0) ? buffers[0].length : 0);
 
         // on crée le writer KTX
-        KTXWriter ktxWriter             = KTXWriter.getNew(mipmapped, isCubemap, width, height);
+        KTXWriter ktxWriter             = new KTXWriter(mipmapped, isCubemap, width, height);
         KTXMetadata ktxMetadata         = ktxWriter.getMetadata();
         KTXTextureData ktxTextureData   = ktxWriter.getTextureData();
 
@@ -88,7 +88,7 @@ public class KTXConvert {
 
         // écriture du fichier KTX
         ktxWriter.write(out);
-        ktxWriter.recycle();
+ 
     }
 
     /**
@@ -129,7 +129,7 @@ public class KTXConvert {
         byte numberOfFaces              = (byte) pvrHeader.getNumberOfFaces();
         
         // on crée le writer KTX
-        KTXWriter ktxWriter             = KTXWriter.getNew(mipmapped, isCubemap, width, height);
+        KTXWriter ktxWriter             = new KTXWriter(mipmapped, isCubemap, width, height);
         KTXMetadata ktxMetadata         = ktxWriter.getMetadata();
         KTXTextureData ktxTextureData   = ktxWriter.getTextureData();
         
@@ -167,6 +167,6 @@ public class KTXConvert {
         
         // écriture du fichier KTX
         ktxWriter.write(out);
-        ktxWriter.recycle();
+        
     }
 }
