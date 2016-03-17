@@ -69,15 +69,13 @@ public class Canvas3D2D extends Canvas3D
 			System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
 					+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
 			System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);
-			
-			
+
 			//PC
 			//Monitor detected: Monitor[Id 0x0 [primary], 520 x 290 mm, pixelScale [1.0, 1.0], viewport [ 0 / 0  1920 x 1080 ] [pixels], [ 0 / 0  1920 x 1080 ] [window], orig [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], curr [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], modeChanged false, modeCount 148]
 			//Monitor dpi: 93.784615 x 94.5931
 			//Surface scale: native [1.0, 1.0], current [1.0, 1.0]
 			//Surface dpi 93.784615 x 94.5931
-			
-			
+
 			//Android
 			//Monitor detected: Monitor[Id 0x0 [primary], 61 x 101 mm, pixelScale [1.0, 1.0], viewport [ 0 / 0  1080 x 1776 ] [pixels], [ 0 / 0  1080 x 1776 ] [window], orig [Id 0x0, [ 1080 x 1776 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], curr [Id 0x0, [ 1080 x 1776 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], modeChanged false, modeCount 4]
 			//Monitor dpi: 449.7049 x 446.6376
@@ -121,9 +119,12 @@ public class Canvas3D2D extends Canvas3D
 	public void postRender()
 	{
 		//Stenciled things might be teh last displayed in the renderer, so turn off the stencil in case it's on
-		GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
-		gl.glDisable(GL2.GL_STENCIL_TEST);
-		sceneUIController.display(this.getGLWindow());
+		if (this.getGLWindow().getGL() != null)
+		{
+			GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
+			gl.glDisable(GL2.GL_STENCIL_TEST);
+			sceneUIController.display(this.getGLWindow());
+		}
 	}
 
 	public Label createLabel()
