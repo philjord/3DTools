@@ -10,7 +10,7 @@ import com.sun.j3d.utils.shader.StringIO;
 
 public class ShaderSourceIO
 {
-	public static boolean SWAP_VER120_TO_VER100 = false;
+	public static boolean DESKTOP_SHADERS = false;
 
 	public static String getTextFileAsString(String fileName)
 	{
@@ -28,9 +28,15 @@ public class ShaderSourceIO
 				sourceCode = StringIO.readFully(new File(fileName));
 			}
 
-			if (SWAP_VER120_TO_VER100)
+			if (DESKTOP_SHADERS)
 			{
 				sourceCode = sourceCode.replace("#version 120", "#version 100");
+
+				//TODO: also swap the normal swizzle!
+				sourceCode = sourceCode.replace("vec4 normalMap = vec4( texture2D( NormalMap, offset ).ag * 2.0 - 1.0, 0.0, 0.0 );",
+						"vec4 normal = texture2D( NormalMap, offset );");
+				sourceCode = sourceCode.replace("normalMap.z = sqrt( 1.0 - dot( normalMap.xy,normalMap.xy ) );",
+						"normal.rgb = normal.rgb * 2.0 - 1.0;");
 			}
 
 			return sourceCode;
