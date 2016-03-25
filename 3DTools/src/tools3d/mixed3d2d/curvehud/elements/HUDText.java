@@ -22,54 +22,53 @@ public class HUDText
 
 	private Color4f textColor = new Color4f(1.0f, 1.0f, 0.8f, 1f);
 
-	private Color4f textGreyColor = new Color4f(textColor);
+	private Color4f greyTextColor = new Color4f(textColor);
+	private Color4f currentTextColor = textColor;
 
 	private Color4f textShadowColor = new Color4f(0.3f, 0.3f, 0.2f, 0.7f);
 
 	private Font textFont;
 
 	private Font greyTextFont;
+	private Font currentTextFont;
+
+	private int fontSize;
 
 	private Canvas3D2D currentCanvas;
 
 	private Point2f point;
 
-	public HUDText(Canvas3D2D canvas3d, Point2f point)
+	private String text;
+
+	public HUDText(Point2f point, String text)
 	{
-		this(canvas3d, point, 36);
+		this(point, 36, text);
 	}
 
-	public HUDText(Canvas3D2D canvas3d, Point2f point, int fontSize)
+	public HUDText(Point2f point, int fontSize, String text)
 	{
-		this(canvas3d, point, fontSize, true);
+		this(point, fontSize, true, text);
 	}
 
-	public HUDText(Canvas3D2D canvas3d, Point2f point, int fontSize, boolean alignHCenter)
+	public HUDText(Point2f point, int fontSize, boolean alignHCenter, String text)
 	{
+		this.text = text;
 		this.alignHCenter = alignHCenter;
 		this.point = point;
-		textGreyColor.scale(0.8f);
+		this.fontSize = fontSize;
+		greyTextColor.scale(0.8f);
 
 		try
 		{
 			textFont = FontFactory.get(FontFactory.UBUNTU).getDefault();
 			greyTextFont = FontFactory.get(FontFactory.UBUNTU).get(FontSet.FAMILY_REGULAR, FontSet.STYLE_ITALIC);
+			currentTextFont = textFont;
 		}
 		catch (final IOException ioe)
 		{
 			throw new RuntimeException(ioe);
 		}
 
-		textShadowElement = new Label(canvas3d.getVertexFactory(), 0, textFont, fontSize * 0.002f, "");
-		textShadowElement.setEnabled(true);
-		textShadowElement.translate(point.x + 0.01f, point.y + 0.01f, 0f);
-		textShadowElement.setColor(textShadowColor.x, textShadowColor.y, textShadowColor.z, textShadowColor.w);
-
-		textElement = new Label(canvas3d.getVertexFactory(), 0, greyTextFont, fontSize * 0.002f, "");
-		textElement.setEnabled(true);
-		textElement.translate(point.x, point.y, 0f);
-		textElement.setColor(textColor.x, textColor.y, textColor.z, textColor.w);
-		addToCanvas(canvas3d);
 	}
 
 	public void addToCanvas(Canvas3D2D canvas)
@@ -78,9 +77,24 @@ public class HUDText
 		{
 			removeFromCanvas();
 		}
+
+		if (textShadowElement == null)
+		{
+			textShadowElement = new Label(canvas.getVertexFactory(), 0, currentTextFont, fontSize * 0.002f, text);
+			textShadowElement.setEnabled(true);
+			textShadowElement.translate(point.x - 0.005f, point.y + 0.005f, 0f);
+			textShadowElement.setColor(textShadowColor.x, textShadowColor.y, textShadowColor.z, textShadowColor.w);
+
+			textElement = new Label(canvas.getVertexFactory(), 0, currentTextFont, fontSize * 0.002f, text);
+			textElement.setEnabled(true);
+			textElement.translate(point.x, point.y, 0f);
+			textElement.setColor(currentTextColor.x, currentTextColor.y, currentTextColor.z, currentTextColor.w);
+		}
+
 		currentCanvas = canvas;
-		canvas.addUIShape(textElement);
 		canvas.addUIShape(textShadowElement);
+		canvas.addUIShape(textElement);
+
 	}
 
 	public void removeFromCanvas()
@@ -93,27 +107,36 @@ public class HUDText
 		}
 	}
 
-	public void setLocation(float x, float y)
+	public void setLocation(Point2f point)
 	{
-		textElement.translate(x, y, 0f);
-		textShadowElement.translate(x + 0.01f, y + 0.01f, 0f);
+		this.point = point;
+		if (textShadowElement != null)
+		{
+			textElement.translate(point.x, point.y, 0f);
+			textShadowElement.translate(point.x + 0.01f, point.y + 0.01f, 0f);
+		}
 	}
 
 	public void setText(String newText)
 	{
-
-		int hOffset = 0;
+		this.text = newText;
+		currentTextFont = textFont;
+		currentTextColor = textColor;
+		//int hOffset = 0;
 		if (alignHCenter)
 		{
 			//FIXME: noHalign
 			//int sw = textElement.getGraphics().getFontMetrics(textFont).stringWidth(newText);
 			//hOffset = (rectangle.width / 2) - (sw / 2);
 		}
-
-		//textShadowElement.setText(newText);
-		textElement.setColor(textColor.x, textColor.y, textColor.z, textColor.w);
-		textElement.setFont(textFont);
-		textElement.setText(newText);
+		if (textShadowElement != null)
+		{
+			textShadowElement.setFont(currentTextFont);
+			textShadowElement.setText(newText);
+			textElement.setFont(currentTextFont);
+			textElement.setText(newText);
+			textElement.setColor(currentTextColor.x, currentTextColor.y, currentTextColor.z, currentTextColor.w);
+		}
 
 		//debug outliner
 		//textElement.getGraphics().drawRect(0, 0, rectangle.width-1, rectangle.height-1); 
@@ -122,18 +145,24 @@ public class HUDText
 
 	public void setTextGreyed(String newText)
 	{
-		int hOffset = 0;
+		this.text = newText;
+		currentTextFont = greyTextFont;
+		currentTextColor = greyTextColor;
+	//	int hOffset = 0;
 		if (alignHCenter)
 		{
 			//int sw = textElement.getGraphics().getFontMetrics(textFont).stringWidth(newText);
 			//hOffset = (rectangle.width / 2) - (sw / 2);
 		}
 
-		textElement.setColor(textGreyColor.x, textGreyColor.y, textGreyColor.z, textGreyColor.w);
-		textElement.setFont(greyTextFont);
-		textElement.setText(newText);
+		if (textShadowElement != null)
+		{
+			textElement.setColor(currentTextColor.x, currentTextColor.y, currentTextColor.z, currentTextColor.w);
+			textElement.setFont(currentTextFont);
+			textElement.setText(newText);
 
-		textShadowElement.setText("");
+			textShadowElement.setText("");
+		}
 
 	}
 }

@@ -8,7 +8,7 @@ import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.scenegraph.LocationUpdateListener;
 
-public class HUDPosition   implements LocationUpdateListener
+public class HUDPosition implements LocationUpdateListener
 {
 
 	private Label posLabel;
