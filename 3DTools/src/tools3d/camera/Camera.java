@@ -5,8 +5,6 @@ import javax.media.j3d.View;
 
 import com.sun.j3d.utils.universe.Viewer;
 
-import tools3d.audio.JOALMixer;
-
 //TODO: Camera really doesn't need to extend the utility class viewer
 // but I'd need to reproduce the ViewingPlatfrom business too
 public class Camera extends Viewer
@@ -17,20 +15,20 @@ public class Camera extends Viewer
 
 	public static float BACK_CLIP = 5000f;
 
+	public static long MIN_FRAME_CYCLE_TIME = 15;// max 66fps
+
 	private double FOV = 80;
 
 	//TODO: No sound at all now, but will be again one day 
 	// just needs com jogamp openal library included
 	//java.lang.NoClassDefFoundError: Failed resolution of: Lcom/jogamp/openal/util/ALut;
-   // at tools3d.audio.JOALMixer.initialize(JOALMixer.java:810)
-//	public static JOALMixer mixer = null;
-
+	// at tools3d.audio.JOALMixer.initialize(JOALMixer.java:810)
+	//	public static JOALMixer mixer = null;
 
 	public Camera(Canvas3D canvas3D)
 	{
 		// create a viewer with the given canvas, physical environemnt and physical body are defaulted
 		super(canvas3D);
-
 
 		getView().setTransparencySortingPolicy(View.TRANSPARENCY_SORT_GEOMETRY);
 
@@ -38,7 +36,7 @@ public class Camera extends Viewer
 		getView().setFrontClipPolicy(View.VIRTUAL_EYE);
 		getView().setFrontClipDistance(FRONT_CLIP);
 		getView().setBackClipDistance(BACK_CLIP);
-		getView().setMinimumFrameCycleTime(15);// max 66fps
+		getView().setMinimumFrameCycleTime(MIN_FRAME_CYCLE_TIME);
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?
@@ -48,20 +46,20 @@ public class Camera extends Viewer
 		getView().setFieldOfView(fov);
 
 		//other wise restricted access exception
-/*		if (mixer == null && getView().getUserHeadToVworldEnable())
-		{
-			// create and adds a joalmixer as the audio device
-			mixer = new JOALMixer(getPhysicalEnvironment());
-
-			boolean success = mixer.initialize();
-
-			if (!success)
-			{
-				System.out.println("Open AL failed to init");
-				// remove the audio device
-				getPhysicalEnvironment().setAudioDevice(null);
-			}
-		}*/
+		/*		if (mixer == null && getView().getUserHeadToVworldEnable())
+				{
+					// create and adds a joalmixer as the audio device
+					mixer = new JOALMixer(getPhysicalEnvironment());
+		
+					boolean success = mixer.initialize();
+		
+					if (!success)
+					{
+						System.out.println("Open AL failed to init");
+						// remove the audio device
+						getPhysicalEnvironment().setAudioDevice(null);
+					}
+				}*/
 
 	}
 
