@@ -21,6 +21,8 @@ import javax.vecmath.Point3f;
 
 public class BetterDistanceLOD extends Behavior
 {
+	public static float FADE_RANGE_DIVISOR = 15f;
+
 	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
 	private WakeupOnElapsedFrames wakeupFrame0 = new WakeupOnElapsedFrames(0, true);
@@ -50,7 +52,8 @@ public class BetterDistanceLOD extends Behavior
 		this.roots = roots;
 		for (BranchGroup bg : roots)
 		{
-			bg.setCapability(BranchGroup.ALLOW_DETACH);
+			if (bg != null)
+				bg.setCapability(BranchGroup.ALLOW_DETACH);
 		}
 
 		this.distances = new double[distances.length];
@@ -101,7 +104,7 @@ public class BetterDistanceLOD extends Behavior
 			wakeupOn(wakeupFrame10);
 			return;
 		}
-///////////////////////////
+		///////////////////////////
 		ViewPlatform vp = v.getViewPlatform();
 		if (vp == null)
 		{
@@ -116,7 +119,7 @@ public class BetterDistanceLOD extends Behavior
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
 		double viewDistance = center.distance(viewPosition);
-///////////////////////////
+		///////////////////////////
 		/*	Canvas3D canvas = v.getCanvas3D(0);
 			// rotate about axis
 			canvas.getCenterEyeInImagePlate(viewPosition);
@@ -134,19 +137,19 @@ public class BetterDistanceLOD extends Behavior
 				canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
 			}
 			xform.transform(viewPosition);
-
+		
 			parent.getLocalToVworld(xform);
-
+		
 			xform.invert(); // xform is now vWorldToLocal
-
+		
 			// transform the eye position into the billboard's coordinate system
 			xform.transform(viewPosition);
-
+		
 			// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
 			// so let's just use the length 
 			double viewDistance = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y)
 					+ (viewPosition.z * viewPosition.z));
-
+		
 			//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
 			// see bloated float sign, test
 			viewDistance = viewDistance / xform.getScale();
@@ -191,7 +194,7 @@ public class BetterDistanceLOD extends Behavior
 			prevIndex = newIndex;
 		}
 
-		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / 15f));
+		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / FADE_RANGE_DIVISOR));
 		//System.out.println("viewDistance " + viewDistance + ": distDiff " + distDiff + ": fadeRange " + fadeRange);
 		//simple case not near interface, just for a plain model
 		if (distDiff > fadeRange)
