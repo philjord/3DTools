@@ -172,23 +172,22 @@ public class NavigationInputNewtMove implements MouseListener
 		{
 			int ex = e.getX(i);
 			int ey = e.getY(i);
-			
+
 			if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
 			{
 				//relative to center of quarter screen
 				int rex = ex - (glWindow.getWidth() / 4);
-				int rey = ey - ((glWindow.getHeight() / 2)+(glWindow.getHeight() / 4));
-				
+				int rey = ey - ((glWindow.getHeight() / 2) + (glWindow.getHeight() / 4));
 
 				//if free flight and touching side, only do the side work (note ex not rex)
 				if (isAllowVerticalMovement() && ex < (glWindow.getWidth() / 8))
 				{
-					if (rey > 0 && !upHeldDown)
+					if (rey < 0 && !upHeldDown)
 					{
 						upHeldDown = true;
 						setTranslationChange();
 					}
-					else if (rey < 0 && !downHeldDown)
+					else if (rey > 0 && !downHeldDown)
 					{
 						downHeldDown = true;
 						setTranslationChange();
