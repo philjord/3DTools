@@ -10,7 +10,7 @@ import com.sun.j3d.utils.shader.StringIO;
 
 public class ShaderSourceIO
 {
-	public static boolean DESKTOP_SHADERS = false;
+	public static boolean ES_SHADERS = false;
 
 	public static String getTextFileAsString(String fileName)
 	{
@@ -28,7 +28,7 @@ public class ShaderSourceIO
 				sourceCode = StringIO.readFully(new File(fileName));
 			}
 
-			if (DESKTOP_SHADERS)
+			if (ES_SHADERS)
 			{
 				sourceCode = sourceCode.replace("#version 120", "#version 100");
 

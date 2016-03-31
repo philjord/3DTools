@@ -90,7 +90,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 						return "SimpleShaderAppearance textureShaderProgram";
 					}
 				};
-				String vertexProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+				String vertexProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 				vertexProgram += "attribute vec4 glVertex;\n";
 				vertexProgram += "attribute vec2 glMultiTexCoord0;\n";
 				vertexProgram += "uniform mat4 glModelViewProjectionMatrix;\n";
@@ -100,7 +100,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 				vertexProgram += "glTexCoord0 = glMultiTexCoord0.st;\n";
 				vertexProgram += "}";
 
-				String fragmentProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+				String fragmentProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 				fragmentProgram += "precision mediump float;\n";
 				fragmentProgram += alphaTestUniforms;
 				fragmentProgram += "varying vec2 glTexCoord0;\n";
@@ -150,7 +150,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 							return "SimpleShaderAppearance colorLineShaderProgram";
 						}
 					};
-					String vertexProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+					String vertexProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
 					vertexProgram += "uniform int ignoreVertexColors;\n";
@@ -165,7 +165,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "	glFrontColor = glColor;\n";
 					vertexProgram += "}";
 
-					String fragmentProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+					String fragmentProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 					fragmentProgram += "precision mediump float;\n";
 					fragmentProgram += "varying vec4 glFrontColor;\n";
 					fragmentProgram += "void main( void ){\n";
@@ -191,7 +191,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 							return "SimpleShaderAppearance flatShaderProgram";
 						}
 					};
-					String vertexProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+					String vertexProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 					vertexProgram += "attribute vec4 glVertex;\n";
 					vertexProgram += "attribute vec4 glColor;\n";
 					vertexProgram += "uniform int ignoreVertexColors;\n";
@@ -206,7 +206,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 					vertexProgram += "	glFrontColor = glColor;\n";
 					vertexProgram += "}";
 
-					String fragmentProgram = ShaderSourceIO.DESKTOP_SHADERS ? "#version 100\n" : "#version 120\n";
+					String fragmentProgram = ShaderSourceIO.ES_SHADERS ? "#version 100\n" : "#version 120\n";
 					fragmentProgram += "precision mediump float;\n";
 					fragmentProgram += "varying vec4 glFrontColor;\n";
 					fragmentProgram += "void main( void ){\n";
