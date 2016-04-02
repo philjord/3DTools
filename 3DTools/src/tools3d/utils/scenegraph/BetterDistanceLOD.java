@@ -85,7 +85,8 @@ public class BetterDistanceLOD extends Behavior
 	// deburners
 	//private Point3d viewPosition = new Point3d();
 	//private Transform3D xform = new Transform3D();
-
+	private Transform3D localToWorldTrans = new Transform3D();
+	
 	@SuppressWarnings("rawtypes")
 	public void processStimulus(Enumeration criteria)
 	{
@@ -113,8 +114,7 @@ public class BetterDistanceLOD extends Behavior
 		}
 
 		J3dUtil.getViewPosition(vp, viewPosition);
-
-		Transform3D localToWorldTrans = new Transform3D();
+		
 		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
