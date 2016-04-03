@@ -173,6 +173,7 @@ public class NavigationInputNewtMove implements MouseListener
 			int ex = e.getX(i);
 			int ey = e.getY(i);
 
+			// free flight is on the top half of screen one 1/8th of screen
 			if (isAllowVerticalMovement() && ey < (glWindow.getHeight() / 2) && ex < (glWindow.getWidth() / 8))
 			{
 				if (ey < (glWindow.getHeight() / 4) && !upHeldDown)
@@ -188,35 +189,44 @@ public class NavigationInputNewtMove implements MouseListener
 			}
 			else if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
 			{
+				// notice lower Y is higher up screen! which is not natural at all!
+
 				//relative to center of quarter screen
 				int rex = ex - (glWindow.getWidth() / 4);
 				int rey = ey - ((glWindow.getHeight() / 2) + (glWindow.getHeight() / 4));
 
-				//if free flight and touching side, only do the side work (note ex not rex)
-				// free flight is on the top half of screen one 1/8th of screen
-
-				if (rey < -(glWindow.getHeight() / 8) && !runHeldDown)
+				// fast is top 1/4 of square (==1/8 screen)
+				// back is bottom 1/4 
+				// left and right is each 1/4
+				// central 1/2 x 1/2 is just move forward
+				int halfSizeH = (glWindow.getHeight() / 4);
+				int quarterSizeH = (glWindow.getHeight() / 8);
+				int quarterSizeW = (glWindow.getWidth() / 8);
+				if (rey <= -quarterSizeH && !runHeldDown)
 				{
 					runHeldDown = true;
 					setTranslationChange();
 				}
-				else if (rey < 0 && rex > -(glWindow.getHeight() / 8) && !walkHeldDown)
-				{
-					walkHeldDown = true;
-					setTranslationChange();
-				}
-				else if (rey > 0 && !backHeldDown)
+				else if (rey >= quarterSizeH && !backHeldDown)
 				{
 					backHeldDown = true;
 					setTranslationChange();
 				}
+				//complex in order to leave a plain straf at 1/4 up spot
+				else if ((rey > -quarterSizeH && rey < quarterSizeH) // am I in the center half sized space
+						&& !(rey > halfSizeH && rex < -quarterSizeW)//but not to the left or right at the lower quarter
+						&& !(rey > halfSizeH && rex > quarterSizeW) && !walkHeldDown)
+				{
+					walkHeldDown = true;
+					setTranslationChange();
+				}
 
-				if (rex < 0 && !strafLeftHeldDown)
+				if (rex < -quarterSizeW && !strafLeftHeldDown)
 				{
 					strafLeftHeldDown = true;
 					setTranslationChange();
 				}
-				else if (rex > 0 && !strafRightHeldDown)
+				else if (rex > quarterSizeW && !strafRightHeldDown)
 				{
 					strafRightHeldDown = true;
 					setTranslationChange();

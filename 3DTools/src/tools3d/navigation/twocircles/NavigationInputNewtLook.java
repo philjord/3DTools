@@ -108,8 +108,8 @@ public class NavigationInputNewtLook implements MouseListener
 						navigationProcesor.changeRotation(scaledDeltaY, scaledDeltaX);
 					}
 
-					mouseDownLocationx = e.getX();
-					mouseDownLocationy = e.getY();
+					mouseDownLocationx = ex;
+					mouseDownLocationy = ey;
 
 				}
 				fireListeners(dx < 0, dx > 0, dy > 0, dy < 0);
