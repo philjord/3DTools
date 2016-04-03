@@ -173,54 +173,53 @@ public class NavigationInputNewtMove implements MouseListener
 			int ex = e.getX(i);
 			int ey = e.getY(i);
 
-			if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
+			if (isAllowVerticalMovement() && ey < (glWindow.getHeight() / 2) && ex < (glWindow.getWidth() / 8))
+			{
+				if (ey < (glWindow.getHeight() / 4) && !upHeldDown)
+				{
+					upHeldDown = true;
+					setTranslationChange();
+				}
+				else if (ey > (glWindow.getHeight() / 4) && !downHeldDown)
+				{
+					downHeldDown = true;
+					setTranslationChange();
+				}
+			}
+			else if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
 			{
 				//relative to center of quarter screen
 				int rex = ex - (glWindow.getWidth() / 4);
 				int rey = ey - ((glWindow.getHeight() / 2) + (glWindow.getHeight() / 4));
 
 				//if free flight and touching side, only do the side work (note ex not rex)
-				if (isAllowVerticalMovement() && ex < (glWindow.getWidth() / 8))
-				{
-					if (rey < 0 && !upHeldDown)
-					{
-						upHeldDown = true;
-						setTranslationChange();
-					}
-					else if (rey > 0 && !downHeldDown)
-					{
-						downHeldDown = true;
-						setTranslationChange();
-					}
-				}
-				else
-				{
-					if (rey < -(glWindow.getHeight() / 8) && !runHeldDown)
-					{
-						runHeldDown = true;
-						setTranslationChange();
-					}
-					else if (rey < 0 && rex > -(glWindow.getHeight() / 8) && !walkHeldDown)
-					{
-						walkHeldDown = true;
-						setTranslationChange();
-					}
-					else if (rey > 0 && !backHeldDown)
-					{
-						backHeldDown = true;
-						setTranslationChange();
-					}
+				// free flight is on the top half of screen one 1/8th of screen
 
-					if (rex < 0 && !strafLeftHeldDown)
-					{
-						strafLeftHeldDown = true;
-						setTranslationChange();
-					}
-					else if (rex > 0 && !strafRightHeldDown)
-					{
-						strafRightHeldDown = true;
-						setTranslationChange();
-					}
+				if (rey < -(glWindow.getHeight() / 8) && !runHeldDown)
+				{
+					runHeldDown = true;
+					setTranslationChange();
+				}
+				else if (rey < 0 && rex > -(glWindow.getHeight() / 8) && !walkHeldDown)
+				{
+					walkHeldDown = true;
+					setTranslationChange();
+				}
+				else if (rey > 0 && !backHeldDown)
+				{
+					backHeldDown = true;
+					setTranslationChange();
+				}
+
+				if (rex < 0 && !strafLeftHeldDown)
+				{
+					strafLeftHeldDown = true;
+					setTranslationChange();
+				}
+				else if (rex > 0 && !strafRightHeldDown)
+				{
+					strafRightHeldDown = true;
+					setTranslationChange();
 				}
 
 			}
@@ -231,14 +230,28 @@ public class NavigationInputNewtMove implements MouseListener
 	@Override
 	public void mouseReleased(MouseEvent e)
 	{
-		runHeldDown = false;
-		walkHeldDown = false;
-		backHeldDown = false;
-		strafLeftHeldDown = false;
-		strafRightHeldDown = false;
-		upHeldDown = false;
-		downHeldDown = false;
-		setTranslationChange();
+		// find out if it's touching one of the areas for movement
+		for (int i = 0; i < e.getPointerCount(); i++)
+		{
+			int ex = e.getX(i);
+			int ey = e.getY(i);
+
+			if (isAllowVerticalMovement() && ey < (glWindow.getHeight() / 2) && ex < (glWindow.getWidth() / 8))
+			{
+				upHeldDown = false;
+				downHeldDown = false;
+				setTranslationChange();
+			}
+			else if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
+			{
+				runHeldDown = false;
+				walkHeldDown = false;
+				backHeldDown = false;
+				strafLeftHeldDown = false;
+				strafRightHeldDown = false;
+				setTranslationChange();
+			}
+		}
 	}
 
 	@Override
@@ -249,28 +262,31 @@ public class NavigationInputNewtMove implements MouseListener
 	@Override
 	public void mouseEntered(MouseEvent e)
 	{
+		mousePressed(e);
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e)
 	{
+		mouseReleased(e);
 	}
 
 	@Override
 	public void mouseMoved(MouseEvent e)
 	{
 		mousePressed(e);
-
 	}
 
 	@Override
 	public void mouseDragged(MouseEvent e)
 	{
+		mousePressed(e);
 	}
 
 	@Override
 	public void mouseWheelMoved(MouseEvent e)
 	{
+		System.out.println("What mouse wheel moved?");
 	}
 
 }
