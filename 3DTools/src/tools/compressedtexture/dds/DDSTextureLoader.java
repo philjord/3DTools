@@ -10,6 +10,7 @@ import javax.media.j3d.DDSImageComponent2D;
 import javax.media.j3d.ImageComponent;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureUnitState;
 
 import javaawt.image.BufferedImage;
 import tools.compressedtexture.CompressedTextureLoader;
@@ -32,6 +33,57 @@ import tools.compressedtexture.CompressedTextureLoader;
 public class DDSTextureLoader extends CompressedTextureLoader
 {
 
+	public static TextureUnitState getTextureUnitState(File file)
+	{
+		String filename = file.getAbsolutePath();
+		try
+		{
+			return getTextureUnitState(filename, new FileInputStream(file));
+		}
+		catch (IOException e)
+		{
+			System.out
+					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			return null;
+		}
+	}
+
+	public static TextureUnitState getTextureUnitState(String filename, InputStream inputStream)
+	{
+		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+
+		if (ret_val == null)
+		{
+			Texture tex = getTexture(filename, inputStream);
+			//notice nulls are fine
+
+			TextureUnitState tus = new TextureUnitState();
+			tus.setTexture(tex);
+			tus.setName(filename);
+			loadedTextureUnitStates.put(filename, tus);
+			ret_val = tus;
+		}
+		return ret_val;
+	}
+
+	public static TextureUnitState getTextureUnitState(String filename, ByteBuffer inputBuffer)
+	{
+		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+
+		if (ret_val == null)
+		{
+			Texture tex = getTexture(filename, inputBuffer);
+			//notice nulls are fine
+
+			TextureUnitState tus = new TextureUnitState();
+			tus.setTexture(tex);
+			tus.setName(filename);
+			loadedTextureUnitStates.put(filename, tus);
+			ret_val = tus;
+		}
+		return ret_val;
+	}
+
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
 	 * Note it may return a Texture loaded earlier
@@ -47,8 +99,8 @@ public class DDSTextureLoader extends CompressedTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println(
-					"" + CompressedTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			System.out
+					.println("" + DDSTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 	}

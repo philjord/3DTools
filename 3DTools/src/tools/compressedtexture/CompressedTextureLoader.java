@@ -7,6 +7,7 @@ import java.nio.ByteBuffer;
 
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureUnitState;
 
 import tools.WeakValueHashMap;
 import tools.io.FastByteArrayInputStream;
@@ -42,6 +43,7 @@ public abstract class CompressedTextureLoader
 	 * Note WeakValueHashMap are self expunging
 	 */
 	protected static WeakValueHashMap<String, Texture2D> loadedTextures = new WeakValueHashMap<String, Texture2D>();
+	protected static WeakValueHashMap<String, TextureUnitState> loadedTextureUnitStates = new WeakValueHashMap<String, TextureUnitState>();
 
 	//private static RequestStats requestStats = new RequestStats(loadedTextures);
 
@@ -57,6 +59,14 @@ public abstract class CompressedTextureLoader
 
 		return loadedTextures.get(filename);
 	}
+	
+	public static TextureUnitState checkCachedTextureUnitState(String filename)
+	{
+		//enable to test is caching is good
+		//requestStats.request(filename);
+
+		return loadedTextureUnitStates.get(filename);
+	}
 
 	/**
 	 * For debug purposes
@@ -64,6 +74,7 @@ public abstract class CompressedTextureLoader
 	public static void clearCache()
 	{
 		loadedTextures.clear();
+		loadedTextureUnitStates.clear();
 	}
 
 	protected static int computeLog(int value)

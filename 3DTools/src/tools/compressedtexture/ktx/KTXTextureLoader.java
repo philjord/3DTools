@@ -10,6 +10,7 @@ import javax.media.j3d.ImageComponent;
 import javax.media.j3d.KTXImageComponent2D;
 import javax.media.j3d.Texture;
 import javax.media.j3d.Texture2D;
+import javax.media.j3d.TextureUnitState;
 
 import com.numericalactivity.dktxtools.ktx.KTXFormatException;
 
@@ -21,6 +22,56 @@ import tools.compressedtexture.CompressedTextureLoader;
  */
 public class KTXTextureLoader extends CompressedTextureLoader
 {
+	public static TextureUnitState getTextureUnitState(File file)
+	{
+		String filename = file.getAbsolutePath();
+		try
+		{
+			return getTextureUnitState(filename, new FileInputStream(file));
+		}
+		catch (IOException e)
+		{
+			System.out
+					.println("" + KTXTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			return null;
+		}
+	}
+
+	public static TextureUnitState getTextureUnitState(String filename, InputStream inputStream)
+	{
+		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+
+		if (ret_val == null)
+		{
+			Texture tex = getTexture(filename, inputStream);
+			//notice nulls are fine
+
+			TextureUnitState tus = new TextureUnitState();
+			tus.setTexture(tex);
+			tus.setName(filename);
+			loadedTextureUnitStates.put(filename, tus);
+			ret_val = tus;
+		}
+		return ret_val;
+	}
+
+	public static TextureUnitState getTextureUnitState(String filename, ByteBuffer inputBuffer)
+	{
+		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+
+		if (ret_val == null)
+		{
+			Texture tex = getTexture(filename, inputBuffer);
+			//notice nulls are fine
+
+			TextureUnitState tus = new TextureUnitState();
+			tus.setTexture(tex);
+			tus.setName(filename);
+			loadedTextureUnitStates.put(filename, tus);
+			ret_val = tus;
+		}
+		return ret_val;
+	}
 
 	/**
 	 * Returns the associated Texture object or null if the image failed to load
@@ -37,8 +88,8 @@ public class KTXTextureLoader extends CompressedTextureLoader
 		}
 		catch (IOException e)
 		{
-			System.out.println(
-					"" + CompressedTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
+			System.out
+					.println("" + KTXTextureLoader.class + " had a  IO problem with " + filename + " : " + e + " " + e.getStackTrace()[0]);
 			return null;
 		}
 	}
