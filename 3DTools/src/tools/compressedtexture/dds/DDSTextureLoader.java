@@ -58,6 +58,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			//notice nulls are fine
 
 			TextureUnitState tus = new TextureUnitState();
+			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
 			loadedTextureUnitStates.put(filename, tus);
@@ -76,6 +77,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			//notice nulls are fine
 
 			TextureUnitState tus = new TextureUnitState();
+			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
 			loadedTextureUnitStates.put(filename, tus);
