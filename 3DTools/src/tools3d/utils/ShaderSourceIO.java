@@ -32,11 +32,11 @@ public class ShaderSourceIO
 			{
 				sourceCode = sourceCode.replace("#version 120", "#version 100");
 
-				//TODO: also swap the normal swizzle!
+				//also swap the normal swizzle!
 				sourceCode = sourceCode.replace("vec4 normalMap = vec4( texture2D( NormalMap, offset ).ag * 2.0 - 1.0, 0.0, 0.0 );",
-						"vec4 normal = texture2D( NormalMap, offset );");
+						"vec4 normalMap = texture2D( NormalMap, offset );");
 				sourceCode = sourceCode.replace("normalMap.z = sqrt( 1.0 - dot( normalMap.xy,normalMap.xy ) );",
-						"normal.rgb = normal.rgb * 2.0 - 1.0;");
+						"normalMap.rgb = normalMap.rgb * 2.0 - 1.0;");
 			}
 
 			return sourceCode;
