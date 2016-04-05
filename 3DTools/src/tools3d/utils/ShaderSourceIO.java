@@ -37,6 +37,10 @@ public class ShaderSourceIO
 						"vec4 normalMap = texture2D( NormalMap, offset );");
 				sourceCode = sourceCode.replace("normalMap.z = sqrt( 1.0 - dot( normalMap.xy,normalMap.xy ) );",
 						"normalMap.rgb = normalMap.rgb * 2.0 - 1.0;");
+				
+				//fo4_env.frag use a function not in frag shader for ES
+				sourceCode = sourceCode.replace("vec4 cube = textureCubeLod( CubeMap, reflectedWS, 8.0 - g * 8.0 );"
+						,"vec4 cube = textureCube( CubeMap, reflectedWS);");
 			}
 
 			return sourceCode;
