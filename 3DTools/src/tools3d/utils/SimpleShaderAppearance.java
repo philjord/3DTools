@@ -77,6 +77,7 @@ public class SimpleShaderAppearance extends ShaderAppearance
 	 */
 	private SimpleShaderAppearance(Color3f color, boolean hasTexture)
 	{
+		clearCapabilities();
 		if (hasTexture)
 		{
 			RenderingAttributes ra = new RenderingAttributes();
