@@ -39,7 +39,7 @@ public class KTXTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, InputStream inputStream)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -50,7 +50,7 @@ public class KTXTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -58,7 +58,7 @@ public class KTXTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, ByteBuffer inputBuffer)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -69,7 +69,7 @@ public class KTXTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -106,17 +106,14 @@ public class KTXTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, InputStream inputStream)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
 			try
 			{
 				KTXImage ktxImage = new KTXImage(toByteBuffer(inputStream));
-				Texture2D tex = createTexture(filename, ktxImage);
-
-				loadedTextures.put(filename, tex);
-				ret_val = tex;
+				ret_val = createTexture(filename, ktxImage);
 			}
 			catch (IOException e)
 			{
@@ -145,16 +142,14 @@ public class KTXTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
 			try
 			{
 				KTXImage ktxImage = new KTXImage(inputBuffer);
-				Texture2D tex = createTexture(filename, ktxImage);
-				loadedTextures.put(filename, tex);
-				ret_val = tex;
+				ret_val = createTexture(filename, ktxImage);
 			}
 			catch (IOException e)
 			{
@@ -217,7 +212,7 @@ public class KTXTextureLoader extends CompressedTextureLoader
 			tex.setImage(i, new KTXImageComponent2D(ImageComponent.FORMAT_RGBA, image));
 		}
 
-		loadedTextures.put(filename, tex);
+		cacheTexture(filename, tex);
 
 		return tex;
 

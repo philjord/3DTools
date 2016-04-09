@@ -50,7 +50,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, InputStream inputStream)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -61,7 +61,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -69,7 +69,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, ByteBuffer inputBuffer)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -80,7 +80,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -117,17 +117,14 @@ public class DDSTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, InputStream inputStream)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
 			try
 			{
 				DDSImage ddsImage = DDSImage.read(toByteBuffer(inputStream));
-
 				Texture2D tex = createTexture(filename, ddsImage);
-
-				loadedTextures.put(filename, tex);
 				ret_val = tex;
 			}
 			catch (IOException e)
@@ -151,7 +148,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
@@ -159,7 +156,6 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			{
 				DDSImage ddsImage = DDSImage.read(inputBuffer);
 				Texture2D tex = createTexture(filename, ddsImage);
-				loadedTextures.put(filename, tex);
 				ret_val = tex;
 			}
 			catch (IOException e)
@@ -222,7 +218,7 @@ public class DDSTextureLoader extends CompressedTextureLoader
 			tex.setImage(i, new DDSImageComponent2D(ImageComponent.FORMAT_RGBA, image));
 		}
 
-		loadedTextures.put(filename, tex);
+		cacheTexture(filename, tex);
 
 		ddsImage.close();
 

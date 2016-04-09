@@ -42,13 +42,14 @@ public abstract class CompressedTextureLoader
 	 * in use by at least one Appearence node in the scene graph
 	 * Note WeakValueHashMap are self expunging
 	 */
-	protected static WeakValueHashMap<String, Texture2D> loadedTextures = new WeakValueHashMap<String, Texture2D>();
-	protected static WeakValueHashMap<String, TextureUnitState> loadedTextureUnitStates = new WeakValueHashMap<String, TextureUnitState>();
+	private static WeakValueHashMap<String, Texture2D> loadedTextures = new WeakValueHashMap<String, Texture2D>();
+	private static WeakValueHashMap<String, TextureUnitState> loadedTextureUnitStates = new WeakValueHashMap<String, TextureUnitState>();
 
 	//private static RequestStats requestStats = new RequestStats(loadedTextures);
 
 	/**
 	* Called to early out in case of cache hit, very likely to return null!
+	* cached with no extension, so double up in type will be a problem
 	* @param filename
 	* @return Possibly a pre-loaded Texture, does not load if not found
 	*/
@@ -59,13 +60,28 @@ public abstract class CompressedTextureLoader
 
 		return loadedTextures.get(filename);
 	}
-	
+
+	/**
+	 * cached with no extension, so double up in type will be a problem
+	 * @param filename
+	 * @return
+	 */
 	public static TextureUnitState checkCachedTextureUnitState(String filename)
 	{
 		//enable to test is caching is good
 		//requestStats.request(filename);
 
-		return loadedTextureUnitStates.get(filename);
+		return loadedTextureUnitStates.get(filename.replace(".dss", "").replace(".ktx", "").replace(".atc", ""));
+	}
+
+	public static void cacheTexture(String filename, Texture2D tex)
+	{
+		loadedTextures.put(filename.replace(".dss", "").replace(".ktx", "").replace(".atc", ""), tex);
+	}
+
+	public static void cacheTextureUnitState(String filename, TextureUnitState tus)
+	{
+		loadedTextureUnitStates.put(filename.replace(".dss", "").replace(".ktx", "").replace(".atc", ""), tus);
 	}
 
 	/**

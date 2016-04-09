@@ -37,7 +37,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, InputStream inputStream)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -48,7 +48,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -56,7 +56,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 
 	public static TextureUnitState getTextureUnitState(String filename, ByteBuffer inputBuffer)
 	{
-		TextureUnitState ret_val = loadedTextureUnitStates.get(filename);
+		TextureUnitState ret_val = checkCachedTextureUnitState(filename);
 
 		if (ret_val == null)
 		{
@@ -67,7 +67,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
-			loadedTextureUnitStates.put(filename, tus);
+			cacheTextureUnitState(filename, tus);
 			ret_val = tus;
 		}
 		return ret_val;
@@ -104,7 +104,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, InputStream inputStream)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
@@ -113,8 +113,6 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 				ASTCImage astcImage = new ASTCImage(toByteBuffer(inputStream));
 
 				Texture2D tex = createTexture(filename, astcImage);
-
-				loadedTextures.put(filename, tex);
 				ret_val = tex;
 			}
 			catch (IOException e)
@@ -137,13 +135,12 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 	public static Texture getTexture(String filename, ByteBuffer inputBuffer)
 	{
 		// Check the cache for an instance first
-		Texture ret_val = loadedTextures.get(filename);
+		Texture ret_val = checkCachedTexture(filename);
 
 		if (ret_val == null)
 		{
 			ASTCImage astcImage = new ASTCImage(inputBuffer);
 			Texture2D tex = createTexture(filename, astcImage);
-			loadedTextures.put(filename, tex);
 			ret_val = tex;
 		}
 		return ret_val;
@@ -176,7 +173,7 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 		BufferedImage image = new ASTCBufferedImage(astcImage, 0, filename);
 		tex.setImage(0, new ASTCImageComponent2D(ImageComponent.FORMAT_RGBA, image));
 
-		loadedTextures.put(filename, tex);
+		cacheTexture(filename, tex);
 
 		return tex;
 	}
