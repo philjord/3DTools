@@ -21,7 +21,7 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 		this.setCallBack(this);
 	}
 
-	public void add(Group parent, Node child)
+	public synchronized void add(Group parent, Node child)
 	{
 		if (parent.isLive())
 			this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.ADD, parent, child));
@@ -29,7 +29,7 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			parent.addChild(child);
 	}
 
-	public void remove(Group parent, Node child)
+	public synchronized void remove(Group parent, Node child)
 	{
 		if (parent.isLive())
 			this.addToQueue(new StructureUpdate(StructureUpdate.TYPE.REMOVE, parent, child));
@@ -37,13 +37,13 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			parent.removeChild(child);
 	}
 
-	public void remove(Node child)
+	public synchronized void remove(Node child)
 	{
 		remove((Group) child.getParent(), child);
 	}
 
 	@Override
-	public void addToQueue(Object parameter)
+	public synchronized void addToQueue(Object parameter)
 	{
 		if (parameter instanceof StructureUpdate)
 		{
