@@ -35,22 +35,28 @@ public class Utils3D
 
 	public static float[] extractArrayFromFloatBuffer(final FloatBuffer original)
 	{
+
 		if (original.hasArray())
 		{
 			return original.array();
 		}
 		else
 		{
-			float[] ret = new float[original.capacity()];
-			original.rewind();
-			original.get(ret);
-			return ret;
 
+			float[] ret = new float[original.capacity()];
+			// in case 2 threads try at the same time!
+			synchronized (original)
+			{
+				original.rewind();
+				original.get(ret);
+				return ret;
+			}
 		}
 	}
 
 	public static FloatBuffer cloneFloatBuffer(final FloatBuffer original)
 	{
+
 		// Create clone with same capacity as original.
 		FloatBuffer clone = null;
 		if (original.isDirect())
@@ -64,9 +70,13 @@ public class Utils3D
 			clone = FloatBuffer.allocate(original.capacity());
 		}
 
-		original.rewind();
-		clone.put(original);
+		// in case 2 threads try to clone at the same time!
+		synchronized (original)
+		{
+			original.rewind();
+			clone.put(original);
 
+		}
 		return clone;
 	}
 
