@@ -20,6 +20,8 @@ public class QueuingCallbackBehavior extends Behavior
 {
 	private ArrayList<Object> queue = new ArrayList<Object>();
 
+	
+
 	private CallBack callBack;
 
 	private boolean newestOnly = false;
@@ -121,6 +123,15 @@ public class QueuingCallbackBehavior extends Behavior
 		{
 			queue.add(parameter);
 		}
+	}
+	
+	/**
+	 * For DEBUG only! do not add or remove!
+	 * @return
+	 */
+	public ArrayList<Object> getQueue()
+	{
+		return queue;
 	}
 
 	public static interface CallBack

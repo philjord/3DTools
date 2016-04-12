@@ -1,17 +1,17 @@
 package tools3d.utils.scenegraph;
 
 import javax.media.j3d.Group;
+import javax.media.j3d.MultipleParentException;
 import javax.media.j3d.Node;
 
 /** NOTE! j3d does not allow multi threaded access to add and remove groups
-// It can cause deadlocks, betterdistanceLOD on teh behavior thread is
+// It can cause deadlocks, betterdistanceLOD on the behavior thread is
 // doing structure change addChild, removeChild etc, 
- so these queueing callbakcs need to be on the behavior thread as well.
+ so these queuing callbacks need to be on the behavior thread as well.
  
- Notice for non live scene graphs this system immediately makes teh call and does not queue anything
+ Notice for non live scene graphs this system immediately makes the call and does not queue anything
  
- https://java.net/jira/browse/JAVA3D-193
- 
+ https://java.net/jira/browse/JAVA3D-193 
 */
 public class StructureUpdateBehavior extends QueuingCallbackBehavior implements QueuingCallbackBehavior.CallBack
 {
@@ -64,7 +64,14 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			StructureUpdate structureUpdate = (StructureUpdate) parameter;
 			if (structureUpdate.type == StructureUpdate.TYPE.ADD)
 			{
-				structureUpdate.parent.addChild(structureUpdate.child);
+				try
+				{
+					structureUpdate.parent.addChild(structureUpdate.child);
+				}
+				catch (MultipleParentException e)
+				{
+					System.out.println("MultipleParentException parent =" + structureUpdate.parent + " child = " + structureUpdate.child);
+				}
 			}
 			else if (structureUpdate.type == StructureUpdate.TYPE.REMOVE)
 			{
@@ -100,6 +107,11 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 			this.type = type;
 			this.parent = parent;
 			this.child = child;
+		}
+
+		public String toString()
+		{
+			return "StructureUpdate: t=" + type + " p=" + parent + " c=" + child;
 		}
 	}
 
