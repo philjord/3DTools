@@ -406,7 +406,7 @@ public abstract class KTXTextureData
 		long bytesRead = 0;
 		//	ByteBuffer bufferBytesPerFace = ByteBuffer.allocate(4);
 		//	ByteOrder byteOrder = ktxHeader._byteOrder;
-		byte[] faceData;
+//		byte[] faceData;
 		byte mipPadding;
 		byte cubePadding;
 		byte i;
@@ -415,19 +415,26 @@ public abstract class KTXTextureData
 		{
 			// on récupère la taille de chaque face en prenant en compte l'ordre de lecture récupéré dans les headers
 			_imageSize[mipmapLevel] = in.getInt();
-			faceData = new byte[_imageSize[mipmapLevel]];
+//			faceData = new byte[_imageSize[mipmapLevel]];
 			_width[mipmapLevel] = TextureUtils.getDimensionForMipmapLevel(mipmapLevel, _width[0]);
 			_height[mipmapLevel] = TextureUtils.getDimensionForMipmapLevel(mipmapLevel, _height[0]);
 
 			for (byte face = 0; face < _numberOfFaces; face++)
 			{
 				// on crée le ByteBuffer sans oublier de redéfinir son ordre à celui indique dans les headers
-				_textureData[mipmapLevel][face] = ByteBuffer.allocateDirect(_imageSize[mipmapLevel]);
+/*				_textureData[mipmapLevel][face] = ByteBuffer.allocateDirect(_imageSize[mipmapLevel]);
 				in.get(faceData);
 
 				_textureData[mipmapLevel][face].put(faceData);
 				_textureData[mipmapLevel][face].position(0);
-				_textureData[mipmapLevel][face].order(ktxHeader._byteOrder);
+				_textureData[mipmapLevel][face].order(ktxHeader._byteOrder);*/
+				
+				//hold onto your pants!	I'm slicing it			
+				_textureData[mipmapLevel][face] = in.slice();
+				_textureData[mipmapLevel][face].limit(_imageSize[mipmapLevel]);				
+				_textureData[mipmapLevel][face].order(ktxHeader._byteOrder);				
+				in.position(in.position() + _imageSize[mipmapLevel]);
+				
 
 				bytesRead += _imageSize[mipmapLevel];
 
