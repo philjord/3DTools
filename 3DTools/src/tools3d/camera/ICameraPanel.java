@@ -8,12 +8,14 @@ public interface ICameraPanel
 
 	public void startRendering();
 
-	public void setSceneAntialiasingEnable(boolean aaRequired);
+	public boolean isRendering();
 
 	public void stopRendering();
 
 	public IDolly getDolly();
 
 	public void setDolly(IDolly dolly);
+
+	public void setSceneAntialiasingEnable(boolean aaRequired);
 
 }
