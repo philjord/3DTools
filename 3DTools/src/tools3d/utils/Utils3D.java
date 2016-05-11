@@ -35,21 +35,28 @@ public class Utils3D
 
 	public static float[] extractArrayFromFloatBuffer(final FloatBuffer original)
 	{
-
-		if (original.hasArray())
+		if (original == null)
 		{
-			return original.array();
+			System.err.println("Utils3D.extractArrayFromFloatBuffer orignal is null");
+			throw new UnsupportedOperationException();
 		}
 		else
 		{
-
-			float[] ret = new float[original.capacity()];
-			// in case 2 threads try at the same time!
-			synchronized (original)
+			if (original.hasArray())
 			{
-				original.rewind();
-				original.get(ret);
-				return ret;
+				return original.array();
+			}
+			else
+			{
+
+				float[] ret = new float[original.capacity()];
+				// in case 2 threads try at the same time!
+				synchronized (original)
+				{
+					original.rewind();
+					original.get(ret);
+					return ret;
+				}
 			}
 		}
 	}
@@ -57,27 +64,35 @@ public class Utils3D
 	public static FloatBuffer cloneFloatBuffer(final FloatBuffer original)
 	{
 
-		// Create clone with same capacity as original.
-		FloatBuffer clone = null;
-		if (original.isDirect())
+		if (original == null)
 		{
-			ByteBuffer bb = ByteBuffer.allocateDirect(original.capacity() * 4);
-			bb.order(ByteOrder.nativeOrder());
-			clone = bb.asFloatBuffer();
+			System.err.println("Utils3D.extractArrayFromFloatBuffer orignal is null");
+			throw new UnsupportedOperationException();
 		}
 		else
 		{
-			clone = FloatBuffer.allocate(original.capacity());
-		}
+			// Create clone with same capacity as original.
+			FloatBuffer clone = null;
+			if (original.isDirect())
+			{
+				ByteBuffer bb = ByteBuffer.allocateDirect(original.capacity() * 4);
+				bb.order(ByteOrder.nativeOrder());
+				clone = bb.asFloatBuffer();
+			}
+			else
+			{
+				clone = FloatBuffer.allocate(original.capacity());
+			}
 
-		// in case 2 threads try to clone at the same time!
-		synchronized (original)
-		{
-			original.rewind();
-			clone.put(original);
+			// in case 2 threads try to clone at the same time!
+			synchronized (original)
+			{
+				original.rewind();
+				clone.put(original);
 
+			}
+			return clone;
 		}
-		return clone;
 	}
 
 	public static FloatBuffer makeFloatBuffer(float[] arr)
