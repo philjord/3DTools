@@ -32,6 +32,7 @@ public class ShaderSourceIO
 			{
 				sourceCode = sourceCode.replace("#version 120", "#version 100");
 				sourceCode = sourceCode.replace("#version 140", "#version 300 es");
+				sourceCode = sourceCode.replace("#version 150", "#version 300 es");
 
 				//also swap the normal swizzle!
 				sourceCode = sourceCode.replace("vec4 normalMap = vec4( texture2D( NormalMap, offset ).ag * 2.0 - 1.0, 0.0, 0.0 );",
