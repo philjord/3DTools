@@ -70,6 +70,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	/**
 	 * Initialize method that sets up initial wakeup criteria.
 	 */
+	@Override
 	public void initialize()
 	{
 		// Insert wakeup condition into queue
@@ -104,8 +105,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	 * @param criteria an enumeration of the criteria that caused the
 	 * stimulus
 	 */
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
+	@Override
 	public void processStimulus(Enumeration criteria)
 	{
 
@@ -142,7 +142,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		///////////////////////////
 		//  get viewplatforms's location in virutal world
 		/*Canvas3D canvas = v.getCanvas3D(0);
-
+		
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);
 		// transform the points to the Billboard's space
@@ -155,14 +155,14 @@ public abstract class VaryingLODBehaviour extends Behavior
 			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
 		}
 		xform.transform(viewPosition);
-
+		
 		node.getLocalToVworld(xform);
-
+		
 		xform.invert(); // xform is now vWorldToLocal
-
+		
 		// transform the eye position into the billboard's coordinate system
 		xform.transform(viewPosition);
-
+		
 		// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
 		//so let's just use the length for setting the wakeup
 		double dist = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y) + (viewPosition.z * viewPosition.z));
@@ -180,42 +180,51 @@ public abstract class VaryingLODBehaviour extends Behavior
 			{
 				node.getLocalToVworld(mv);// put bounds from local node coords to vworld coords				
 				BoundingSphere b = new BoundingSphere(node.getBounds());// cheap if sphere or box
-				b.transform(mv);
-
-				//NifCharacter is good
-				//J3dNiController seems normally to be a 50 (bones good, but flip texture no so)
-				//if (b.getRadius() == 50)
-
-				// get center
-				b.getCenter(c);
-				// get trans from world to clip
-				view.getCanvas3D(0).getVworldProjection(pj, pr);
-				//use a 4tuple to allow perspective to be returned
-				t.set(c.x, c.y, c.z, 1);
-				// trans center from vworld to clip coords
-				pj.transform(t);
-				// Perspective division (don't forget this step)
-				c.x = t.x / t.w;
-				c.y = t.y / t.w;
-				c.z = t.z / t.w;
-
-				// now a very long radius scale operation against perspective
-				b.getCenter(c2);
-				t.set(c2.x, c2.y, c2.z - b.getRadius(), 1);
-				pj.transform(t);
-				c2.x = t.x / t.w;
-				c2.y = t.y / t.w;
-				c2.z = t.z / t.w;
-				c2.x -= c.x;
-				c2.y -= c.y;
-				c2.z -= c.z;
-
-				double r2 = Math.sqrt((c2.x * c2.x) + (c2.y * c2.y) + (c2.z * c2.z));
-
-				if (sphereIntersectUnitBox(c, r2))
+				if (b.getRadius() == Double.POSITIVE_INFINITY)
 				{
 					process();
 				}
+				else
+				{
+
+					b.transform(mv);
+
+					//NifCharacter is good
+					//J3dNiController seems normally to be a 50 (bones good, but flip texture no so)
+					//if (b.getRadius() == 50)
+
+					// get center
+					b.getCenter(c);
+					// get trans from world to clip
+					view.getCanvas3D(0).getVworldProjection(pj, pr);
+					//use a 4tuple to allow perspective to be returned
+					t.set(c.x, c.y, c.z, 1);
+					// trans center from vworld to clip coords
+					pj.transform(t);
+					// Perspective division (don't forget this step)
+					c.x = t.x / t.w;
+					c.y = t.y / t.w;
+					c.z = t.z / t.w;
+
+					// now a very long radius scale operation against perspective
+					b.getCenter(c2);
+					t.set(c2.x, c2.y, c2.z - b.getRadius(), 1);
+					pj.transform(t);
+					c2.x = t.x / t.w;
+					c2.y = t.y / t.w;
+					c2.z = t.z / t.w;
+					c2.x -= c.x;
+					c2.y -= c.y;
+					c2.z -= c.z;
+
+					double r2 = Math.sqrt((c2.x * c2.x) + (c2.y * c2.y) + (c2.z * c2.z));
+
+					if (sphereIntersectUnitBox(c, r2))
+					{
+						process();
+					}
+				}
+
 			}
 			catch (NullPointerException e)
 			{
@@ -227,18 +236,22 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 		//		Insert wakeup condition into queue
 		if (viewDistance < dists[0])
+
 		{
 			wakeupOn(wakeup0);
 		}
 		else if (viewDistance < dists[1])
+
 		{
 			wakeupOn(wakeup1);
 		}
 		else if (viewDistance < dists[2])
+
 		{
 			wakeupOn(wakeup2);
 		}
 		else
+
 		{
 			wakeupOn(wakeup3);
 		}
