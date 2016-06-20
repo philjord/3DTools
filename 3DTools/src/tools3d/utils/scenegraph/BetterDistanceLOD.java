@@ -41,11 +41,19 @@ public class BetterDistanceLOD extends Behavior
 
 	private ArrayList<BranchGroup> roots;
 
+	private boolean popOnly = false;// if set true then no fading at all, only detach/attach
+
 	static final double EPSILON = 1.0e-6;
 
 	public BetterDistanceLOD(Group parent, ArrayList<BranchGroup> roots, float[] distances)
 	{
+		this(parent, roots, distances, false);
+	}
+
+	public BetterDistanceLOD(Group parent, ArrayList<BranchGroup> roots, float[] distances, boolean popOnly)
+	{
 		this.parent = parent;
+		this.popOnly = popOnly;
 		parent.setCapability(Group.ALLOW_CHILDREN_WRITE);
 		parent.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		parent.setCapability(Node.ALLOW_LOCAL_TO_VWORLD_READ);
@@ -53,7 +61,15 @@ public class BetterDistanceLOD extends Behavior
 		for (BranchGroup bg : roots)
 		{
 			if (bg != null)
+			{
 				bg.setCapability(BranchGroup.ALLOW_DETACH);
+				
+				if (!popOnly && bg instanceof Fadable)
+				{
+					// tell the group to prepare itself for fading
+					((Fadable) bg).fade(-1f);
+				}
+			}
 		}
 
 		this.distances = new double[distances.length];
@@ -62,7 +78,6 @@ public class BetterDistanceLOD extends Behavior
 		{
 			this.distances[i] = distances[i];
 		}
-
 	}
 
 	@Override
@@ -86,8 +101,8 @@ public class BetterDistanceLOD extends Behavior
 	//private Point3d viewPosition = new Point3d();
 	//private Transform3D xform = new Transform3D();
 	private Transform3D localToWorldTrans = new Transform3D();
-	
-	@SuppressWarnings("rawtypes")
+
+	@Override
 	public void processStimulus(Enumeration criteria)
 	{
 		if (parent == null)
@@ -114,7 +129,7 @@ public class BetterDistanceLOD extends Behavior
 		}
 
 		J3dUtil.getViewPosition(vp, viewPosition);
-		
+
 		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
@@ -199,10 +214,13 @@ public class BetterDistanceLOD extends Behavior
 		//simple case not near interface, just for a plain model
 		if (distDiff > fadeRange)
 		{
-			// ensure no fade for new index
-			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+			if (!popOnly)
 			{
-				((Fadable) roots.get(newIndex)).fade(0f);
+				// ensure no fade for new index
+				if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+				{
+					((Fadable) roots.get(newIndex)).fade(0f);
+				}
 			}
 
 			// and neighbour not added
@@ -215,11 +233,14 @@ public class BetterDistanceLOD extends Behavior
 		}
 		else
 		{
-			float fade = (float) (distDiff / fadeRange);
-			//	System.out.println("fade " + fade);
-			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+			if (!popOnly)
 			{
-				((Fadable) roots.get(newIndex)).fade(1f - fade);
+				float fade = (float) (distDiff / fadeRange);
+				//	System.out.println("fade " + fade);
+				if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+				{
+					((Fadable) roots.get(newIndex)).fade(1f - fade);
+				}
 			}
 
 			if (newIndex + 1 < roots.size() && roots.get(newIndex + 1) instanceof Fadable)
@@ -230,10 +251,12 @@ public class BetterDistanceLOD extends Behavior
 				// one side looks better all round (neighbour is always opaque)
 				ensureAdded(newIndex + 1, true);
 			}
+
 		}
 
 		// Insert wakeup condition into queueif based on proximity to interesting ness
 		if (distDiff < 1.5)
+
 			wakeupOn(wakeupFrame0);
 		else if (distDiff < 5)
 			wakeupOn(wakeupFrame2);
@@ -254,7 +277,7 @@ public class BetterDistanceLOD extends Behavior
 			if (bg != null && !bg.isLive())
 			{
 				parent.addChild(bg);
-				if (removeFade && bg instanceof Fadable)
+				if (!popOnly && removeFade && bg instanceof Fadable)
 				{
 					((Fadable) bg).fade(0f);
 				}
@@ -270,7 +293,7 @@ public class BetterDistanceLOD extends Behavior
 			if (bg != null && bg.isLive())
 			{
 				parent.removeChild(bg);
-				if (bg instanceof Fadable)
+				if (!popOnly && bg instanceof Fadable)
 				{
 					((Fadable) bg).fade(0f);
 				}
