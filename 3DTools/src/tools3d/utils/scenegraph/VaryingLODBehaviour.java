@@ -41,6 +41,9 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 	private boolean frustumOnly = false;
 
+	private View view = null;// once set can't be changed, probably a bad idea
+	private ViewPlatform vp = null;
+
 	/**
 	 * if node is null this will be used for distance check
 	 * Dists must be 3 floats! 40,120,280 is fine
@@ -100,6 +103,9 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 	private Transform3D pr = new Transform3D(); //ignored 
 
+	private Transform3D localToWorldTrans = new Transform3D();
+	private BoundingSphere b = new BoundingSphere();
+
 	/**
 	 * Process stimulus method that computes appropriate transform.
 	 * @param criteria an enumeration of the criteria that caused the
@@ -116,25 +122,31 @@ public abstract class VaryingLODBehaviour extends Behavior
 			return;
 		}
 
-		View view = this.getView();
 		if (view == null)
 		{
-			//System.out.println("view null");
-			wakeupOn(wakeup3);
-			return;
+			view = this.getView();
+			if (view == null)
+			{
+				//System.out.println("view null");
+				wakeupOn(wakeup3);
+				return;
+			}
 		}
 
 		///////////////////////////
-		ViewPlatform vp = view.getViewPlatform();
+
 		if (vp == null)
 		{
-			wakeupOn(wakeup3);
-			return;
+			vp = view.getViewPlatform();
+			if (vp == null)
+			{
+				wakeupOn(wakeup3);
+				return;
+			}
 		}
 
 		J3dUtil.getViewPosition(vp, viewPosition);
 
-		Transform3D localToWorldTrans = new Transform3D();
 		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
@@ -179,7 +191,10 @@ public abstract class VaryingLODBehaviour extends Behavior
 			try
 			{
 				node.getLocalToVworld(mv);// put bounds from local node coords to vworld coords				
-				BoundingSphere b = new BoundingSphere(node.getBounds());// cheap if sphere or box
+
+				b.set(node.getBounds());// cheap if sphere or box
+
+				//positive infinity is everywhere so we always intersect with it
 				if (b.getRadius() == Double.POSITIVE_INFINITY)
 				{
 					process();
@@ -236,22 +251,18 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 		//		Insert wakeup condition into queue
 		if (viewDistance < dists[0])
-
 		{
 			wakeupOn(wakeup0);
 		}
 		else if (viewDistance < dists[1])
-
 		{
 			wakeupOn(wakeup1);
 		}
 		else if (viewDistance < dists[2])
-
 		{
 			wakeupOn(wakeup2);
 		}
 		else
-
 		{
 			wakeupOn(wakeup3);
 		}
@@ -260,7 +271,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		//wakeupOn(new WakeupOnElapsedFrames(100, true)); 
 	}
 
-	private boolean sphereIntersectUnitBox(Point3d sphereCenter, double radius)
+	private static boolean sphereIntersectUnitBox(Point3d sphereCenter, double radius)
 	{
 		// Get the center of the sphere relative to the center of the box
 		double scx = sphereCenter.x;
@@ -309,8 +320,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		double disty = scy - bpy;
 		double distz = scz - bpz;
 
-		//orignal had ^2 of radius instead of sqrt but doesn't work for < 1 radius!
-		if (Math.sqrt((distx * distx) + (disty * disty) + (distz * distz)) < radius)
+		if ((distx * distx) + (disty * disty) + (distz * distz) < radius * radius)
 			return true;
 		else
 			return false;
