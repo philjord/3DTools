@@ -45,8 +45,8 @@ public abstract class VaryingLODBehaviour extends Behavior
 	private ViewPlatform vp = null;
 
 	/**
-	 * if node is null this will be used for distance check
 	 * Dists must be 3 floats! 40,120,280 is fine
+	 * if node is null this will be used for distance check
 	 * Defaults to passive=true
 	 *TODO: like knots add frames and dist arrays 
 	 * @param node
