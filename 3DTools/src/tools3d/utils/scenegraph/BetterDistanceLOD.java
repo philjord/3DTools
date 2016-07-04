@@ -227,10 +227,11 @@ public class BetterDistanceLOD extends Behavior
 			ensureRemoved(newIndex + 1);
 
 		}
-		else if (distDiff <= 0)
-		{
-			System.out.println("BetterDistanceLOD can this ever happen? " + distDiff);
-		}
+		//else if (distDiff <= 0)
+		//{
+			//Yes!
+			//System.out.println("BetterDistanceLOD can this ever happen? " + distDiff);
+		//}
 		else
 		{
 			if (!popOnly)
