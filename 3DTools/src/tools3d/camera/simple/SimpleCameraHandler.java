@@ -310,11 +310,11 @@ public class SimpleCameraHandler extends BranchGroup
 			// some time radius is -1 or a massive number, ignore those
 			if (boundingSphere.getRadius() < 50000 && boundingSphere.getRadius() > 0)
 			{
-				eye.z = boundingSphere.getRadius() * 2d;
+				eye.z = boundingSphere.getRadius() * 1.1d;
 			}
 			else
 			{
-				eye.z = 10;
+				eye.z = 5;
 				System.out.println("boundingSphere.getRadius() " + boundingSphere.getRadius());
 			}
 			setView(eye, center);
