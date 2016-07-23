@@ -176,19 +176,25 @@ public class NavigationInputNewtMove implements MouseListener
 			// free flight is on the top half of screen one 1/8th of screen
 			if (isAllowVerticalMovement() && ey < (glWindow.getHeight() / 2) && ex < (glWindow.getWidth() / 8))
 			{
+				upHeldDown = false;
+				downHeldDown = false;
+
 				if (ey < (glWindow.getHeight() / 4) && !upHeldDown)
 				{
 					upHeldDown = true;
-					setTranslationChange();
 				}
 				else if (ey > (glWindow.getHeight() / 4) && !downHeldDown)
 				{
 					downHeldDown = true;
-					setTranslationChange();
 				}
+				setTranslationChange();
 			}
 			else if (ex < (glWindow.getWidth() / 2) && ey > (glWindow.getHeight() / 2))
 			{
+				backHeldDown = false;
+				walkHeldDown = false;
+				strafLeftHeldDown = false;
+				strafRightHeldDown = false;
 				// notice lower Y is higher up screen! which is not natural at all!
 
 				//relative to center of quarter screen
@@ -199,40 +205,39 @@ public class NavigationInputNewtMove implements MouseListener
 				// back is bottom 1/4 
 				// left and right is each 1/4
 				// central 1/2 x 1/2 is just move forward
-				int halfSizeH = (glWindow.getHeight() / 4);
+				//int halfSizeH = (glWindow.getHeight() / 4);
 				int quarterSizeH = (glWindow.getHeight() / 8);
 				int quarterSizeW = (glWindow.getWidth() / 8);
-				if (rey <= -quarterSizeH && !runHeldDown)
+
+				// run removed as troubling
+				/*if (rey <= -quarterSizeH && !runHeldDown)
 				{
 					runHeldDown = true;
 					setTranslationChange();
 				}
-				else if (rey >= quarterSizeH && !backHeldDown)
-				{
-					backHeldDown = true;
-					setTranslationChange();
-				}
-				//complex in order to leave a plain straf at 1/4 up spot
-				else if ((rey > -quarterSizeH && rey < quarterSizeH) // am I in the center half sized space
-						&& !(rey > halfSizeH && rex < -quarterSizeW)//but not to the left or right at the lower quarter
-						&& !(rey > halfSizeH && rex > quarterSizeW) && !walkHeldDown)
-				{
-					walkHeldDown = true;
-					setTranslationChange();
-				}
-
-				if (rex < -quarterSizeW && !strafLeftHeldDown)
+				else 
+				*/
+				if (rex < -quarterSizeW)
 				{
 					strafLeftHeldDown = true;
-					setTranslationChange();
 				}
-				else if (rex > quarterSizeW && !strafRightHeldDown)
+				else if (rex > quarterSizeW)
 				{
 					strafRightHeldDown = true;
-					setTranslationChange();
+				}
+				else if (rey >= quarterSizeH)
+				{
+					backHeldDown = true;
+				}
+				else if (rey < quarterSizeH)
+				{
+					walkHeldDown = true;
 				}
 
+				
+				setTranslationChange();
 			}
+
 		}
 
 	}
@@ -261,6 +266,7 @@ public class NavigationInputNewtMove implements MouseListener
 				strafRightHeldDown = false;
 				setTranslationChange();
 			}
+
 		}
 	}
 
