@@ -7,6 +7,7 @@ import javax.media.j3d.Transform3D;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 import javax.vecmath.Quat4f;
+import javax.vecmath.SingularMatrixException;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 
@@ -17,7 +18,7 @@ public class TrailerCamDolly extends Dolly
 {
 	private static final Vector3d Y_UP = new Vector3d(0, 1, 0);
 
-	private static final float TRAIL_MAX_DIST = 15;
+	private static final float TRAIL_MAX_DIST = 7;
 
 	// amount to come in off any hits to stop "sideways" frustrum view holes
 	private static final float TRAIL_DIST_MARGIN = 0.25f;
@@ -68,7 +69,8 @@ public class TrailerCamDolly extends Dolly
 
 	private Vector3f prevTrans = new Vector3f();
 
-	//Note we set teh locations values up, but process does the work, in case teh world changes without us moving (a door opens)
+	//Note we set the locations values up, but process does the work, in case the world changes without us moving (a door opens)
+	@Override
 	public void locationUpdated(Quat4f rot, Vector3f trans)
 	{
 		// only update if new things have happened
@@ -96,49 +98,60 @@ public class TrailerCamDolly extends Dolly
 
 	public synchronized void processCamera()
 	{
-		long dt = (System.nanoTime() - lastUpdateTime) / 1000000;
-		float maxFractionForDT = TRAIL_MAX_FRACTION_DELTA_PER_SEC * (dt / 1000f);
-
-		// set hit fraction
-		float newHitFraction = trailorCamCollider.getCollisionFraction(currentAvartarHeadPoint, currentCameraMaxVector);
-
-		// if it's bad just use previous hit fraction
-		if (!Float.isNaN(newHitFraction))
+		// often zeros at start up, but generally impossible to process if equal
+		if (!currentAvartarHeadPoint.equals(currentCameraMaxVector))
 		{
-			currentHitFraction = newHitFraction;
+			long dt = (System.nanoTime() - lastUpdateTime) / 1000000;
+			float maxFractionForDT = TRAIL_MAX_FRACTION_DELTA_PER_SEC * (dt / 1000f);
+
+			// set hit fraction
+			float newHitFraction = trailorCamCollider.getCollisionFraction(currentAvartarHeadPoint, currentCameraMaxVector);
+
+			// if it's bad just use previous hit fraction
+			if (!Float.isNaN(newHitFraction))
+			{
+				currentHitFraction = newHitFraction;
+			}
+
+			// come in a tiny bit so we see through wall to the side less
+			if (currentHitFraction <= 1.0f)
+			{
+				float cameraVectorLen = currentHitFraction * TRAIL_MAX_DIST;
+				cameraVectorLen -= TRAIL_DIST_MARGIN;
+				currentHitFraction = cameraVectorLen / TRAIL_MAX_DIST;
+			}
+
+			float hitFractionDelta = currentHitFraction - lastSetHitFraction;
+
+			// clamp the max out ward delta by time (inwards is instant)
+			hitFractionDelta = hitFractionDelta > maxFractionForDT ? maxFractionForDT : hitFractionDelta;
+			currentHitFraction = hitFractionDelta + lastSetHitFraction;
+
+			// scale the camera vector
+			tempCameraVector.set(currentCameraMaxVector);
+			tempCameraVector.scale(currentHitFraction);
+
+			// make a camerapoint
+			tempCameraPoint.add(currentAvartarHeadPoint, tempCameraVector);
+
+			// look at head from camera
+			tempCamTrans.lookAt(tempCameraPoint, currentAvartarHeadPoint, Y_UP);
+			try
+			{
+				tempCamTrans.invert();//cos lookAt is not for view platforms?
+
+				// set the actual view platform 
+				getViewPlatformTransform().setTransform(tempCamTrans);
+			}
+			catch (SingularMatrixException sme)
+			{
+				System.out.println("trailor cam bad inputs " + currentAvartarHeadPoint + " " + currentCameraMaxVector);
+			}
+
+			// remember state
+			lastSetHitFraction = currentHitFraction;
+			lastUpdateTime = System.nanoTime();
 		}
-
-		// come in a tiny bit so we see through wall to the side less
-		if (currentHitFraction <= 1.0f)
-		{
-			float cameraVectorLen = currentHitFraction * TRAIL_MAX_DIST;
-			cameraVectorLen -= TRAIL_DIST_MARGIN;
-			currentHitFraction = cameraVectorLen / TRAIL_MAX_DIST;
-		}
-
-		float hitFractionDelta = currentHitFraction - lastSetHitFraction;
-
-		// clamp the max out ward delta by time (inwards is instant)
-		hitFractionDelta = hitFractionDelta > maxFractionForDT ? maxFractionForDT : hitFractionDelta;
-		currentHitFraction = hitFractionDelta + lastSetHitFraction;
-
-		// scale the camera vector
-		tempCameraVector.set(currentCameraMaxVector);
-		tempCameraVector.scale(currentHitFraction);
-
-		// make a camerapoint
-		tempCameraPoint.add(currentAvartarHeadPoint, tempCameraVector);
-
-		// look at head from camera
-		tempCamTrans.lookAt(tempCameraPoint, currentAvartarHeadPoint, Y_UP);
-		tempCamTrans.invert();//cos lookAt is not for view platforms?
-
-		// set the actual view platform 
-		getViewPlatformTransform().setTransform(tempCamTrans);
-
-		// remember state
-		lastSetHitFraction = currentHitFraction;
-		lastUpdateTime = System.nanoTime();
 	}
 
 	public static interface TrailorCamCollider
@@ -157,7 +170,6 @@ public class TrailerCamDolly extends Dolly
 			wakeupOn(FPSWakeUp);
 		}
 
-		@SuppressWarnings("rawtypes")
 		@Override
 		public void processStimulus(Enumeration critera)
 		{
