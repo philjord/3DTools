@@ -5,6 +5,8 @@ import javax.media.j3d.View;
 
 import com.sun.j3d.utils.universe.Viewer;
 
+import tools3d.audio.JOALMixer;
+
 //TODO: Camera really doesn't need to extend the utility class viewer
 // but I'd need to reproduce the ViewingPlatfrom business too
 public class Camera extends Viewer
@@ -23,7 +25,7 @@ public class Camera extends Viewer
 	// just needs com jogamp openal library included
 	//java.lang.NoClassDefFoundError: Failed resolution of: Lcom/jogamp/openal/util/ALut;
 	// at tools3d.audio.JOALMixer.initialize(JOALMixer.java:810)
-	//	public static JOALMixer mixer = null;
+	public static JOALMixer mixer = null;
 
 	public Camera(Canvas3D canvas3D)
 	{
@@ -46,20 +48,20 @@ public class Camera extends Viewer
 		getView().setFieldOfView(fov);
 
 		//other wise restricted access exception
-		/*		if (mixer == null && getView().getUserHeadToVworldEnable())
-				{
-					// create and adds a joalmixer as the audio device
-					mixer = new JOALMixer(getPhysicalEnvironment());
-		
-					boolean success = mixer.initialize();
-		
-					if (!success)
-					{
-						System.out.println("Open AL failed to init");
-						// remove the audio device
-						getPhysicalEnvironment().setAudioDevice(null);
-					}
-				}*/
+		if (mixer == null && getView().getUserHeadToVworldEnable())
+		{
+			// create and adds a joalmixer as the audio device
+			mixer = new JOALMixer(getPhysicalEnvironment());
+
+			boolean success = mixer.initialize();
+
+			if (!success)
+			{
+				System.out.println("Open AL failed to init");
+				// remove the audio device
+				getPhysicalEnvironment().setAudioDevice(null);
+			}
+		}
 
 	}
 
