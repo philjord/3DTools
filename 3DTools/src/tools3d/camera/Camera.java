@@ -21,10 +21,6 @@ public class Camera extends Viewer
 
 	private double FOV = 80;
 
-	//TODO: No sound at all now, but will be again one day 
-	// just needs com jogamp openal library included
-	//java.lang.NoClassDefFoundError: Failed resolution of: Lcom/jogamp/openal/util/ALut;
-	// at tools3d.audio.JOALMixer.initialize(JOALMixer.java:810)
 	public static JOALMixer mixer = null;
 
 	public Camera(Canvas3D canvas3D)
@@ -39,6 +35,7 @@ public class Camera extends Viewer
 		getView().setFrontClipDistance(FRONT_CLIP);
 		getView().setBackClipDistance(BACK_CLIP);
 		getView().setMinimumFrameCycleTime(MIN_FRAME_CYCLE_TIME);
+		 
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?
