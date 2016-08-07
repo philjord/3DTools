@@ -1,5 +1,10 @@
 package tools3d.audio;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.nio.ByteBuffer;
+
 import javax.media.j3d.BackgroundSound;
 import javax.media.j3d.BoundingSphere;
 import javax.media.j3d.BranchGroup;
@@ -10,14 +15,77 @@ import javax.vecmath.Point2f;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 
+import javazoom.jl.converter.Converter;
+import javazoom.jl.decoder.JavaLayerException;
+import tools3d.audio.converter.ConverterBB;
+
 /**NOTE! this string is a URL this is how you specify a relative url.
 *MediaContainer sample = new MediaContainer("file:media/sounds/factCREAK.au");
 *
-*Play an mp3 lik this JLayerPlayer.playMP3("resources/sounds/Known as Dune.mp3");
+*Play an mp3 like this JLayerPlayer.playMP3("resources/sounds/Known as Dune.mp3");
 */
 
 public class SimpleSounds
 {
+
+	// Muhahaha! should only use what it uses and no more, dear god what have I done?
+	private static ByteBuffer bb = ByteBuffer.allocateDirect(1000000);
+
+	/**Not to be used for background sounds! use the system supplied direct 
+	* mp3 play capacity, this guy is for spatialized sounds only!
+	* Possibly the first wav file fails??JOAL error code: 40961
+	*/
+	public static BranchGroup createPointSoundMp3(InputStream is)
+	{
+
+		ConverterBB conv = new ConverterBB();
+
+		int detail = Converter.PrintWriterProgressListener.VERBOSE_DETAIL;
+		ConverterBB.ProgressListener listener = new ConverterBB.PrintWriterProgressListener(new PrintWriter(System.out, true), detail);
+
+		try
+		{
+			bb.clear();
+			conv.convert(is, bb, listener, null);
+		}
+		catch (JavaLayerException ex)
+		{
+			System.err.println("Convertion failure: " + ex);
+		}
+
+		bb.rewind();
+		byte[] buffer = new byte[bb.remaining()];
+		bb.get(buffer);
+		ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
+
+		MediaContainer mc = new MediaContainer(bais);
+		return createPointSound(mc);
+	}
+
+	public static BranchGroup createPointSound(MediaContainer mc)
+	{
+		PointSound ps = new PointSound();
+		ps.setSoundData(mc);
+		ps.setPosition(new Point3f(0, 0, 0));
+		float staticAttenuation = 10;
+		float maxGain = staticAttenuation / 100f;
+		ps.setInitialGain(0.2f);
+		int minimumAttenuationDistance = 1;
+		int maximumAttenuationDistance = 10;
+		ps.setDistanceGain(new float[] { 0, minimumAttenuationDistance, maximumAttenuationDistance }, new float[] { maxGain, maxGain, 0 });
+		ps.setEnable(true);
+		ps.setPause(false);
+
+		ps.setSchedulingBounds(new BoundingSphere(new Point3d(), Double.POSITIVE_INFINITY));
+		ps.setLoop(-1);
+		ps.setContinuousEnable(true);
+
+		BranchGroup bg = new BranchGroup();
+		bg.setCapability(BranchGroup.ALLOW_DETACH);
+		bg.addChild(ps);
+
+		return bg;
+	}
 
 	public static BranchGroup createPointSound(String soundURL)
 	{
@@ -47,6 +115,11 @@ public class SimpleSounds
 
 	}
 
+	/**
+	 * Do not try to use mp3 files here, use the system installed mp3 file handler!
+	 * @param soundURL
+	 * @return
+	 */
 	public static BranchGroup createBackgroundSound(String soundURL)
 	{
 
