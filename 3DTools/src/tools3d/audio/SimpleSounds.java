@@ -81,6 +81,11 @@ public class SimpleSounds
 
 	public static BranchGroup createPointSound(MediaContainer mc, float maximumAttenuationDistance, int loopCount, float gain)
 	{
+
+		// only 0 and -1 supported!
+		if (loopCount == 1)
+			loopCount = 0;
+		
 		PointSound ps = new PointSound();
 		ps.setSoundData(mc);
 		ps.setPosition(new Point3f(0, 0, 0));
@@ -174,4 +179,24 @@ public class SimpleSounds
 
 	}
 
+	public static void playMp3(String fileName, float volume)
+	{
+		if (mp3SystemMediaPlayer != null)
+		{
+			mp3SystemMediaPlayer.playAnMp3(fileName, volume);
+		}
+		else
+		{
+			System.err.println("mp3SystemMediaPlayer is null!");
+		}
+
+	}
+
+	public static Mp3SystemMediaPlayer mp3SystemMediaPlayer = null;
+
+	public interface Mp3SystemMediaPlayer
+	{
+		// name not same as above cos dex dies
+		public void playAnMp3(String fileName, float volume);
+	}
 }
