@@ -112,7 +112,6 @@ public class Cube extends Shape3D
 	 */
 	public Cube()
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
@@ -130,7 +129,6 @@ public class Cube extends Shape3D
 	 */
 	public Cube(double scale)
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
@@ -148,7 +146,6 @@ public class Cube extends Shape3D
 
 	public Cube(double scale, float r, float g, float b)
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
@@ -179,7 +176,6 @@ public class Cube extends Shape3D
 		 */
 	public Cube(double xScale, double yScale, double zScale)
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
@@ -200,7 +196,6 @@ public class Cube extends Shape3D
 
 	public Cube(double xScale, double yScale, double zScale, float r, float g, float b)
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 
@@ -230,7 +225,6 @@ public class Cube extends Shape3D
 
 	public Cube(float xMin, float yMin, float zMin, float xMax, float yMax, float zMax)
 	{
-		clearCapabilities();
 		TriangleArray cube = new TriangleArray(36,
 				GeometryArray.COORDINATES | GeometryArray.COLOR_3 | GeometryArray.USE_NIO_BUFFER | GeometryArray.BY_REFERENCE);
 

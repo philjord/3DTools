@@ -45,7 +45,6 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 			//notice nulls are fine
 
 			TextureUnitState tus = new TextureUnitState();
-			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
 			cacheTextureUnitState(filename, tus);
@@ -64,7 +63,6 @@ public class ASTCTextureLoader extends CompressedTextureLoader
 			//notice nulls are fine
 
 			TextureUnitState tus = new TextureUnitState();
-			tus.clearCapabilities();
 			tus.setTexture(tex);
 			tus.setName(filename);
 			cacheTextureUnitState(filename, tus);

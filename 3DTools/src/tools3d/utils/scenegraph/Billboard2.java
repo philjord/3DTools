@@ -118,6 +118,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		nAxis.x = 0.0;
 		nAxis.y = 1.0;
 		nAxis.z = 0.0;
@@ -142,6 +143,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg, int mode, Vector3f axis)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		this.mode = mode;
 		this.axis.set(axis);
 		double invMag;
@@ -164,6 +166,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg, int mode, Point3f point)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		this.mode = mode;
 		this.rotationPoint.set(point);
 	}
@@ -278,6 +281,7 @@ public class Billboard2 extends Behavior
 	public void setTarget(TransformGroup tg)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 	}
 
 	/**

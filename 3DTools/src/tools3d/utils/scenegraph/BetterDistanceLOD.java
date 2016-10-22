@@ -14,8 +14,7 @@ import javax.media.j3d.ViewPlatform;
 import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3f;
 
-//OH MY GOD! switches pointing to links don't refresh properly!
-// I also notice that shared group appear to be massively inefficient
+//Note Bug 1331 - Shared nodes under switch nodes, the link doesn’t work properly 
 
 //allows a transition zone of fadness sent out to 2 nodes attached
 
