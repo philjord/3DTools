@@ -1,6 +1,6 @@
 package tools3d.utils.scenegraph;
 
-import javax.vecmath.Color3f;
+import org.jogamp.vecmath.Color3f;
 
 public interface Fadable
 {

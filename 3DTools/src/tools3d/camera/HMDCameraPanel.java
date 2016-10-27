@@ -1,13 +1,12 @@
 package tools3d.camera;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3f;
-
 import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.PhysicalBody;
 import org.jogamp.java3d.PhysicalEnvironment;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3f;
 
 import tools3d.audio.JOALMixer;
 import tools3d.mixed3d2d.Canvas3D2D;

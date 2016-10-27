@@ -2,13 +2,11 @@ package tools3d.utils.infoText;
 //<AND>DISABLED for andy
 //<AND>import java.awt.Font;
 
-//<AND>import javax.media.j3d.Text3D;
-import javax.vecmath.Point3f;
-
 import org.jogamp.java3d.Appearance;
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Material;
 import org.jogamp.java3d.OrientedShape3D;
+import org.jogamp.vecmath.Point3f;
 
 /**
  * @author pj

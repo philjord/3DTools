@@ -6,16 +6,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import org.jogamp.java3d.AudioDevice3D;
 import org.jogamp.java3d.MediaContainer;
 import org.jogamp.java3d.Sound;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import com.jogamp.openal.AL;
 import com.jogamp.openal.ALConstants;

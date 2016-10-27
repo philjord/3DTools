@@ -3,12 +3,11 @@
  */
 package tools3d.universe;
 
-import javax.vecmath.Color3f;
-
 import org.jogamp.java3d.AmbientLight;
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Group;
 import org.jogamp.java3d.Light;
+import org.jogamp.vecmath.Color3f;
 
 import tools3d.utils.Utils3D;
 

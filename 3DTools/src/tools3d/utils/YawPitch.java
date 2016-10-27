@@ -1,11 +1,10 @@
 package tools3d.utils;
 
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Quat4d;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3d;
-
 import org.jogamp.java3d.Transform3D;
+import org.jogamp.vecmath.AxisAngle4d;
+import org.jogamp.vecmath.Quat4d;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3d;
 
 public class YawPitch
 {

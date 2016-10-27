@@ -1,7 +1,5 @@
 package tools3d.utils;
 
-import javax.vecmath.Color3f;
-
 import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.GLSLShaderProgram;
 import org.jogamp.java3d.LineAttributes;
@@ -13,6 +11,7 @@ import org.jogamp.java3d.ShaderAppearance;
 import org.jogamp.java3d.ShaderAttributeSet;
 import org.jogamp.java3d.ShaderAttributeValue;
 import org.jogamp.java3d.SourceCodeShader;
+import org.jogamp.vecmath.Color3f;
 
 /**
  * Note all of these are no lighting shaders, so materials are always ignored

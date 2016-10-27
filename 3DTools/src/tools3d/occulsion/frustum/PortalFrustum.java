@@ -1,8 +1,7 @@
 package tools3d.occulsion.frustum;
 
-import javax.vecmath.Point4d;
-
 import org.jogamp.java3d.Canvas3D;
+import org.jogamp.vecmath.Point4d;
 
 public class PortalFrustum extends ViewFrustum
 {

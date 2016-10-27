@@ -2,12 +2,6 @@ package tools3d.utils.scenegraph;
 
 import java.util.Enumeration;
 
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.OrientedShape3D;
@@ -15,6 +9,11 @@ import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.View;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.AxisAngle4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 /** 
  * EXACT copy of BIllboard, with HMD comatibility mode enabled correction (cloning removed too)

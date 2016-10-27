@@ -1,6 +1,6 @@
 package tools3d.utils.loader;
 
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Vector3f;
 
 public class PropertyCodec
 {

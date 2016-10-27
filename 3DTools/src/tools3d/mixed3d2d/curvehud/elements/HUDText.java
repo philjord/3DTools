@@ -2,8 +2,8 @@ package tools3d.mixed3d2d.curvehud.elements;
 
 import java.io.IOException;
 
-import javax.vecmath.Color4f;
-import javax.vecmath.Point2f;
+import org.jogamp.vecmath.Color4f;
+import org.jogamp.vecmath.Point2f;
 
 import com.jogamp.graph.font.Font;
 import com.jogamp.graph.font.FontFactory;

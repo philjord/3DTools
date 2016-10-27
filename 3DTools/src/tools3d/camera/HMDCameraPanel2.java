@@ -1,10 +1,9 @@
 package tools3d.camera;
 
-import javax.vecmath.Point3d;
-
 import org.jogamp.java3d.PhysicalBody;
 import org.jogamp.java3d.PhysicalEnvironment;
 import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.ovr.OculusRift03;

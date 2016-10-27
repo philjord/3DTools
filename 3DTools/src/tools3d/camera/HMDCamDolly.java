@@ -1,14 +1,13 @@
 package tools3d.camera;
 
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Group;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import com.jogamp.newt.opengl.GLWindow;
 

@@ -2,15 +2,14 @@ package tools3d.camera;
 
 import java.util.Enumeration;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Quat4f;
-import javax.vecmath.SingularMatrixException;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
-
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.SingularMatrixException;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.utils.Utils3D;

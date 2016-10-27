@@ -1,8 +1,5 @@
 package tools3d.mixed3d2d;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
-
 import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.PickConeRay;
 import org.jogamp.java3d.PickCylinderRay;
@@ -10,6 +7,8 @@ import org.jogamp.java3d.PickRay;
 import org.jogamp.java3d.PickShape;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
 
 import com.jogamp.newt.event.MouseEvent;
 

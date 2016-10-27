@@ -1,6 +1,6 @@
 package tools3d.navigation.rules;
 
-import javax.vecmath.Quat4f;
+import org.jogamp.vecmath.Quat4f;
 
 import tools3d.utils.YawPitch;
 

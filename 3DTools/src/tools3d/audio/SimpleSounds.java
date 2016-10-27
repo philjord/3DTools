@@ -5,9 +5,6 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.ByteBuffer;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-
 import org.jogamp.java3d.AudioDevice3D;
 import org.jogamp.java3d.BackgroundSound;
 import org.jogamp.java3d.BoundingSphere;
@@ -15,6 +12,8 @@ import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.MediaContainer;
 import org.jogamp.java3d.PointSound;
 import org.jogamp.java3d.Sound;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
 
 import javazoom.jl.converter.Converter;
 import javazoom.jl.decoder.JavaLayerException;

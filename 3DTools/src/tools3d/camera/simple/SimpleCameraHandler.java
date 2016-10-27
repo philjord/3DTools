@@ -1,9 +1,5 @@
 package tools3d.camera.simple;
 
-import javax.vecmath.Point3d;
-import javax.vecmath.Quat4d;
-import javax.vecmath.Vector3d;
-
 import org.jogamp.java3d.BoundingSphere;
 import org.jogamp.java3d.Bounds;
 import org.jogamp.java3d.BranchGroup;
@@ -12,6 +8,9 @@ import org.jogamp.java3d.CapabilityNotSetException;
 import org.jogamp.java3d.PickInfo;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Quat4d;
+import org.jogamp.vecmath.Vector3d;
 
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;

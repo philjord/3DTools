@@ -2,12 +2,11 @@ package tools3d.utils.leafnode;
 
 import java.util.Enumeration;
 
-import javax.vecmath.Point3d;
-
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BoundingSphere;
 import org.jogamp.java3d.WakeupCondition;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.Point3d;
 
 public class PerFrameUpdateBehavior extends Behavior
 {

@@ -1,11 +1,10 @@
 package tools3d.utils;
 
-import javax.vecmath.Color3f;
-
 import org.jogamp.java3d.Appearance;
 import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.LineAttributes;
 import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.vecmath.Color3f;
 
 public class PhysAppearance  
 {

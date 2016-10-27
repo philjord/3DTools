@@ -2,8 +2,8 @@ package tools3d.navigation;
 
 import java.util.Vector;
 
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3f;
 
 import tools3d.navigation.rules.NavigationRotationRule;
 import tools3d.utils.Utils3D;
