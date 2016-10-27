@@ -2,9 +2,9 @@ package tools3d.utils;
 
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedTime;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupOnElapsedTime;
 
 /**
  * @author Administrator

@@ -3,16 +3,17 @@ package tools3d.utils.scenegraph;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.J3dUtil;
-import javax.media.j3d.Node;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.media.j3d.ViewPlatform;
-import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3f;
+
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.J3dUtil;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 //Note Bug 1331 - Shared nodes under switch nodes, the link doesn’t work properly 
 

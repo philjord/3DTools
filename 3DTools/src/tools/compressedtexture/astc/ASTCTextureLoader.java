@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 
-import javax.media.j3d.ASTCImageComponent2D;
-import javax.media.j3d.ImageComponent;
-import javax.media.j3d.Texture;
-import javax.media.j3d.Texture2D;
-import javax.media.j3d.TextureUnitState;
+import org.jogamp.java3d.ASTCImageComponent2D;
+import org.jogamp.java3d.ImageComponent;
+import org.jogamp.java3d.Texture;
+import org.jogamp.java3d.Texture2D;
+import org.jogamp.java3d.TextureUnitState;
 
 import javaawt.image.BufferedImage;
 import tools.compressedtexture.CompressedTextureLoader;

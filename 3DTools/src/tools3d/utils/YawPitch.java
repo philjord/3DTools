@@ -1,10 +1,11 @@
 package tools3d.utils;
 
-import javax.media.j3d.Transform3D;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
+
+import org.jogamp.java3d.Transform3D;
 
 public class YawPitch
 {

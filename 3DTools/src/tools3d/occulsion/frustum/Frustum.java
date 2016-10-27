@@ -1,11 +1,12 @@
 package tools3d.occulsion.frustum;
 
-import javax.media.j3d.BoundingPolytope;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point4d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector4d;
+
+import org.jogamp.java3d.BoundingPolytope;
 
 public abstract class Frustum
 {

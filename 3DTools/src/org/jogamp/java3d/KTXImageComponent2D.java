@@ -1,6 +1,7 @@
-package javax.media.j3d;
+package org.jogamp.java3d;
 
 import javaawt.image.RenderedImage;
+import tools.compressedtexture.ktx.KTXBufferedImage;
 
 /**
  * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that
@@ -12,12 +13,8 @@ import javaawt.image.RenderedImage;
  * @author philip
  *
  */
-public abstract class CompressedImageComponent2D extends ImageComponent2D
+public class KTXImageComponent2D extends CompressedImageComponent2D
 {
-	private static boolean byRef = true;
-
-	private static boolean yUp = true;
-
 	/**
 	 * See DDSTextureLoader for an example of how to use this class
 	 * 
@@ -26,9 +23,23 @@ public abstract class CompressedImageComponent2D extends ImageComponent2D
 	 * @param format Only ImageComponent.FORMAT_RGBA supported
 	 * @param image Only a DDSBufferedImage can be handed to DDSImageComponent2D
 	 */
-	public CompressedImageComponent2D(int format, RenderedImage image)
+	public KTXImageComponent2D(int format, RenderedImage image)
 	{
-		super(format, image, byRef, yUp);
-
+		super(format, image);
+		if (!(image instanceof KTXBufferedImage))
+		{
+			throw new IllegalArgumentException("Only a KTXBufferedImage can be handed to DDSImageComponent2D");
+		}
 	}
+
+	/**
+	 * Use a special Retained
+	 */
+	@Override
+	void createRetained()
+	{
+		this.retained = new KTXImageComponent2DRetained();
+		this.retained.setSource(this);
+	}
+
 }

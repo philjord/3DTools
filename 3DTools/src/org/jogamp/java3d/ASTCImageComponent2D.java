@@ -1,4 +1,4 @@
-package javax.media.j3d;
+package org.jogamp.java3d;
 
 import javaawt.image.RenderedImage;
 import tools.compressedtexture.astc.ASTCBufferedImage;

@@ -1,6 +1,12 @@
-package javax.media.j3d;
+package org.jogamp.java3d;
 
 import javax.vecmath.Point3f;
+
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.NodeRetained;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.ViewPlatformRetained;
 
 public class J3dUtil
 {

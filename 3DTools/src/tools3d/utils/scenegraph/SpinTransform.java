@@ -2,14 +2,15 @@ package tools3d.utils.scenegraph;
 
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Point3d;
+
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 public class SpinTransform extends Behavior
 {

@@ -1,8 +1,8 @@
 package tools3d.utils.scenegraph;
 
-import javax.media.j3d.Group;
-import javax.media.j3d.MultipleParentException;
-import javax.media.j3d.Node;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.MultipleParentException;
+import org.jogamp.java3d.Node;
 
 /** NOTE! j3d does not allow multi threaded access to add and remove groups
 // It can cause deadlocks, betterdistanceLOD on the behavior thread is

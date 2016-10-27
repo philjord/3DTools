@@ -1,6 +1,6 @@
 package tools3d.universe;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;

@@ -1,7 +1,10 @@
-package javax.media.j3d;
+package org.jogamp.java3d;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+
+import org.jogamp.java3d.ImageComponent2DRetained;
+import org.jogamp.java3d.NioImageBuffer;
 
 import javaawt.image.RenderedImage;
 import tools.compressedtexture.CompressedBufferedImage;

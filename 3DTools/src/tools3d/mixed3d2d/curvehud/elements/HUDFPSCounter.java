@@ -2,10 +2,10 @@ package tools3d.mixed3d2d.curvehud.elements;
 
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.media.j3d.WakeupOnElapsedTime;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.java3d.WakeupOnElapsedTime;
 
 import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 

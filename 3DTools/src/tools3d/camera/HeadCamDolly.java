@@ -1,8 +1,9 @@
 package tools3d.camera;
 
-import javax.media.j3d.Transform3D;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.Transform3D;
 
 import tools3d.navigation.AvatarCollisionInfo;
 

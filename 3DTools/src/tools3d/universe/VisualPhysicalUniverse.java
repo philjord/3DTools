@@ -1,11 +1,11 @@
 package tools3d.universe;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.Locale;
-import javax.media.j3d.View;
-import javax.media.j3d.ViewSpecificGroup;
-import javax.media.j3d.VirtualUniverse;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Locale;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.ViewSpecificGroup;
+import org.jogamp.java3d.VirtualUniverse;
 
 /**
  * 

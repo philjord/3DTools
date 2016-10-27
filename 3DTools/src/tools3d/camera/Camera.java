@@ -1,7 +1,7 @@
 package tools3d.camera;
 
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.View;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.View;
 
 import com.sun.j3d.utils.universe.Viewer;
 

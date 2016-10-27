@@ -3,10 +3,10 @@
  */
 package tools3d.utils.leafnode;
 
-import javax.media.j3d.GeometryArray;
-import javax.media.j3d.J3DBuffer;
-import javax.media.j3d.TriangleArray;
-import javax.media.j3d.Shape3D;
+import org.jogamp.java3d.GeometryArray;
+import org.jogamp.java3d.J3DBuffer;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.TriangleArray;
 
 import tools3d.utils.SimpleShaderAppearance;
 import tools3d.utils.Utils3D;

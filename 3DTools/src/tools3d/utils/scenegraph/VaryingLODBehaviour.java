@@ -2,17 +2,18 @@ package tools3d.utils.scenegraph;
 
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.J3dUtil;
-import javax.media.j3d.Node;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.media.j3d.ViewPlatform;
-import javax.media.j3d.WakeupOnElapsedFrames;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Vector4d;
+
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.J3dUtil;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 /** A behavior that updates on a frequency based on distance from viewer, 
  * so more distance animations can run slower

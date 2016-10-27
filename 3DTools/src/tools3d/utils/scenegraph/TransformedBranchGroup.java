@@ -2,8 +2,8 @@ package tools3d.utils.scenegraph;
 
 import java.util.Enumeration;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Node;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Node;
 
 public class TransformedBranchGroup extends BranchGroup
 {

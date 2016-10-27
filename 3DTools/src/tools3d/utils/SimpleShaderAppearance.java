@@ -1,17 +1,18 @@
 package tools3d.utils;
 
-import javax.media.j3d.ColoringAttributes;
-import javax.media.j3d.GLSLShaderProgram;
-import javax.media.j3d.LineAttributes;
-import javax.media.j3d.Material;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.RenderingAttributes;
-import javax.media.j3d.Shader;
-import javax.media.j3d.ShaderAppearance;
-import javax.media.j3d.ShaderAttributeSet;
-import javax.media.j3d.ShaderAttributeValue;
-import javax.media.j3d.SourceCodeShader;
 import javax.vecmath.Color3f;
+
+import org.jogamp.java3d.ColoringAttributes;
+import org.jogamp.java3d.GLSLShaderProgram;
+import org.jogamp.java3d.LineAttributes;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.RenderingAttributes;
+import org.jogamp.java3d.Shader;
+import org.jogamp.java3d.ShaderAppearance;
+import org.jogamp.java3d.ShaderAttributeSet;
+import org.jogamp.java3d.ShaderAttributeValue;
+import org.jogamp.java3d.SourceCodeShader;
 
 /**
  * Note all of these are no lighting shaders, so materials are always ignored

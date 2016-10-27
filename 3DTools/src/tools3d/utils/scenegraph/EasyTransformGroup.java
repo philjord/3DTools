@@ -1,8 +1,5 @@
 package tools3d.utils.scenegraph;
 
-import javax.media.j3d.Group;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.AxisAngle4f;
 import javax.vecmath.GMatrix;
@@ -18,6 +15,10 @@ import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
 import javax.vecmath.Vector4d;
 import javax.vecmath.Vector4f;
+
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 
 import tools3d.utils.Utils3D;
 

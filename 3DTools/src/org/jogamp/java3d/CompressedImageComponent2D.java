@@ -1,7 +1,8 @@
-package javax.media.j3d;
+package org.jogamp.java3d;
+
+import org.jogamp.java3d.ImageComponent2D;
 
 import javaawt.image.RenderedImage;
-import tools.compressedtexture.dds.DDSBufferedImage;
 
 /**
  * Stealth class to get DXT ByteBuffers handed to the pipeline along with a type that
@@ -13,8 +14,12 @@ import tools.compressedtexture.dds.DDSBufferedImage;
  * @author philip
  *
  */
-public class DDSImageComponent2D extends CompressedImageComponent2D
+public abstract class CompressedImageComponent2D extends ImageComponent2D
 {
+	private static boolean byRef = true;
+
+	private static boolean yUp = true;
+
 	/**
 	 * See DDSTextureLoader for an example of how to use this class
 	 * 
@@ -23,23 +28,9 @@ public class DDSImageComponent2D extends CompressedImageComponent2D
 	 * @param format Only ImageComponent.FORMAT_RGBA supported
 	 * @param image Only a DDSBufferedImage can be handed to DDSImageComponent2D
 	 */
-	public DDSImageComponent2D(int format, RenderedImage image)
+	public CompressedImageComponent2D(int format, RenderedImage image)
 	{
-		super(format, image);
-		if (!(image instanceof DDSBufferedImage))
-		{
-			throw new IllegalArgumentException("Only a DDSBufferedImage can be handed to DDSImageComponent2D");
-		}
-	}
+		super(format, image, byRef, yUp);
 
-	/**
-	 * Use a special Retained
-	 */
-	@Override
-	void createRetained()
-	{
-		this.retained = new DDSImageComponent2DRetained();
-		this.retained.setSource(this);
 	}
-
 }

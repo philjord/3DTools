@@ -4,12 +4,12 @@ package tools3d.camera.simple;
  
 import java.util.Enumeration;
 
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.WakeupCriterion;
- 
-import javax.media.j3d.WakeupOnBehaviorPost;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Vector3d;
+
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnBehaviorPost;
 
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.MouseEvent;

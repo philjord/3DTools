@@ -1,14 +1,15 @@
 package tools3d.utils.scenegraph;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
 import javax.vecmath.AxisAngle4d;
 import javax.vecmath.Point3d;
 import javax.vecmath.Point3f;
 import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 
 import tools3d.utils.Utils3D;
 

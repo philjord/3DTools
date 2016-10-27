@@ -1,7 +1,7 @@
 package tools3d.camera;
 
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.ViewPlatform;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.ViewPlatform;
 
 public class LocatableViewPlatform extends ViewPlatform
 {

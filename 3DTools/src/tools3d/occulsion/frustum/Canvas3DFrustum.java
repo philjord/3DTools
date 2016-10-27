@@ -1,8 +1,9 @@
 package tools3d.occulsion.frustum;
 
-import javax.media.j3d.BoundingPolytope;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector4d;
+
+import org.jogamp.java3d.BoundingPolytope;
 
 /**
  * ViewFrustum planes for a single Canvas3D and determining if

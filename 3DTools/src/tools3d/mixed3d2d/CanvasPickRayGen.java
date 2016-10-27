@@ -1,14 +1,15 @@
 package tools3d.mixed3d2d;
 
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.PickConeRay;
-import javax.media.j3d.PickCylinderRay;
-import javax.media.j3d.PickRay;
-import javax.media.j3d.PickShape;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
+
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.PickConeRay;
+import org.jogamp.java3d.PickCylinderRay;
+import org.jogamp.java3d.PickRay;
+import org.jogamp.java3d.PickShape;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
 
 import com.jogamp.newt.event.MouseEvent;
 

@@ -3,9 +3,9 @@ package tools3d.navigation;
 import java.util.ArrayList;
 import java.util.Enumeration;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedFrames;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 import tools3d.utils.Utils3D;
 

@@ -3,7 +3,7 @@ package tools3d.mixed3d2d;
 import java.io.IOException;
 import java.util.Arrays;
 
-import javax.media.j3d.Canvas3D;
+import org.jogamp.java3d.Canvas3D;
 
 import com.jogamp.graph.curve.opengl.RegionRenderer;
 import com.jogamp.graph.curve.opengl.RenderState;

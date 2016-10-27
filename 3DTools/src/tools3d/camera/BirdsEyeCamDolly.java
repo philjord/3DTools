@@ -1,12 +1,13 @@
 package tools3d.camera;
 
-import javax.media.j3d.Group;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
 import javax.vecmath.Point3d;
 import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3d;
 import javax.vecmath.Vector3f;
+
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
 
 import com.sun.j3d.utils.universe.MultiTransformGroup;
 import com.sun.j3d.utils.universe.PlatformGeometry;
