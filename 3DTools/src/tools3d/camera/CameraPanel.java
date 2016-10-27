@@ -1,7 +1,8 @@
 package tools3d.camera;
 
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
+
 import com.jogamp.newt.opengl.GLWindow;
-import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.universe.VisualPhysicalUniverse;

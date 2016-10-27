@@ -2,9 +2,8 @@ package tools3d.camera;
 
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Group;
-
-import com.sun.j3d.utils.universe.PlatformGeometry;
-import com.sun.j3d.utils.universe.ViewingPlatform;
+import org.jogamp.java3d.utils.universe.PlatformGeometry;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 
 public abstract class Dolly extends ViewingPlatform implements IDolly
 {

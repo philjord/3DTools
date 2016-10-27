@@ -1,13 +1,13 @@
 package tools3d.universe;
 
 import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.utils.universe.SimpleUniverse;
+import org.jogamp.java3d.utils.universe.Viewer;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
-import com.sun.j3d.utils.universe.SimpleUniverse;
-import com.sun.j3d.utils.universe.Viewer;
-import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class HeadlessUniverse extends SimpleUniverse
 {

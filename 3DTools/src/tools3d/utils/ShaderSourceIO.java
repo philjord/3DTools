@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import com.sun.j3d.utils.shader.StringIO;
+import org.jogamp.java3d.utils.shader.StringIO;
 
 public class ShaderSourceIO
 {

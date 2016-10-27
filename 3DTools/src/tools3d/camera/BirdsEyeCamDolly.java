@@ -3,13 +3,12 @@ package tools3d.camera;
 import org.jogamp.java3d.Group;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.universe.MultiTransformGroup;
+import org.jogamp.java3d.utils.universe.PlatformGeometry;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Quat4f;
 import org.jogamp.vecmath.Vector3d;
 import org.jogamp.vecmath.Vector3f;
-
-import com.sun.j3d.utils.universe.MultiTransformGroup;
-import com.sun.j3d.utils.universe.PlatformGeometry;
 
 public class BirdsEyeCamDolly extends Dolly
 {

@@ -7,13 +7,13 @@ import java.util.Enumeration;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnBehaviorPost;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import org.jogamp.java3d.utils.behaviors.mouse.newt.MouseBehavior;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Vector3d;
 
 import com.jogamp.newt.Window;
 import com.jogamp.newt.event.MouseEvent;
-import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import com.sun.j3d.utils.behaviors.mouse.newt.MouseBehavior;
 
 public class MyMouseRotater extends MouseBehavior
 {

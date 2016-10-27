@@ -8,6 +8,10 @@ import org.jogamp.java3d.CapabilityNotSetException;
 import org.jogamp.java3d.PickInfo;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import org.jogamp.java3d.utils.behaviors.mouse.newt.MouseRotate;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Quat4d;
 import org.jogamp.vecmath.Vector3d;
@@ -16,10 +20,6 @@ import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.newt.event.MouseAdapter;
 import com.jogamp.newt.event.MouseEvent;
-import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import com.sun.j3d.utils.behaviors.mouse.newt.MouseRotate;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.universe.ViewingPlatform;
 
 import tools3d.utils.YawPitch;
 

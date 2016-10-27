@@ -11,6 +11,8 @@ import org.jogamp.java3d.MediaContainer;
 import org.jogamp.java3d.Sound;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
+import org.jogamp.java3d.audioengines.AuralParameters;
+import org.jogamp.java3d.audioengines.Sample;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Point3f;
 import org.jogamp.vecmath.Vector3d;
@@ -19,8 +21,6 @@ import org.jogamp.vecmath.Vector3f;
 import com.jogamp.openal.AL;
 import com.jogamp.openal.ALConstants;
 import com.jogamp.openal.util.ALut;
-import com.sun.j3d.audioengines.AuralParameters;
-import com.sun.j3d.audioengines.Sample;
 
 /**
  * This is the JOAL Sample object which encapsulates all the functionality and holds all the data associated with a

@@ -2,8 +2,7 @@ package tools3d.camera;
 
 import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.View;
-
-import com.sun.j3d.utils.universe.Viewer;
+import org.jogamp.java3d.utils.universe.Viewer;
 
 import tools3d.audio.JOALMixer;
 
