@@ -11,8 +11,8 @@ import org.jogamp.vecmath.Vector3f;
 
 import com.jogamp.newt.opengl.GLWindow;
 
-import java2.awt.GraphicsDevice;
-import java2.awt.GraphicsEnvironment;
+import javaawt.GraphicsDevice;
+import javaawt.GraphicsEnvironment;
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.navigation.NavigationProcessorInterface;
 import tools3d.ovr.OculusRift03;
