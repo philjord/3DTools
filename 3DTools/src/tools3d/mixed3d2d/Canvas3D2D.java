@@ -1,7 +1,6 @@
 package tools3d.mixed3d2d;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 import org.jogamp.java3d.Canvas3D;
 
@@ -64,11 +63,11 @@ public class Canvas3D2D extends Canvas3D
 			sDPI[0] *= 25.4f;
 			sDPI[1] *= 25.4f;
 			dpiH = sDPI[1];
-			System.err.println("Monitor detected: " + mm);
-			System.err.println("Monitor dpi: " + monitorDPI[0] + " x " + monitorDPI[1]);
-			System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
-					+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
-			System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);
+			//System.err.println("Monitor detected: " + mm);
+			//System.err.println("Monitor dpi: " + monitorDPI[0] + " x " + monitorDPI[1]);
+			//System.err.println("Surface scale: native " + Arrays.toString(upWin.getMaximumSurfaceScale(new float[2])) + ", current "
+			//		+ Arrays.toString(upWin.getCurrentSurfaceScale(new float[2])));
+			//System.err.println("Surface dpi " + sDPI[0] + " x " + sDPI[1]);
 
 			//PC
 			//Monitor detected: Monitor[Id 0x0 [primary], 520 x 290 mm, pixelScale [1.0, 1.0], viewport [ 0 / 0  1920 x 1080 ] [pixels], [ 0 / 0  1920 x 1080 ] [window], orig [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], curr [Id 0x0, [ 1920 x 1080 pixels x 32 bpp ] @ 60.0 Hz, flags [], 0 degr], modeChanged false, modeCount 148]
@@ -121,7 +120,7 @@ public class Canvas3D2D extends Canvas3D
 	{
 		//if(false)
 		if (this.getGLWindow().getGL() != null)
-		{
+		{ 
 			//Stenciled things might be the last displayed in the renderer, so turn off the stencil in case it's on
 			GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
 			gl.glDisable(GL2.GL_STENCIL_TEST);
