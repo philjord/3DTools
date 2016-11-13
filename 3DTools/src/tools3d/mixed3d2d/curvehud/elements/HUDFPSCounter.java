@@ -12,7 +12,7 @@ import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.Utils3D;
 
-public class HUDFPSCounter  
+public class HUDFPSCounter
 {
 	//see http://websemantics.co.uk/resources/font_size_conversion_chart/ points to pixels
 	//private static double pixelToPnt = 1.4;
@@ -71,12 +71,13 @@ public class HUDFPSCounter
 	{
 		private WakeupOnElapsedFrames wakeUp = new WakeupOnElapsedFrames(0);
 
+		@Override
 		public void initialize()
 		{
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings({ "rawtypes" })
+		@Override
 		public void processStimulus(Enumeration critera)
 		{
 			currtime = System.currentTimeMillis();
@@ -95,12 +96,13 @@ public class HUDFPSCounter
 	{
 		private WakeupOnElapsedTime wakeUp = new WakeupOnElapsedTime(TIME_SAMPLE);
 
+		@Override
 		public void initialize()
 		{
 			wakeupOn(wakeUp);
 		}
 
-		@SuppressWarnings({ "rawtypes" })
+		@Override
 		public void processStimulus(Enumeration critera)
 		{
 			// time is in millisec, so multiply by 1000 to get frames/sec
@@ -112,7 +114,9 @@ public class HUDFPSCounter
 				//note round to int
 				textElement.getGraphics().drawString("" + ((int) Math.rint(fps * 10) / 10), 0, textElement.getHeight() - 5);
 			*/
-			fpsLabel.setText("" + ((int) Math.rint(fps * 10) / 10));
+			if (fpsLabel != null)
+				fpsLabel.setText("" + ((int) Math.rint(fps * 10) / 10));
+
 			numOfFrames = 0;
 			timeOfFrames = 0;
 
