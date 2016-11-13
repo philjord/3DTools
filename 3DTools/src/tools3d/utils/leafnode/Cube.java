@@ -7,8 +7,8 @@ import org.jogamp.java3d.GeometryArray;
 import org.jogamp.java3d.J3DBuffer;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.TriangleArray;
+import org.jogamp.java3d.utils.shader.SimpleShaderAppearance;
 
-import tools3d.utils.SimpleShaderAppearance;
 import tools3d.utils.Utils3D;
 
 /**

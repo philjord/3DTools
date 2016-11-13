@@ -4,6 +4,7 @@ import org.jogamp.java3d.Appearance;
 import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.LineAttributes;
 import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.utils.shader.SimpleShaderAppearance;
 import org.jogamp.vecmath.Color3f;
 
 public class PhysAppearance  
