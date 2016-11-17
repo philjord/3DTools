@@ -27,22 +27,55 @@ public class Canvas3D2D extends Canvas3D
 	public Canvas3D2D(GLWindow glwin)
 	{
 		super(glwin);
-		initOverlySystem();
+		this.rs = RenderState.createRenderState(SVertex.factory());
+
+		initRenderer();
 	}
+
+	
 
 	public Canvas3D2D()
 	{
 		super();
+		this.rs = RenderState.createRenderState(SVertex.factory());
+
+		initRenderer();
+
+	}
+
+	@Override
+	public void addNotify()
+	{
+		super.addNotify();
 		initOverlySystem();
 	}
 
+	private RegionRenderer renderer;
 	private RenderState rs;
 	private SceneUIController sceneUIController;
 	private final float sceneDist = 10f;
 	private final float zNear = 0.1f, zFar = 100f;
+	
+	private void initRenderer()
+	{
+		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
+		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
+
+		sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
+
+		//ummmm....? this caused a crash and is apparently not needed?
+		//GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
+		//renderer.init(gl, renderModes);
+
+		sceneUIController.setRenderer(renderer);
+
+		sceneUIController.init(this.getGLWindow());
+
+	}
+	
 
 	private int renderModes = 0;
-	private RegionRenderer renderer;
+	
 
 	private Font font;
 	private final float fontSizeFpsPVP = 0.038f;
@@ -99,20 +132,6 @@ public class Canvas3D2D extends Canvas3D
 			throw new RuntimeException(ioe);
 		}
 
-		sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
-		this.rs = RenderState.createRenderState(SVertex.factory());
-
-		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
-		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
-
-		//ummmm....? this caused a crash and is apparently not needed?
-		//GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
-		//renderer.init(gl, renderModes);
-
-		sceneUIController.setRenderer(renderer);
-
-		sceneUIController.init(this.getGLWindow());
-
 	}
 
 	@Override
@@ -120,7 +139,7 @@ public class Canvas3D2D extends Canvas3D
 	{
 		//if(false)
 		if (this.getGLWindow().getGL() != null)
-		{ 
+		{
 			//Stenciled things might be the last displayed in the renderer, so turn off the stencil in case it's on
 			GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
 			gl.glDisable(GL2.GL_STENCIL_TEST);
