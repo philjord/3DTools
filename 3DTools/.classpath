@@ -20,5 +20,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/vecmath"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/awtshim"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/awtgeom"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
