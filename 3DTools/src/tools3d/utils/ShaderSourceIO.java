@@ -44,6 +44,10 @@ public class ShaderSourceIO
 				//FIXME: the supposedly correct second version makes the shader break on android
 			//	sourceCode = sourceCode.replace("vec4 cube = textureCubeLod( CubeMap, reflectedWS, 8.0 - g * 8.0 );"
 			//			,"vec4 cube = textureCube( CubeMap, reflectedWS );");
+				
+				
+				
+				//TODO: I need to swap to the in out system if I'm using the version 300 es right?
 			}
 
 			return sourceCode;
