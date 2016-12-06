@@ -1,11 +1,12 @@
 package tools3d.utils.scenegraph;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.Group;
 import org.jogamp.java3d.Node;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 import tools3d.utils.Utils3D;
@@ -81,9 +82,8 @@ public class QueuingCallbackBehavior extends Behavior
 		wakeupOn(wakeup);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void processStimulus(Enumeration criteria)
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		long start = System.nanoTime();
 		synchronized (queue)

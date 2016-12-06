@@ -1,6 +1,6 @@
 package tools3d.utils.scenegraph;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BoundingSphere;
@@ -9,6 +9,7 @@ import org.jogamp.java3d.Node;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
 import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Point3f;
@@ -49,7 +50,6 @@ public abstract class VaryingLODBehaviour extends Behavior
 	 * if node is null this will be used for distance check
 	 * Defaults to passive=true
 	 *TODO: like knots add frames and dist arrays 
-	 * @param node
 	 */
 	public VaryingLODBehaviour(Node node, float[] dists, boolean passive, boolean frustumOnly)
 	{
@@ -112,7 +112,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	 * stimulus
 	 */
 	@Override
-	public void processStimulus(Enumeration criteria)
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 
 		if (node == null || dists == null || !node.isLive())

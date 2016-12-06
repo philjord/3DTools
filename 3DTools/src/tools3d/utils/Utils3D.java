@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Appearance;
 import org.jogamp.java3d.BoundingSphere;
@@ -192,10 +192,10 @@ public class Utils3D
 		targetPolyAttr.setPolygonMode(PolygonAttributes.POLYGON_FILL);
 		appearance.setPolygonAttributes(targetPolyAttr);
 
-		Enumeration<?> enumeration = bg.getAllChildren();
-		while (enumeration.hasMoreElements())
+		Iterator<?> enumeration = bg.getAllChildren();
+		while (enumeration.hasNext())
 		{
-			Object o = enumeration.nextElement();
+			Object o = enumeration.next();
 			if (o instanceof Shape3D)
 			{
 				Shape3D s3d = (Shape3D) o;

@@ -1,6 +1,6 @@
 package tools3d.utils.scenegraph;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Node;
@@ -25,7 +25,7 @@ public class TransformedBranchGroup extends BranchGroup
 		transformGroup.addChild(child);
 	}
 
-	public Enumeration<Node> getAllChildren()
+	public Iterator<Node> getAllChildren()
 	{
 		return transformGroup.getAllChildren();
 	}

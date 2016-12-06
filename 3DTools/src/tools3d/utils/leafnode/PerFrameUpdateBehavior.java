@@ -1,10 +1,11 @@
 package tools3d.utils.leafnode;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BoundingSphere;
 import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.vecmath.Point3d;
 
@@ -21,13 +22,14 @@ public class PerFrameUpdateBehavior extends Behavior
 		this.callBack = callBack;
 	}
 
+	@Override
 	public void initialize()
 	{
 		wakeupOn(FPSCriterion);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		callBack.update();
 

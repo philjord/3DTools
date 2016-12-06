@@ -1,7 +1,7 @@
 package tools3d.utils.scenegraph;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BranchGroup;
@@ -11,6 +11,7 @@ import org.jogamp.java3d.Node;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.View;
 import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.vecmath.Point3f;
 
@@ -102,7 +103,7 @@ public class BetterDistanceLOD extends Behavior
 	private Transform3D localToWorldTrans = new Transform3D();
 
 	@Override
-	public void processStimulus(Enumeration criteria)
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		if (parent == null)
 		{

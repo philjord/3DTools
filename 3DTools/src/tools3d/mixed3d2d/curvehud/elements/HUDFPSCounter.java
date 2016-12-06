@@ -1,6 +1,6 @@
 package tools3d.mixed3d2d.curvehud.elements;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BranchGroup;
@@ -78,7 +78,7 @@ public class HUDFPSCounter
 		}
 
 		@Override
-		public void processStimulus(Enumeration critera)
+		public void processStimulus(Iterator critera)
 		{
 			currtime = System.currentTimeMillis();
 			deltatime = currtime - lasttime;
@@ -103,7 +103,7 @@ public class HUDFPSCounter
 		}
 
 		@Override
-		public void processStimulus(Enumeration critera)
+		public void processStimulus(Iterator critera)
 		{
 			// time is in millisec, so multiply by 1000 to get frames/sec
 			double fps = numOfFrames / (timeOfFrames / 1000.0);

@@ -205,7 +205,7 @@ public class JOALMixer extends AudioEngine3DL2 implements AudioDevice, AudioDevi
 	{
 		if (debug && debugView)
 			System.out.println("JOALMixer - setView...");
-		if (reference.getAllCanvas3Ds().hasMoreElements())
+		if (reference.getAllCanvas3Ds().hasNext())
 		{
 			reference.getUserHeadToVworld(transform);
 			transform.get(positionVector);

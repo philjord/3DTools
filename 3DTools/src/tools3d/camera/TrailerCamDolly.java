@@ -1,9 +1,10 @@
 package tools3d.camera;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.vecmath.Point3d;
 import org.jogamp.vecmath.Quat4f;
@@ -171,7 +172,7 @@ public class TrailerCamDolly extends Dolly
 		}
 
 		@Override
-		public void processStimulus(Enumeration critera)
+		public void processStimulus(Iterator<WakeupCriterion> critera)
 		{
 			processCamera();
 

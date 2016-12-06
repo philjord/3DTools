@@ -2,7 +2,7 @@ package tools3d.camera.simple;
 
  
  
-import java.util.Enumeration;
+import java.util.Iterator;
 
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.WakeupCriterion;
@@ -31,6 +31,7 @@ public class MyMouseRotater extends MouseBehavior
 		flags = flags | INVERT_INPUT;
 	}
 
+	@Override
 	public void initialize()
 	{
 		super.initialize();
@@ -44,8 +45,8 @@ public class MyMouseRotater extends MouseBehavior
 		}
 	}
 
-	@SuppressWarnings({ "rawtypes" })
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		WakeupCriterion wakeup;
 		 
@@ -53,9 +54,9 @@ public class MyMouseRotater extends MouseBehavior
 		//	 	int id;
 		//	 	int dx, dy;
 
-		while (criteria.hasMoreElements())
+		while (criteria.hasNext())
 		{
-			wakeup = (WakeupCriterion) criteria.nextElement();
+			wakeup = criteria.next();
 
 			if (wakeup instanceof WakeupOnBehaviorPost)
 			{
