@@ -208,6 +208,7 @@ public class YawPitch
 		return qOut;
 	}
 
+	@Override
 	public String toString()
 	{
 		return "YawPitch( " + yaw + ", " + pitch + " )";
@@ -215,9 +216,16 @@ public class YawPitch
 
 	public static YawPitch parse(String in)
 	{
-		double y = Double.parseDouble(in.substring(in.indexOf("(") + 1, in.indexOf(",")));
-		double p = Double.parseDouble(in.substring(in.indexOf(",") + 1, in.indexOf(")")));
-		return new YawPitch(y, p);
+		try
+		{
+			double y = Double.parseDouble(in.substring(in.indexOf("(") + 1, in.indexOf(",")));
+			double p = Double.parseDouble(in.substring(in.indexOf(",") + 1, in.indexOf(")")));
+			return new YawPitch(y, p);
+		}
+		catch (StringIndexOutOfBoundsException e)
+		{
+			return new YawPitch();
+		}
 	}
 
 	/**
