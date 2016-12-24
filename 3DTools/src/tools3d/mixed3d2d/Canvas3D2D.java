@@ -26,62 +26,60 @@ public class Canvas3D2D extends Canvas3D
 
 	public Canvas3D2D(GLWindow glwin)
 	{
-		super(glwin);
-		this.rs = RenderState.createRenderState(SVertex.factory());
-
+		super(glwin);	 
 		initRenderer();
-	}
-
-	
+	}	
 
 	public Canvas3D2D()
 	{
 		super();
-		this.rs = RenderState.createRenderState(SVertex.factory());
-
 		initRenderer();
-
 	}
 
 	@Override
 	public void addNotify()
 	{
 		super.addNotify();
-		initOverlySystem();
+		outputOverlayDetails();
 	}
 
 	private RegionRenderer renderer;
-	private RenderState rs;
-	private SceneUIController sceneUIController;
+	private RenderState rs = RenderState.createRenderState(SVertex.factory());
 	private final float sceneDist = 10f;
 	private final float zNear = 0.1f, zFar = 100f;
+	private SceneUIController sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
+
+	private int renderModes = 0;
+	private Font font;
+	private final float fontSizeFpsPVP = 0.038f;
+	
 	
 	private void initRenderer()
 	{
-		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
 		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
-
-		sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
-
-		//ummmm....? this caused a crash and is apparently not needed?
-		//GL2ES2 gl = this.getGLWindow().getGL().getGL2ES2();
-		//renderer.init(gl, renderModes);
-
+		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
+	
 		sceneUIController.setRenderer(renderer);
-
 		sceneUIController.init(this.getGLWindow());
+		
+		try
+		{
+			font = FontFactory.get(FontFactory.UBUNTU).getDefault();
+			//URLConnection u = IOUtil.getResource("fonts/freefont/Pelagiad.ttf", FontSet01.class.getClassLoader());
+			//font = FontFactory.get(u.getInputStream(), true);
+		}
+		catch (final IOException ioe)
+		{
+			throw new RuntimeException(ioe);
+		}
 
 	}
 	
 
-	private int renderModes = 0;
-	
 
-	private Font font;
-	private final float fontSizeFpsPVP = 0.038f;
 	private float dpiH = 96;
 
-	public void initOverlySystem()
+	private void outputOverlayDetails()
 	{
 		final Object upObj = this.getGLWindow().getUpstreamWidget();
 
@@ -121,16 +119,7 @@ public class Canvas3D2D extends Canvas3D
 
 		//System.err.println("Chosen: " + drawable.getChosenGLCapabilities());
 
-		try
-		{
-			font = FontFactory.get(FontFactory.UBUNTU).getDefault();
-			//URLConnection u = IOUtil.getResource("fonts/freefont/Pelagiad.ttf", FontSet01.class.getClassLoader());
-			//font = FontFactory.get(u.getInputStream(), true);
-		}
-		catch (final IOException ioe)
-		{
-			throw new RuntimeException(ioe);
-		}
+		
 
 	}
 

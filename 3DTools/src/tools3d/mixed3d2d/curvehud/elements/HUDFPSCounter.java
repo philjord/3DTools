@@ -114,8 +114,10 @@ public class HUDFPSCounter
 				//note round to int
 				textElement.getGraphics().drawString("" + ((int) Math.rint(fps * 10) / 10), 0, textElement.getHeight() - 5);
 			*/
-			if (fpsLabel != null)
-				fpsLabel.setText("" + ((int) Math.rint(fps * 10) / 10));
+
+			String newText = "" + ((int) Math.rint(fps * 10) / 10);
+			if (fpsLabel != null && !fpsLabel.getText().equals(newText))
+				fpsLabel.setText(newText);
 
 			numOfFrames = 0;
 			timeOfFrames = 0;
