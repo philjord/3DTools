@@ -1,13 +1,13 @@
 package tools3d.camera;
 
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.View;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.utils.universe.Viewer;
 
 import tools3d.audio.JOALMixer;
 
-import com.sun.j3d.utils.universe.Viewer;
-
 //TODO: Camera really doesn't need to extend the utility class viewer
+// but I'd need to reproduce the ViewingPlatfrom business too
 public class Camera extends Viewer
 {
 	// front and back clips, for 16bit should be ratio of no more than 3000:1 
@@ -15,6 +15,8 @@ public class Camera extends Viewer
 	public static float FRONT_CLIP = 0.1f;
 
 	public static float BACK_CLIP = 5000f;
+
+	public static long MIN_FRAME_CYCLE_TIME = 15;// max 66fps
 
 	private double FOV = 80;
 
@@ -31,7 +33,8 @@ public class Camera extends Viewer
 		getView().setFrontClipPolicy(View.VIRTUAL_EYE);
 		getView().setFrontClipDistance(FRONT_CLIP);
 		getView().setBackClipDistance(BACK_CLIP);
-		getView().setMinimumFrameCycleTime(15);// max 66fps
+		getView().setMinimumFrameCycleTime(MIN_FRAME_CYCLE_TIME);
+		 
 
 		// default in View = double fov = 45.0 * Math.PI / 180.0;
 		// 45 is too "zoomed", 60 seems more natural, but perhaps even more might be better, possibly up to the 90 mark?

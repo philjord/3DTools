@@ -1,8 +1,8 @@
 package tools3d.navigation;
 
-import javax.media.j3d.Transform3D;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3f;
 
 import tools.WeakListenerList;
 import tools3d.utils.scenegraph.LocationUpdateListener;
@@ -23,14 +23,20 @@ public class AvatarLocation
 	 * 
 	 * @param avatarLocationListener
 	 */
-	public synchronized void addAvatarLocationListener(LocationUpdateListener avatarLocationListener)
+	public void addAvatarLocationListener(LocationUpdateListener avatarLocationListener)
 	{
-		avatarLocationListeners.add(avatarLocationListener);
+		synchronized (avatarLocationListeners)
+		{
+			avatarLocationListeners.add(avatarLocationListener);
+		}
 	}
 
-	public synchronized void removeAvatarLocationListener(LocationUpdateListener avatarLocationListener)
+	public void removeAvatarLocationListener(LocationUpdateListener avatarLocationListener)
 	{
-		avatarLocationListeners.remove(avatarLocationListener);
+		synchronized (avatarLocationListeners)
+		{
+			avatarLocationListeners.remove(avatarLocationListener);
+		}
 	}
 
 	public Transform3D getTransform()
@@ -56,30 +62,33 @@ public class AvatarLocation
 		get(trans);
 	}
 
-	public synchronized void setTranslation(Vector3f trans)
+	public void setTranslation(Vector3f trans)
 	{
 		set(rotation, trans);
 	}
 
-	public synchronized void setRotation(Quat4f rot)
+	public void setRotation(Quat4f rot)
 	{
 		set(rot, translation);
 	}
 
-	public synchronized void set(Quat4f rot, Vector3f trans)
+	public void set(Quat4f rot, Vector3f trans)
 	{
 		if (!Float.isNaN(trans.x) && !Float.isNaN(rot.x))
 		{
 			//epsilon equals is a "as similar as this" system
 			if (!rot.epsilonEquals(rotation, 0.0001f) || !trans.epsilonEquals(translation, 0.005f))
-			{				
-				rotation.set(rot);
-				translation.set(trans);
-
-				for (int i = 0; i < avatarLocationListeners.size(); i++)
+			{
+				synchronized (avatarLocationListeners)
 				{
-					if (avatarLocationListeners.get(i) != null)
-						avatarLocationListeners.get(i).locationUpdated(rot, trans);
+					rotation.set(rot);
+					translation.set(trans);
+
+					for (int i = 0; i < avatarLocationListeners.size(); i++)
+					{
+						if (avatarLocationListeners.get(i) != null)
+							avatarLocationListeners.get(i).locationUpdated(rot, trans);
+					}
 				}
 			}
 		}

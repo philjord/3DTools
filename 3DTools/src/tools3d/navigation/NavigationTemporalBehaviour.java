@@ -1,11 +1,12 @@
 package tools3d.navigation;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedFrames;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 import tools3d.utils.Utils3D;
 
@@ -31,13 +32,14 @@ public class NavigationTemporalBehaviour extends Behavior
 		setEnable(true);
 	}
 
+	@Override
 	public void initialize()
 	{
 		wakeupOn(FPSCriterion);
 	}
 
-	@SuppressWarnings("rawtypes")
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		process();
 		wakeupOn(FPSCriterion);

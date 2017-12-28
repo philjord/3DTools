@@ -6,22 +6,22 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Appearance;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Material;
-import javax.media.j3d.Node;
-import javax.media.j3d.PolygonAttributes;
-import javax.media.j3d.Shape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.vecmath.Color3f;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Appearance;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Material;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.Shape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.vecmath.Color3f;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3f;
 
 /**
  * @author pj
@@ -32,6 +32,68 @@ public class Utils3D
 {
 	//	infinite bounds for fast decision making
 	public static BoundingSphere defaultBounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY);
+
+	public static float[] extractArrayFromFloatBuffer(final FloatBuffer original)
+	{
+		if (original == null)
+		{
+			System.err.println("Utils3D.extractArrayFromFloatBuffer orignal is null");
+			throw new UnsupportedOperationException();
+		}
+		else
+		{
+			if (original.hasArray())
+			{
+				return original.array();
+			}
+			else
+			{
+
+				float[] ret = new float[original.capacity()];
+				// in case 2 threads try at the same time!
+				synchronized (original)
+				{
+					original.rewind();
+					original.get(ret);
+					return ret;
+				}
+			}
+		}
+	}
+
+	public static FloatBuffer cloneFloatBuffer(final FloatBuffer original)
+	{
+
+		if (original == null)
+		{
+			System.err.println("Utils3D.extractArrayFromFloatBuffer orignal is null");
+			throw new UnsupportedOperationException();
+		}
+		else
+		{
+			// Create clone with same capacity as original.
+			FloatBuffer clone = null;
+			if (original.isDirect())
+			{
+				ByteBuffer bb = ByteBuffer.allocateDirect(original.capacity() * 4);
+				bb.order(ByteOrder.nativeOrder());
+				clone = bb.asFloatBuffer();
+			}
+			else
+			{
+				clone = FloatBuffer.allocate(original.capacity());
+			}
+
+			// in case 2 threads try to clone at the same time!
+			synchronized (original)
+			{
+				original.rewind();
+				clone.put(original);
+
+			}
+			return clone;
+		}
+	}
 
 	public static FloatBuffer makeFloatBuffer(float[] arr)
 	{
@@ -130,10 +192,10 @@ public class Utils3D
 		targetPolyAttr.setPolygonMode(PolygonAttributes.POLYGON_FILL);
 		appearance.setPolygonAttributes(targetPolyAttr);
 
-		Enumeration<?> enumeration = bg.getAllChildren();
-		while (enumeration.hasMoreElements())
+		Iterator<?> enumeration = bg.getAllChildren();
+		while (enumeration.hasNext())
 		{
-			Object o = enumeration.nextElement();
+			Object o = enumeration.next();
 			if (o instanceof Shape3D)
 			{
 				Shape3D s3d = (Shape3D) o;
@@ -225,7 +287,7 @@ public class Utils3D
 			q1.x = (float) ((rot[7] - rot[5]) * ww);
 			q1.y = (float) ((rot[2] - rot[6]) * ww);
 			q1.z = (float) ((rot[3] - rot[1]) * ww);
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
@@ -238,7 +300,7 @@ public class Utils3D
 			ww = 0.5 / q1.x;
 			q1.y = (float) (rot[3] * ww);
 			q1.z = (float) (rot[6] * ww);
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
@@ -249,14 +311,14 @@ public class Utils3D
 		{
 			q1.y = (float) Math.sqrt(ww);
 			q1.z = (float) (rot[7] / (2.0 * q1.y));
-			if(needsNormalize)
+			if (needsNormalize)
 				q1.normalize();
 			return;
 		}
 
 		q1.y = 0.0f;
 		q1.z = 1.0f;
-		if(needsNormalize)
+		if (needsNormalize)
 			q1.normalize();
 	}
 

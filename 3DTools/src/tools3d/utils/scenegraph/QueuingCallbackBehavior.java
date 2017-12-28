@@ -1,12 +1,13 @@
 package tools3d.utils.scenegraph;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.Group;
-import javax.media.j3d.Node;
-import javax.media.j3d.WakeupOnElapsedFrames;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
 
 import tools3d.utils.Utils3D;
 
@@ -19,6 +20,8 @@ import tools3d.utils.Utils3D;
 public class QueuingCallbackBehavior extends Behavior
 {
 	private ArrayList<Object> queue = new ArrayList<Object>();
+
+	
 
 	private CallBack callBack;
 
@@ -79,9 +82,8 @@ public class QueuingCallbackBehavior extends Behavior
 		wakeupOn(wakeup);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public void processStimulus(Enumeration criteria)
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		long start = System.nanoTime();
 		synchronized (queue)
@@ -121,6 +123,15 @@ public class QueuingCallbackBehavior extends Behavior
 		{
 			queue.add(parameter);
 		}
+	}
+	
+	/**
+	 * For DEBUG only! do not add or remove!
+	 * @return
+	 */
+	public ArrayList<Object> getQueue()
+	{
+		return queue;
 	}
 
 	public static interface CallBack

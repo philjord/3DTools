@@ -1,12 +1,11 @@
 package tools3d.occulsion.frustum;
 
-// Standard imports
-import javax.media.j3d.BoundingBox;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.Transform3D;
-import javax.vecmath.Matrix4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector4d;
+import org.jogamp.java3d.BoundingBox;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.vecmath.Matrix4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector4d;
 
 /**
  

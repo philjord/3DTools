@@ -1,19 +1,20 @@
 package tools3d.utils.scenegraph;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.OrientedShape3D;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.View;
-import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.vecmath.AxisAngle4d;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.OrientedShape3D;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.AxisAngle4d;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 /** 
  * EXACT copy of BIllboard, with HMD comatibility mode enabled correction (cloning removed too)
@@ -118,6 +119,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		nAxis.x = 0.0;
 		nAxis.y = 1.0;
 		nAxis.z = 0.0;
@@ -142,6 +144,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg, int mode, Vector3f axis)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		this.mode = mode;
 		this.axis.set(axis);
 		double invMag;
@@ -164,6 +167,7 @@ public class Billboard2 extends Behavior
 	public Billboard2(TransformGroup tg, int mode, Point3f point)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 		this.mode = mode;
 		this.rotationPoint.set(point);
 	}
@@ -278,6 +282,7 @@ public class Billboard2 extends Behavior
 	public void setTarget(TransformGroup tg)
 	{
 		this.tg = tg;
+		this.tg.setCapability(TransformGroup.ALLOW_LOCAL_TO_VWORLD_READ);
 	}
 
 	/**
@@ -312,7 +317,8 @@ public class Billboard2 extends Behavior
 	 * @param criteria an enumeration of the criteria that caused the
 	 * stimulus
 	 */
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		double angle = 0.0;
 		double sign;

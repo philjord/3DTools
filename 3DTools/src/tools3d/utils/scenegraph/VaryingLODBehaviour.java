@@ -1,18 +1,19 @@
 package tools3d.utils.scenegraph;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.J3dUtil;
-import javax.media.j3d.Node;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.media.j3d.ViewPlatform;
-import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.vecmath.Point3d;
-import javax.vecmath.Point3f;
-import javax.vecmath.Vector4d;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.J3dUtil;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Point3f;
+import org.jogamp.vecmath.Vector4d;
 
 /** A behavior that updates on a frequency based on distance from viewer, 
  * so more distance animations can run slower
@@ -41,12 +42,14 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 	private boolean frustumOnly = false;
 
+	private View view = null;// once set can't be changed, probably a bad idea
+	private ViewPlatform vp = null;
+
 	/**
-	 * if node is null this will be used for distance check
 	 * Dists must be 3 floats! 40,120,280 is fine
+	 * if node is null this will be used for distance check
 	 * Defaults to passive=true
 	 *TODO: like knots add frames and dist arrays 
-	 * @param node
 	 */
 	public VaryingLODBehaviour(Node node, float[] dists, boolean passive, boolean frustumOnly)
 	{
@@ -70,6 +73,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 	/**
 	 * Initialize method that sets up initial wakeup criteria.
 	 */
+	@Override
 	public void initialize()
 	{
 		// Insert wakeup condition into queue
@@ -99,14 +103,16 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 	private Transform3D pr = new Transform3D(); //ignored 
 
+	private Transform3D localToWorldTrans = new Transform3D();
+	private BoundingSphere b = new BoundingSphere();
+
 	/**
 	 * Process stimulus method that computes appropriate transform.
 	 * @param criteria an enumeration of the criteria that caused the
 	 * stimulus
 	 */
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 
 		if (node == null || dists == null || !node.isLive())
@@ -116,25 +122,31 @@ public abstract class VaryingLODBehaviour extends Behavior
 			return;
 		}
 
-		View view = this.getView();
 		if (view == null)
 		{
-			//System.out.println("view null");
-			wakeupOn(wakeup3);
-			return;
+			view = this.getView();
+			if (view == null)
+			{
+				//System.out.println("view null");
+				wakeupOn(wakeup3);
+				return;
+			}
 		}
 
 		///////////////////////////
-		ViewPlatform vp = view.getViewPlatform();
+
 		if (vp == null)
 		{
-			wakeupOn(wakeup3);
-			return;
+			vp = view.getViewPlatform();
+			if (vp == null)
+			{
+				wakeupOn(wakeup3);
+				return;
+			}
 		}
 
 		J3dUtil.getViewPosition(vp, viewPosition);
 
-		Transform3D localToWorldTrans = new Transform3D();
 		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
@@ -142,7 +154,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		///////////////////////////
 		//  get viewplatforms's location in virutal world
 		/*Canvas3D canvas = v.getCanvas3D(0);
-
+		
 		// rotate about axis
 		canvas.getCenterEyeInImagePlate(viewPosition);
 		// transform the points to the Billboard's space
@@ -155,14 +167,14 @@ public abstract class VaryingLODBehaviour extends Behavior
 			canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
 		}
 		xform.transform(viewPosition);
-
+		
 		node.getLocalToVworld(xform);
-
+		
 		xform.invert(); // xform is now vWorldToLocal
-
+		
 		// transform the eye position into the billboard's coordinate system
 		xform.transform(viewPosition);
-
+		
 		// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
 		//so let's just use the length for setting the wakeup
 		double dist = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y) + (viewPosition.z * viewPosition.z));
@@ -179,43 +191,55 @@ public abstract class VaryingLODBehaviour extends Behavior
 			try
 			{
 				node.getLocalToVworld(mv);// put bounds from local node coords to vworld coords				
-				BoundingSphere b = new BoundingSphere(node.getBounds());// cheap if sphere or box
-				b.transform(mv);
 
-				//NifCharacter is good
-				//J3dNiController seems normally to be a 50 (bones good, but flip texture no so)
-				//if (b.getRadius() == 50)
+				b.set(node.getBounds());// cheap if sphere or box
 
-				// get center
-				b.getCenter(c);
-				// get trans from world to clip
-				view.getCanvas3D(0).getVworldProjection(pj, pr);
-				//use a 4tuple to allow perspective to be returned
-				t.set(c.x, c.y, c.z, 1);
-				// trans center from vworld to clip coords
-				pj.transform(t);
-				// Perspective division (don't forget this step)
-				c.x = t.x / t.w;
-				c.y = t.y / t.w;
-				c.z = t.z / t.w;
-
-				// now a very long radius scale operation against perspective
-				b.getCenter(c2);
-				t.set(c2.x, c2.y, c2.z - b.getRadius(), 1);
-				pj.transform(t);
-				c2.x = t.x / t.w;
-				c2.y = t.y / t.w;
-				c2.z = t.z / t.w;
-				c2.x -= c.x;
-				c2.y -= c.y;
-				c2.z -= c.z;
-
-				double r2 = Math.sqrt((c2.x * c2.x) + (c2.y * c2.y) + (c2.z * c2.z));
-
-				if (sphereIntersectUnitBox(c, r2))
+				//positive infinity is everywhere so we always intersect with it
+				if (b.getRadius() == Double.POSITIVE_INFINITY)
 				{
 					process();
 				}
+				else
+				{
+
+					b.transform(mv);
+
+					//NifCharacter is good
+					//J3dNiController seems normally to be a 50 (bones good, but flip texture no so)
+					//if (b.getRadius() == 50)
+
+					// get center
+					b.getCenter(c);
+					// get trans from world to clip
+					view.getCanvas3D(0).getVworldProjection(pj, pr);
+					//use a 4tuple to allow perspective to be returned
+					t.set(c.x, c.y, c.z, 1);
+					// trans center from vworld to clip coords
+					pj.transform(t);
+					// Perspective division (don't forget this step)
+					c.x = t.x / t.w;
+					c.y = t.y / t.w;
+					c.z = t.z / t.w;
+
+					// now a very long radius scale operation against perspective
+					b.getCenter(c2);
+					t.set(c2.x, c2.y, c2.z - b.getRadius(), 1);
+					pj.transform(t);
+					c2.x = t.x / t.w;
+					c2.y = t.y / t.w;
+					c2.z = t.z / t.w;
+					c2.x -= c.x;
+					c2.y -= c.y;
+					c2.z -= c.z;
+
+					double r2 = Math.sqrt((c2.x * c2.x) + (c2.y * c2.y) + (c2.z * c2.z));
+
+					if (sphereIntersectUnitBox(c, r2))
+					{
+						process();
+					}
+				}
+
 			}
 			catch (NullPointerException e)
 			{
@@ -247,7 +271,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		//wakeupOn(new WakeupOnElapsedFrames(100, true)); 
 	}
 
-	private boolean sphereIntersectUnitBox(Point3d sphereCenter, double radius)
+	private static boolean sphereIntersectUnitBox(Point3d sphereCenter, double radius)
 	{
 		// Get the center of the sphere relative to the center of the box
 		double scx = sphereCenter.x;
@@ -296,8 +320,7 @@ public abstract class VaryingLODBehaviour extends Behavior
 		double disty = scy - bpy;
 		double distz = scz - bpz;
 
-		//orignal had ^2 of radius instead of sqrt but doesn't work for < 1 radius!
-		if (Math.sqrt((distx * distx) + (disty * disty) + (distz * distz)) < radius)
+		if ((distx * distx) + (disty * disty) + (distz * distz) < radius * radius)
 			return true;
 		else
 			return false;

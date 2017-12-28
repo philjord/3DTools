@@ -1,19 +1,18 @@
 package tools3d.camera;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Window;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.media.j3d.View;
-import javax.swing.SwingUtilities;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import com.jogamp.newt.opengl.GLWindow;
 
+import javaawt.GraphicsDevice;
+import javaawt.GraphicsEnvironment;
 import tools3d.navigation.AvatarCollisionInfo;
 import tools3d.navigation.NavigationProcessorInterface;
 import tools3d.ovr.OculusRift03;
@@ -208,7 +207,7 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 	{ 
 		//TODO:...
 		System.out.println("looking for " + or.getHmdDesc().displayDeviceName);
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment(leftView.getCanvas3D(0).getGLWindow());
 		for (GraphicsDevice gd : ge.getScreenDevices())
 		{
 			System.out.println("I've got " + gd.getIDstring());
@@ -216,8 +215,8 @@ public class HMDCamDolly extends BranchGroup implements IDolly, NavigationProces
 		}
 
 		//using desktop location instead
-		Window w = SwingUtilities.getWindowAncestor(leftView.getCanvas3D(0));
-		w.setLocation(or.getHmdDesc().windowsPosX, or.getHmdDesc().windowsPosY);
+		GLWindow w = leftView.getCanvas3D(0).getGLWindow();
+		w.setPosition(or.getHmdDesc().windowsPosX, or.getHmdDesc().windowsPosY);
 	}
 
 	@Override

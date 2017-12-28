@@ -1,8 +1,8 @@
 package tools3d.camera;
 
-import javax.media.j3d.BranchGroup;
-import javax.vecmath.Quat4f;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.vecmath.Quat4f;
+import org.jogamp.vecmath.Vector3f;
 
 public class NullCamDolly extends Dolly
 {

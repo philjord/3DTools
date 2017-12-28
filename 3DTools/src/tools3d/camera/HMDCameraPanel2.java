@@ -1,16 +1,9 @@
 package tools3d.camera;
 
-import java.awt.GraphicsConfigTemplate;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
-
-import javax.media.j3d.GraphicsConfigTemplate3D;
-import javax.media.j3d.PhysicalBody;
-import javax.media.j3d.PhysicalEnvironment;
-import javax.media.j3d.View;
-import javax.vecmath.Point3d;
+import org.jogamp.java3d.PhysicalBody;
+import org.jogamp.java3d.PhysicalEnvironment;
+import org.jogamp.java3d.View;
+import org.jogamp.vecmath.Point3d;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.ovr.OculusRift03;
@@ -26,33 +19,12 @@ public class HMDCameraPanel2 extends CameraPanel
 	{
 		this.universe = universe;
 
-		setLayout(new GridLayout(1, 2));
-
-		//This stuff has to be in synch with the ScreenResolution class
-		// I must do this in order to enable the stencil buffer
-		GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-		GraphicsDevice gd = ge.getDefaultScreenDevice();
-		GraphicsConfiguration[] gc = gd.getConfigurations();
-		GraphicsConfigTemplate3D template = new GraphicsConfigTemplate3D();
-		//stencil setup stuff
-		//template.setStencilSize(8);		
-		// we must also set the stencil buffer to clear each frame (madness!)
-		// put  -Dj3d.stencilClear=true in your vm arguments!!!  
-
-		// antialiasing REQUIRED is good to have
-		template.setSceneAntialiasing(GraphicsConfigTemplate.REQUIRED);
-		template.setStereo(GraphicsConfigTemplate.PREFERRED);//can't say required! kills AA
-		//Note do not use until // chosenCaps.setStereo((gct.getStereo() == GraphicsConfigTemplate.PREFERRED));
-		//in joglpipeline is reversed (big job)
-
-		GraphicsConfiguration config = template.getBestConfiguration(gc);
-
-		canvas3D2D = new Canvas3D2D(config);
+		canvas3D2D = new Canvas3D2D();
 		canvas3D2D.setStereoEnable(true);
 		canvas3D2D.setMonoscopicViewPolicy(View.LEFT_EYE_VIEW);
 		camera = new Camera(canvas3D2D);
 
-		canvas3D2Db = new Canvas3D2D(config);
+		canvas3D2Db = new Canvas3D2D();
 		canvas3D2Db.setStereoEnable(true);
 		canvas3D2Db.setMonoscopicViewPolicy(View.RIGHT_EYE_VIEW);
 
@@ -62,7 +34,7 @@ public class HMDCameraPanel2 extends CameraPanel
 		// note shared!
 		//canvas3D2D.getScreen3D().setPhysicalScreenHeight(0.1);
 		//canvas3D2D.getScreen3D().setPhysicalScreenWidth(0.1);
-		
+
 		//TODO: the images are being render seperated by physical screen distances!
 		// possibly on the OR this would be fine, but I suspect it's not pulling real screen physicals 
 		// because when I set the screen3D physical down 0.01 it goes crazy
@@ -77,8 +49,8 @@ public class HMDCameraPanel2 extends CameraPanel
 		view.addCanvas3D(canvas3D2Db);
 		PhysicalEnvironment pe = view.getPhysicalEnvironment();
 		occ.init();
-	//	pe.addInputDevice(occ);
-	//	pe.setSensor(0, occ.getSensor(0)); // added at 0 which is head tracking index, so tracking availible = true
+		//	pe.addInputDevice(occ);
+		//	pe.setSensor(0, occ.getSensor(0)); // added at 0 which is head tracking index, so tracking availible = true
 		//pe.setCoexistenceCenterInPworldPolicy(View.NOMINAL_HEAD);
 		//pe.setCoexistenceToTrackerBase(t);
 		//CanvasViewCache computeView() vworldToTrackerBase is fulled with maness
@@ -93,9 +65,9 @@ public class HMDCameraPanel2 extends CameraPanel
 		if (canvas3D2Db.isRendererRunning())
 		{
 			canvas3D2Db.stopRenderer();
-			if (this.isAncestorOf(canvas3D2Db))
+			//	if (this.isAncestorOf(canvas3D2Db))
 			{
-				remove(canvas3D2Db);
+				//		remove(canvas3D2Db);
 			}
 		}
 	}
@@ -106,10 +78,10 @@ public class HMDCameraPanel2 extends CameraPanel
 		if (!isRendering())
 		{
 			super.startRendering();
-			if (canvas3D2Db.getParent() != this)
+			//	if (canvas3D2Db.getParent() != this)
 			{
-				add(canvas3D2Db);
-				validate();
+				//	add(canvas3D2Db);
+				//validate();
 			}
 			canvas3D2Db.startRenderer();
 		}

@@ -1,26 +1,28 @@
 package tools3d.utils.scenegraph;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Group;
-import javax.media.j3d.J3dUtil;
-import javax.media.j3d.Node;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.media.j3d.ViewPlatform;
-import javax.media.j3d.WakeupOnElapsedFrames;
-import javax.vecmath.Point3f;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Group;
+import org.jogamp.java3d.J3dUtil;
+import org.jogamp.java3d.Node;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.ViewPlatform;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedFrames;
+import org.jogamp.vecmath.Point3f;
 
-//OH MY GOD! switches pointing to links don't refresh properly!
-// I also notice that shared group appear to be massively inefficient
+//Note Bug 1331 - Shared nodes under switch nodes, the link doesn’t work properly 
 
 //allows a transition zone of fadness sent out to 2 nodes attached
 
 public class BetterDistanceLOD extends Behavior
 {
+	public static float FADE_RANGE_DIVISOR = 15f;
+
 	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
 	private WakeupOnElapsedFrames wakeupFrame0 = new WakeupOnElapsedFrames(0, true);
@@ -39,19 +41,35 @@ public class BetterDistanceLOD extends Behavior
 
 	private ArrayList<BranchGroup> roots;
 
+	private boolean popOnly = false;// if set true then no fading at all, only detach/attach
+
 	static final double EPSILON = 1.0e-6;
 
 	public BetterDistanceLOD(Group parent, ArrayList<BranchGroup> roots, float[] distances)
 	{
+		this(parent, roots, distances, false);
+	}
 
+	public BetterDistanceLOD(Group parent, ArrayList<BranchGroup> roots, float[] distances, boolean popOnly)
+	{
 		this.parent = parent;
+		this.popOnly = popOnly;
 		parent.setCapability(Group.ALLOW_CHILDREN_WRITE);
 		parent.setCapability(Group.ALLOW_CHILDREN_EXTEND);
 		parent.setCapability(Node.ALLOW_LOCAL_TO_VWORLD_READ);
 		this.roots = roots;
 		for (BranchGroup bg : roots)
 		{
-			bg.setCapability(BranchGroup.ALLOW_DETACH);
+			if (bg != null)
+			{
+				bg.setCapability(BranchGroup.ALLOW_DETACH);
+				
+				if (!popOnly && bg instanceof Fadable)
+				{
+					// tell the group to prepare itself for fading
+					((Fadable) bg).fade(-1f);
+				}
+			}
 		}
 
 		this.distances = new double[distances.length];
@@ -60,7 +78,6 @@ public class BetterDistanceLOD extends Behavior
 		{
 			this.distances[i] = distances[i];
 		}
-
 	}
 
 	@Override
@@ -83,9 +100,10 @@ public class BetterDistanceLOD extends Behavior
 	// deburners
 	//private Point3d viewPosition = new Point3d();
 	//private Transform3D xform = new Transform3D();
+	private Transform3D localToWorldTrans = new Transform3D();
 
-	@SuppressWarnings("rawtypes")
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		if (parent == null)
 		{
@@ -102,7 +120,7 @@ public class BetterDistanceLOD extends Behavior
 			wakeupOn(wakeupFrame10);
 			return;
 		}
-///////////////////////////
+		///////////////////////////
 		ViewPlatform vp = v.getViewPlatform();
 		if (vp == null)
 		{
@@ -112,12 +130,11 @@ public class BetterDistanceLOD extends Behavior
 
 		J3dUtil.getViewPosition(vp, viewPosition);
 
-		Transform3D localToWorldTrans = new Transform3D();
 		J3dUtil.getCurrentLocalToVworld(this, localToWorldTrans);
 		center.set(0, 0, 0);
 		localToWorldTrans.transform(center);
 		double viewDistance = center.distance(viewPosition);
-///////////////////////////
+		///////////////////////////
 		/*	Canvas3D canvas = v.getCanvas3D(0);
 			// rotate about axis
 			canvas.getCenterEyeInImagePlate(viewPosition);
@@ -135,19 +152,19 @@ public class BetterDistanceLOD extends Behavior
 				canvas.getImagePlateToVworld(xform); // xform is ImagePlateToVworld
 			}
 			xform.transform(viewPosition);
-
+		
 			parent.getLocalToVworld(xform);
-
+		
 			xform.invert(); // xform is now vWorldToLocal
-
+		
 			// transform the eye position into the billboard's coordinate system
 			xform.transform(viewPosition);
-
+		
 			// I wager viewPosition is the eye point in the local transforms coordinates, I wager?
 			// so let's just use the length 
 			double viewDistance = Math.sqrt((viewPosition.x * viewPosition.x) + (viewPosition.y * viewPosition.y)
 					+ (viewPosition.z * viewPosition.z));
-
+		
 			//TODO: if there is a scale transform node above this one then the view distance is scaled and wrong
 			// see bloated float sign, test
 			viewDistance = viewDistance / xform.getScale();
@@ -192,32 +209,39 @@ public class BetterDistanceLOD extends Behavior
 			prevIndex = newIndex;
 		}
 
-		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / 15f));
+		float fadeRange = (float) (MIN_FADE_RANGE + (viewDistance / FADE_RANGE_DIVISOR));
 		//System.out.println("viewDistance " + viewDistance + ": distDiff " + distDiff + ": fadeRange " + fadeRange);
 		//simple case not near interface, just for a plain model
 		if (distDiff > fadeRange)
 		{
-			// ensure no fade for new index
-			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+			if (!popOnly)
 			{
-				((Fadable) roots.get(newIndex)).fade(0f);
+				// ensure no fade for new index
+				if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+				{
+					((Fadable) roots.get(newIndex)).fade(0f);
+				}
 			}
 
 			// and neighbour not added
 			ensureRemoved(newIndex + 1);
 
 		}
-		else if (distDiff <= 0)
-		{
-			System.out.println("BetterDistanceLOD can this ever happen? " + distDiff);
-		}
+		//else if (distDiff <= 0)
+		//{
+			//Yes!
+			//System.out.println("BetterDistanceLOD can this ever happen? " + distDiff);
+		//}
 		else
 		{
-			float fade = (float) (distDiff / fadeRange);
-			//	System.out.println("fade " + fade);
-			if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+			if (!popOnly)
 			{
-				((Fadable) roots.get(newIndex)).fade(1f - fade);
+				float fade = (float) (distDiff / fadeRange);
+				//	System.out.println("fade " + fade);
+				if (newIndex < roots.size() && roots.get(newIndex) != null && roots.get(newIndex) instanceof Fadable)
+				{
+					((Fadable) roots.get(newIndex)).fade(1f - fade);
+				}
 			}
 
 			if (newIndex + 1 < roots.size() && roots.get(newIndex + 1) instanceof Fadable)
@@ -228,10 +252,12 @@ public class BetterDistanceLOD extends Behavior
 				// one side looks better all round (neighbour is always opaque)
 				ensureAdded(newIndex + 1, true);
 			}
+
 		}
 
 		// Insert wakeup condition into queueif based on proximity to interesting ness
 		if (distDiff < 1.5)
+
 			wakeupOn(wakeupFrame0);
 		else if (distDiff < 5)
 			wakeupOn(wakeupFrame2);
@@ -252,7 +278,7 @@ public class BetterDistanceLOD extends Behavior
 			if (bg != null && !bg.isLive())
 			{
 				parent.addChild(bg);
-				if (removeFade && bg instanceof Fadable)
+				if (!popOnly && removeFade && bg instanceof Fadable)
 				{
 					((Fadable) bg).fade(0f);
 				}
@@ -268,7 +294,7 @@ public class BetterDistanceLOD extends Behavior
 			if (bg != null && bg.isLive())
 			{
 				parent.removeChild(bg);
-				if (bg instanceof Fadable)
+				if (!popOnly && bg instanceof Fadable)
 				{
 					((Fadable) bg).fade(0f);
 				}

@@ -2,18 +2,20 @@ package tools3d.audio;
 
 import java.util.HashMap;
 
-import javax.media.j3d.AudioDevice;
-import javax.media.j3d.AudioDevice3D;
-import javax.media.j3d.AudioDevice3DL2;
-import javax.media.j3d.AuralAttributes;
-import javax.media.j3d.MediaContainer;
-import javax.media.j3d.PhysicalEnvironment;
-import javax.media.j3d.Sound;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.View;
-import javax.vecmath.Point3d;
-import javax.vecmath.Vector3d;
-import javax.vecmath.Vector3f;
+import org.jogamp.java3d.AudioDevice;
+import org.jogamp.java3d.AudioDevice3D;
+import org.jogamp.java3d.AudioDevice3DL2;
+import org.jogamp.java3d.AuralAttributes;
+import org.jogamp.java3d.MediaContainer;
+import org.jogamp.java3d.PhysicalEnvironment;
+import org.jogamp.java3d.Sound;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.View;
+import org.jogamp.java3d.audioengines.AudioEngine3DL2;
+import org.jogamp.java3d.audioengines.Sample;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Vector3d;
+import org.jogamp.vecmath.Vector3f;
 
 import com.jogamp.openal.AL;
 import com.jogamp.openal.ALC;
@@ -24,8 +26,6 @@ import com.jogamp.openal.ALConstants;
 import com.jogamp.openal.ALException;
 import com.jogamp.openal.ALFactory;
 import com.jogamp.openal.util.ALut;
-import com.sun.j3d.audioengines.AudioEngine3DL2;
-import com.sun.j3d.audioengines.Sample;
 
 /**
  * This class is a concrete implementation of AudioEngine3DL2 that uses the JOAL/OpenAL sound library to provide
@@ -205,7 +205,7 @@ public class JOALMixer extends AudioEngine3DL2 implements AudioDevice, AudioDevi
 	{
 		if (debug && debugView)
 			System.out.println("JOALMixer - setView...");
-		if (reference.getAllCanvas3Ds().hasMoreElements())
+		if (reference.getAllCanvas3Ds().hasNext())
 		{
 			reference.getUserHeadToVworld(transform);
 			transform.get(positionVector);

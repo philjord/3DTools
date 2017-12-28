@@ -1,24 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="JRiftLibrary/" kind="src" path="src"/>
-	<classpathentry kind="src" path="/Tools"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/java3d-core-and"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Tools"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/java3d-utils-and"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/vecmath"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/jftp.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/log4j-1.2.9.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/j3d/j3d-org-java3d-all.jar" sourcepath="E:/Java/3rd party jars/j3d/src"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/jai.jar" sourcepath="E:/Java/3rd party jars/jai/src/main">
-		<attributes>
-			<attribute name="javadoc_location" value="http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="/external_jars/external jars/jogamp/jar/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/jogamp/jar/joal.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/jogamp/jar/jogl-all.jar" sourcepath="E:/downloads&amp;installs/develop/java/jogamp/jogamp-all-platforms/jogl-java-src.zip"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/1.6.0-pre12/j3dcore.jar" sourcepath="/java3d-core"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/1.6.0-pre12/j3dutils.jar"/>
-	<classpathentry kind="lib" path="/external_jars/external jars/java3d/1.6.0-pre12/vecmath.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jogamp/jar/atomic/jogl-fonts-p0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jogamp/jar/joal.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>

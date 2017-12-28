@@ -1,32 +1,27 @@
 package tools3d.camera.simple;
 
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import org.jogamp.java3d.BoundingSphere;
+import org.jogamp.java3d.Bounds;
+import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.Canvas3D;
+import org.jogamp.java3d.CapabilityNotSetException;
+import org.jogamp.java3d.PickInfo;
+import org.jogamp.java3d.Transform3D;
+import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseBehaviorCallback;
+import org.jogamp.java3d.utils.behaviors.mouse.newt.MouseRotate;
+import org.jogamp.java3d.utils.pickfast.PickCanvas;
+import org.jogamp.java3d.utils.universe.ViewingPlatform;
+import org.jogamp.vecmath.Point3d;
+import org.jogamp.vecmath.Quat4d;
+import org.jogamp.vecmath.Vector3d;
 
-import javax.media.j3d.BoundingSphere;
-import javax.media.j3d.Bounds;
-import javax.media.j3d.BranchGroup;
-import javax.media.j3d.Canvas3D;
-import javax.media.j3d.CapabilityNotSetException;
-import javax.media.j3d.PickInfo;
-import javax.media.j3d.Transform3D;
-import javax.media.j3d.TransformGroup;
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-import javax.vecmath.Point3d;
-import javax.vecmath.Quat4d;
-import javax.vecmath.Vector3d;
+import com.jogamp.newt.event.KeyAdapter;
+import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.newt.event.MouseAdapter;
+import com.jogamp.newt.event.MouseEvent;
 
 import tools3d.utils.YawPitch;
-
-import com.sun.j3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import com.sun.j3d.utils.behaviors.mouse.MouseRotate;
-import com.sun.j3d.utils.pickfast.PickCanvas;
-import com.sun.j3d.utils.universe.ViewingPlatform;
 
 public class SimpleCameraHandler extends BranchGroup
 {
@@ -44,9 +39,9 @@ public class SimpleCameraHandler extends BranchGroup
 
 	private boolean isFreeLook = true;
 
-	private Transform3D viewTransform = new Transform3D();
+	private boolean topHalfOnly = true;
 
-	private JFrame parentFrame;
+	private Transform3D viewTransform = new Transform3D();
 
 	private YawPitch yawPitch = new YawPitch();
 
@@ -63,11 +58,18 @@ public class SimpleCameraHandler extends BranchGroup
 	public SimpleCameraHandler(ViewingPlatform _viewingPlatform, Canvas3D _canvas3D, BranchGroup modelGroup,
 			TransformGroup modelRotateTransformGroup, boolean defaultToFreeLook)
 	{
+		this(_viewingPlatform, _canvas3D, modelGroup, modelRotateTransformGroup, defaultToFreeLook, false);
+	}
+
+	public SimpleCameraHandler(ViewingPlatform _viewingPlatform, Canvas3D _canvas3D, BranchGroup modelGroup,
+			TransformGroup modelRotateTransformGroup, boolean defaultToFreeLook, boolean _topHalfOnly)
+	{
 		System.out.println("SimpleCameraHandler right mouse to change from model spin to freelook");
 		this.viewingPlatform = _viewingPlatform;
 		this.canvas3D = _canvas3D;
-		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
-		freeLookMouseRotate = new MyMouseRotater(viewingPlatform.getViewPlatformTransform());
+		this.topHalfOnly = _topHalfOnly;
+		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
+		freeLookMouseRotate = new MyMouseRotater(canvas3D.getGLWindow(), viewingPlatform.getViewPlatformTransform());
 
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -76,7 +78,15 @@ public class SimpleCameraHandler extends BranchGroup
 		freeLookMouseRotate.setEnable(true);
 		addChild(freeLookMouseRotate);
 
-		modelRotateMouseRotate = new MouseRotate(modelRotateTransformGroup);
+		modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup) {
+			protected void doProcess(MouseEvent evt)
+			{
+				processMouseEvent(evt);
+				if (!topHalfOnly || evt.getY() < canvas3D.getGLWindow().getHeight() / 2)
+					super.doProcess(evt);
+
+			}
+		};
 		modelRotateMouseRotate.setSchedulingBounds(new BoundingSphere(new Point3d(0.0, 0.0, 0.0), Double.POSITIVE_INFINITY));
 		modelRotateMouseRotate.setEnable(false);
 		addChild(modelRotateMouseRotate);
@@ -90,7 +100,7 @@ public class SimpleCameraHandler extends BranchGroup
 				yawPitch.set(viewTransform);
 				viewTransform.setRotation(yawPitch.get(new Quat4d()));
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 		});
 
@@ -102,7 +112,7 @@ public class SimpleCameraHandler extends BranchGroup
 		selectPickCanvas.setTolerance(0.0f);
 		selectPickCanvas.setFlags(PickInfo.CLOSEST_INTERSECTION_POINT);
 
-		canvas3D.addMouseListener(new MouseAdapter() {
+		canvas3D.getGLWindow().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
@@ -114,14 +124,12 @@ public class SimpleCameraHandler extends BranchGroup
 				{
 					setFreeLook(!isFreeLook);
 				}
+
 			}
 
-		});
-
-		canvas3D.addMouseWheelListener(new MouseWheelListener() {
-			public void mouseWheelMoved(MouseWheelEvent e)
+			public void mouseWheelMoved(MouseEvent e)
 			{
-				if (e.getWheelRotation() < 0)
+				if (e.getRotation()[1] < 0)
 				{
 					forward();
 				}
@@ -130,9 +138,10 @@ public class SimpleCameraHandler extends BranchGroup
 					back();
 				}
 			}
+
 		});
 
-		canvas3D.addKeyListener(new KeyAdapter() {
+		canvas3D.getGLWindow().addKeyListener(new KeyAdapter() {
 
 			public void keyPressed(KeyEvent e)
 			{
@@ -174,6 +183,7 @@ public class SimpleCameraHandler extends BranchGroup
 				{
 					m.set(0, 0, 0);
 				}
+
 				m.scale(moveAmount);
 
 				viewTransform.get(loc);
@@ -181,8 +191,17 @@ public class SimpleCameraHandler extends BranchGroup
 				viewTransform.setTranslation(loc);
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				if (parentFrame != null)
-					parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+
+				if (e.getKeyCode() == KeyEvent.VK_PLUS || e.getKeyCode() == KeyEvent.VK_2)
+				{
+					forward();
+				}
+				else if (e.getKeyCode() == KeyEvent.VK_MINUS || e.getKeyCode() == KeyEvent.VK_8)
+				{
+					back();
+				}
+
+				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 
 		});
@@ -200,8 +219,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += 1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		if (parentFrame != null)
-			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+
+		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 	}
 
 	private void back()
@@ -210,8 +229,8 @@ public class SimpleCameraHandler extends BranchGroup
 		loc.z += -1.0;
 		viewTransform.setTranslation(loc);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		if (parentFrame != null)
-			parentFrame.setTitle("Rot = " + yawPitch + " loc = " + loc);
+
+		canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 
 	}
 
@@ -269,13 +288,15 @@ public class SimpleCameraHandler extends BranchGroup
 		if (eye.x == center.x && eye.y == center.y)
 		{
 			center.y += 0.01;
+			center.x += 0.01;
+			center.z -= 0.01;
 		}
 
 		t.lookAt(eye, center, up);
 		t.invert();
 		viewTransform.set(t);
 		viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-		parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
+		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
 	}
 
 	public void viewBounds(Bounds bounds)
@@ -289,11 +310,11 @@ public class SimpleCameraHandler extends BranchGroup
 			// some time radius is -1 or a massive number, ignore those
 			if (boundingSphere.getRadius() < 50000 && boundingSphere.getRadius() > 0)
 			{
-				eye.z = boundingSphere.getRadius() * 4d;
+				eye.z = boundingSphere.getRadius() * 2d;
 			}
 			else
 			{
-				eye.z = 10;
+				eye.z = 5;
 				System.out.println("boundingSphere.getRadius() " + boundingSphere.getRadius());
 			}
 			setView(eye, center);

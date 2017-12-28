@@ -1,10 +1,11 @@
 package tools3d.utils;
 
-import java.util.Enumeration;
+import java.util.Iterator;
 
-import javax.media.j3d.Behavior;
-import javax.media.j3d.WakeupCondition;
-import javax.media.j3d.WakeupOnElapsedTime;
+import org.jogamp.java3d.Behavior;
+import org.jogamp.java3d.WakeupCondition;
+import org.jogamp.java3d.WakeupCriterion;
+import org.jogamp.java3d.WakeupOnElapsedTime;
 
 /**
  * @author Administrator
@@ -32,14 +33,14 @@ public class TimedRunnableBehavior extends Behavior
 		setEnable(true);
 	}
 
+	@Override
 	public void initialize()
 	{
 		wakeupOn(criterion);
 	}
 
-	@SuppressWarnings(
-	{ "unchecked", "rawtypes" })
-	public void processStimulus(Enumeration criteria)
+	@Override
+	public void processStimulus(Iterator<WakeupCriterion> criteria)
 	{
 		callback.run();
 		wakeupOn(criterion);
