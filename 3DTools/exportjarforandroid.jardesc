@@ -11,6 +11,7 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=Tools/src"/>
         <javaElement handleIdentifier="=3DTools/src"/>
     </selectedElements>
 </jardesc>
