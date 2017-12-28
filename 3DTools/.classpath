@@ -8,8 +8,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogamp/jar/atomic/jogl-fonts-p0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogamp/jar/joal.jar"/>
-	<classpathentry kind="lib" path="lib/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
-	<classpathentry kind="lib" path="lib/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
-	<classpathentry kind="lib" path="lib/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
 	<classpathentry kind="output" path="output"/>
 </classpath>
