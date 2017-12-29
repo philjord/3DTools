@@ -4,6 +4,7 @@ import java.util.Iterator;
 
 import org.jogamp.java3d.Behavior;
 import org.jogamp.java3d.BranchGroup;
+import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.java3d.WakeupOnElapsedTime;
 
@@ -78,7 +79,7 @@ public class HUDFPSCounter
 		}
 
 		@Override
-		public void processStimulus(Iterator critera)
+		public void processStimulus(Iterator<WakeupCriterion> critera)
 		{
 			currtime = System.currentTimeMillis();
 			deltatime = currtime - lasttime;
@@ -103,7 +104,7 @@ public class HUDFPSCounter
 		}
 
 		@Override
-		public void processStimulus(Iterator critera)
+		public void processStimulus(Iterator<WakeupCriterion> critera)
 		{
 			// time is in millisec, so multiply by 1000 to get frames/sec
 			double fps = numOfFrames / (timeOfFrames / 1000.0);

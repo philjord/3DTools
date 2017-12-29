@@ -20,6 +20,8 @@ import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 import com.jogamp.opengl.hudbasics.graph.demos.ui.SceneUIController;
 import com.jogamp.opengl.hudbasics.graph.demos.ui.UIShape;
 
+import tools3d.mixed3d2d.curvehud.elements.UbuntuFontLoader;
+
 public class Canvas3D2D extends Canvas3D
 {
 	public boolean isLeft = false;
@@ -64,7 +66,7 @@ public class Canvas3D2D extends Canvas3D
 		
 		try
 		{
-			font = FontFactory.get(FontFactory.UBUNTU).getDefault();
+			font = new UbuntuFontLoader().getDefault();
 			//URLConnection u = IOUtil.getResource("fonts/freefont/Pelagiad.ttf", FontSet01.class.getClassLoader());
 			//font = FontFactory.get(u.getInputStream(), true);
 		}

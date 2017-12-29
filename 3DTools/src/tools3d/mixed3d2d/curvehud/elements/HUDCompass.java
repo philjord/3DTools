@@ -69,6 +69,7 @@ public class HUDCompass implements LocationUpdateListener
 
 	private YawPitch yawPitch = new YawPitch();
 
+	@Override
 	public void locationUpdated(Quat4f rot, Vector3f trans)
 	{
 		if (textElementBear != null)

@@ -36,6 +36,7 @@ public class HUDPosition implements LocationUpdateListener
 
 	}
 
+	@Override
 	public void locationUpdated(Quat4f rot, Vector3f trans)
 	{
 		if (posLabel != null)

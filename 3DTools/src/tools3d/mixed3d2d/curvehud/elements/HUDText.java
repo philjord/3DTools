@@ -6,7 +6,6 @@ import org.jogamp.vecmath.Color4f;
 import org.jogamp.vecmath.Point2f;
 
 import com.jogamp.graph.font.Font;
-import com.jogamp.graph.font.FontFactory;
 import com.jogamp.graph.font.FontSet;
 import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
 
@@ -60,8 +59,8 @@ public class HUDText
 
 		try
 		{
-			textFont = FontFactory.get(FontFactory.UBUNTU).getDefault();
-			greyTextFont = FontFactory.get(FontFactory.UBUNTU).get(FontSet.FAMILY_REGULAR, FontSet.STYLE_ITALIC);
+			textFont = new UbuntuFontLoader().getDefault();
+			greyTextFont = new UbuntuFontLoader().get(FontSet.FAMILY_REGULAR, FontSet.STYLE_ITALIC);
 			currentTextFont = textFont;
 		}
 		catch (final IOException ioe)
