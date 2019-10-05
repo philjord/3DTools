@@ -9,7 +9,7 @@ import org.jogamp.java3d.PickInfo;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import org.jogamp.java3d.utils.behaviors.mouse.newt.MouseRotate;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseRotate;
 import org.jogamp.java3d.utils.pickfast.PickCanvas;
 import org.jogamp.java3d.utils.universe.ViewingPlatform;
 import org.jogamp.vecmath.Point3d;
@@ -69,7 +69,7 @@ public class SimpleCameraHandler extends BranchGroup
 		this.canvas3D = _canvas3D;
 		this.topHalfOnly = _topHalfOnly;
 		//parentFrame = (JFrame) SwingUtilities.getWindowAncestor(canvas3D);
-		freeLookMouseRotate = new MyMouseRotater(canvas3D.getGLWindow(), viewingPlatform.getViewPlatformTransform());
+		freeLookMouseRotate = new MyMouseRotater(canvas3D, viewingPlatform.getViewPlatformTransform());
 
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_READ);
 		modelRotateTransformGroup.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
@@ -78,7 +78,7 @@ public class SimpleCameraHandler extends BranchGroup
 		freeLookMouseRotate.setEnable(true);
 		addChild(freeLookMouseRotate);
 
-		modelRotateMouseRotate = new MouseRotate(canvas3D.getGLWindow(), modelRotateTransformGroup) {
+		modelRotateMouseRotate = new MouseRotate(canvas3D, modelRotateTransformGroup) {
 			protected void doProcess(MouseEvent evt)
 			{
 				processMouseEvent(evt);

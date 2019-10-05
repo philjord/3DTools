@@ -4,15 +4,15 @@ package tools3d.camera.simple;
  
 import java.util.Iterator;
 
+import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnBehaviorPost;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseBehaviorCallback;
-import org.jogamp.java3d.utils.behaviors.mouse.newt.MouseBehavior;
+import org.jogamp.java3d.utils.behaviors.mouse.MouseBehavior;
 import org.jogamp.vecmath.Matrix4d;
 import org.jogamp.vecmath.Vector3d;
 
-import com.jogamp.newt.Window;
 import com.jogamp.newt.event.MouseEvent;
 
 public class MyMouseRotater extends MouseBehavior
@@ -25,7 +25,7 @@ public class MyMouseRotater extends MouseBehavior
 
 	private MouseBehaviorCallback callback = null;
 
-	public MyMouseRotater(Window c, TransformGroup transformGroup)
+	public MyMouseRotater(Canvas3D c, TransformGroup transformGroup)
 	{
 		super(c, transformGroup);
 		flags = flags | INVERT_INPUT;
