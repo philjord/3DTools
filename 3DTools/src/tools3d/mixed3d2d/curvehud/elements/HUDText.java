@@ -7,7 +7,7 @@ import org.jogamp.vecmath.Point2f;
 
 import com.jogamp.graph.font.Font;
 import com.jogamp.graph.font.FontSet;
-import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
+import com.jogamp.graph.ui.shapes.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 
@@ -75,22 +75,22 @@ public class HUDText {
 
 		if (textShadowElement == null) {
 
-			textShadowElement = new Label(canvas.getVertexFactory(), 0, currentTextFont, fontSize * 0.002f, text);
+			textShadowElement = new Label(0, currentTextFont, fontSize * 0.002f, text);
 			textShadowElement.setEnabled(true);
 			textShadowElement.setColor(textShadowColor.x, textShadowColor.y, textShadowColor.z, textShadowColor.w);
 
-			textElement = new Label(canvas.getVertexFactory(), 0, currentTextFont, fontSize * 0.002f, text);
+			textElement = new Label(0, currentTextFont, fontSize * 0.002f, text);
 			textElement.setEnabled(true);
 			textElement.setColor(currentTextColor.x, currentTextColor.y, currentTextColor.z, currentTextColor.w);
 
 			if (alignHCenter) {
 				float tew = textElement.getBounds().getWidth();
 				float hOffset = (tew / 2.0f);
-				textElement.setTranslate(point.x - hOffset, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x - hOffset, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
 			} else {
-				textElement.setTranslate(point.x, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f, point.y + 0.005f, 0f);
 			}
 		}
 
@@ -114,11 +114,11 @@ public class HUDText {
 			if (alignHCenter) {
 				float tew = textElement.getBounds().getWidth();
 				float hOffset = (tew / 2.0f);
-				textElement.setTranslate(point.x - hOffset, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x - hOffset, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
 			} else {
-				textElement.setTranslate(point.x, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f, point.y + 0.005f, 0f);
 			}
 		}
 	}
@@ -138,11 +138,11 @@ public class HUDText {
 			if (alignHCenter) {
 				float tew = textElement.getBounds().getWidth();
 				float hOffset = (tew / 2.0f);
-				textElement.setTranslate(point.x - hOffset, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x - hOffset, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
 			} else {
-				textElement.setTranslate(point.x, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f, point.y + 0.005f, 0f);
 			}
 		}
 
@@ -165,11 +165,11 @@ public class HUDText {
 			if (alignHCenter) {
 				float tew = textElement.getBounds().getWidth();
 				float hOffset = (tew / 2.0f);
-				textElement.setTranslate(point.x - hOffset, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x - hOffset, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f - hOffset, point.y + 0.005f, 0f);
 			} else {
-				textElement.setTranslate(point.x, point.y, 0f);
-				textShadowElement.setTranslate(point.x - 0.005f, point.y + 0.005f, 0f);
+				textElement.moveTo(point.x, point.y, 0f);
+				textShadowElement.moveTo(point.x - 0.005f, point.y + 0.005f, 0f);
 			}
 			
 			//TODO: translate is waaay late much after test is changed, but these do not help

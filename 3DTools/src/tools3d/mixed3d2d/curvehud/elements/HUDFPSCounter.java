@@ -8,7 +8,7 @@ import org.jogamp.java3d.WakeupCriterion;
 import org.jogamp.java3d.WakeupOnElapsedFrames;
 import org.jogamp.java3d.WakeupOnElapsedTime;
 
-import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
+import com.jogamp.graph.ui.shapes.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.Utils3D;
@@ -59,7 +59,7 @@ public class HUDFPSCounter
 	{
 		fpsLabel = canvas3d2d.createLabel();
 		fpsLabel.setEnabled(true);
-		fpsLabel.translate(-0.98f, 0.9f, 0f);
+		fpsLabel.moveTo(-0.98f, 0.9f, 0f);
 		fpsLabel.setColor(1f, 1f, 0f, 1f);
 
 	}

@@ -3,7 +3,7 @@ package tools3d.mixed3d2d.curvehud.elements;
 import org.jogamp.vecmath.Quat4f;
 import org.jogamp.vecmath.Vector3f;
 
-import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
+import com.jogamp.graph.ui.shapes.Label;
 
 import tools3d.mixed3d2d.Canvas3D2D;
 import tools3d.utils.scenegraph.LocationUpdateListener;
@@ -27,7 +27,7 @@ public class HUDPosition implements LocationUpdateListener
 	{
 		posLabel = canvas3d2d.createLabel();
 		posLabel.setEnabled(true);
-		posLabel.translate(-0.98f, 0.8f, 0f);
+		posLabel.moveTo(-0.98f, 0.8f, 0f);
 		posLabel.setColor(0.0f, 0.1f, 0.1f, 0.85f);
 	}
 

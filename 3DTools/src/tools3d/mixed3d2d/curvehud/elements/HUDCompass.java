@@ -3,7 +3,7 @@ package tools3d.mixed3d2d.curvehud.elements;
 import org.jogamp.vecmath.Quat4f;
 import org.jogamp.vecmath.Vector3f;
 
-import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
+import com.jogamp.graph.ui.shapes.Label;
 
 import tools.CompassRotation;
 import tools3d.mixed3d2d.Canvas3D2D;
@@ -42,12 +42,12 @@ public class HUDCompass implements LocationUpdateListener
 	{
 		textElementBear = canvas.createLabel();
 		textElementBear.setEnabled(true);
-		textElementBear.translate(-0.98f, 0.74f, 0f);
+		textElementBear.moveTo(-0.98f, 0.74f, 0f);
 		textElementBear.setColor(0f, 0f, 0f, 1f);
 
 		textElementAzi = canvas.createLabel();
 		textElementAzi.setEnabled(true);
-		textElementAzi.translate(-0.98f, 0.7f, 0f);
+		textElementAzi.moveTo(-0.98f, 0.7f, 0f);
 		textElementAzi.setColor(0f, 0f, 0f, 1f);
 
 		//canvas.addElement(bgElement);

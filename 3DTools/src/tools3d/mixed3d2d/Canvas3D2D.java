@@ -4,21 +4,16 @@ import java.io.IOException;
 
 import org.jogamp.java3d.Canvas3D;
 
-import com.jogamp.graph.curve.opengl.RegionRenderer;
-import com.jogamp.graph.curve.opengl.RenderState;
 import com.jogamp.graph.font.Font;
-import com.jogamp.graph.font.FontFactory;
-import com.jogamp.graph.geom.SVertex;
-import com.jogamp.graph.geom.Vertex;
-import com.jogamp.graph.geom.Vertex.Factory;
+import com.jogamp.graph.ui.Scene;
+import com.jogamp.graph.ui.Shape;
+import com.jogamp.graph.ui.shapes.Label;
 import com.jogamp.newt.MonitorDevice;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.hudbasics.graph.demos.ui.Label;
-import com.jogamp.opengl.hudbasics.graph.demos.ui.SceneUIController;
-import com.jogamp.opengl.hudbasics.graph.demos.ui.UIShape;
+ 
 
 import tools3d.mixed3d2d.curvehud.elements.UbuntuFontLoader;
 
@@ -45,11 +40,7 @@ public class Canvas3D2D extends Canvas3D
 		outputOverlayDetails();
 	}
 
-	private RegionRenderer renderer;
-	private RenderState rs = RenderState.createRenderState(SVertex.factory());
-	private final float sceneDist = 10f;
-	private final float zNear = 0.1f, zFar = 100f;
-	private SceneUIController sceneUIController = new SceneUIController(sceneDist, zNear, zFar);
+	private Scene sceneUIController = new Scene();
 
 	private int renderModes = 0;
 	private Font font;
@@ -57,11 +48,7 @@ public class Canvas3D2D extends Canvas3D
 	
 	
 	private void initRenderer()
-	{
-		rs.setHintMask(RenderState.BITHINT_GLOBAL_DEPTH_TEST_ENABLED);
-		renderer = RegionRenderer.create(rs, RegionRenderer.defaultBlendEnable, RegionRenderer.defaultBlendDisable);
-	
-		sceneUIController.setRenderer(renderer);
+	{ 
 		sceneUIController.init(this.getGLWindow());
 		
 		try
@@ -145,25 +132,20 @@ public class Canvas3D2D extends Canvas3D
 		 * [FPS] Display 112.88889 dpi, fontSize 12.0 ppi -> pixelSize 15.679012
 		 */
 		final float pixelSizeFPS = fontSizeFpsPVP * this.getGLWindow().getSurfaceHeight();
-		Label ret = new Label(renderer.getRenderState().getVertexFactory(), renderModes, font, pixelSizeFPS * 0.1f, "");
+		Label ret = new Label(renderModes, font, pixelSizeFPS * 0.1f, "");
 		sceneUIController.addShape(ret);
 
 		return ret;
 	}
 
-	public void addUIShape(UIShape uiShape)
+	public void addUIShape(Shape uiShape)
 	{
 		sceneUIController.addShape(uiShape);
 	}
 
-	public void removeUIShape(UIShape uiShape)
+	public void removeUIShape(Shape uiShape)
 	{
 		sceneUIController.removeShape(uiShape);
-	}
-
-	public Factory<? extends Vertex> getVertexFactory()
-	{
-		return renderer.getRenderState().getVertexFactory();
 	}
 
 	public int getRenderMode()
