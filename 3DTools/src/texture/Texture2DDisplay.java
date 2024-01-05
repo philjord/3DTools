@@ -2,7 +2,6 @@ package texture;
 
 import java.io.InputStream;
 
-import org.jogamp.java3d.Alpha;
 import org.jogamp.java3d.BoundingSphere;
 import org.jogamp.java3d.BranchGroup;
 import org.jogamp.java3d.Canvas3D;
@@ -10,7 +9,6 @@ import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.GeometryArray;
 import org.jogamp.java3d.IndexedTriangleArray;
 import org.jogamp.java3d.PolygonAttributes;
-import org.jogamp.java3d.RotationInterpolator;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.Texture;
 import org.jogamp.java3d.Transform3D;
@@ -27,8 +25,6 @@ import org.jogamp.vecmath.Vector3f;
 
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
-
- 
 
 /**
  * very simple texture visualizer, throws up glwindow in java3d with esc key as the exit and a basic mouse rotate, to
@@ -85,8 +81,8 @@ public class Texture2DDisplay {
 		Shape3D shape = new Shape3D();
 		IndexedTriangleArray tri = new IndexedTriangleArray(4,
 				GeometryArray.USE_COORD_INDEX_ONLY | GeometryArray.COORDINATES | GeometryArray.TEXTURE_COORDINATE_2, 6);
-		tri.setCoordinate(0, new Point3f(-sw, 0.0f, 0.0f));
-		tri.setCoordinate(1, new Point3f(sw, 0.0f, 0.0f));
+		tri.setCoordinate(0, new Point3f(-sw, -sh, 0.0f));
+		tri.setCoordinate(1, new Point3f(sw, -sh, 0.0f));
 		tri.setCoordinate(2, new Point3f(sw, sh, 0.0f));
 		tri.setCoordinate(3, new Point3f(-sw, sh, 0.0f));
 
@@ -121,22 +117,15 @@ public class Texture2DDisplay {
 		Transform3D t3d = new Transform3D();
 		t3d.set(new Vector3f(0,0,-2));
 		tg1.setTransform(t3d);
-		
-		
+				
 		BoundingSphere bounds = new BoundingSphere(new Point3d(0.0, 0.0, 0.0), 5.0);
 		TransformGroup tg2 = new TransformGroup();
 		MouseRotate behavior = new MouseRotate(canvas3D);
 		behavior.setTransformGroup(tg2);
 		tg2.addChild(behavior);
 		behavior.setSchedulingBounds(bounds);
-		//Transform3D yAxis = new Transform3D();
-		//Alpha rotationAlpha = new Alpha(-1, 8000);
 		tg2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);		
-		//RotationInterpolator rotator = new RotationInterpolator(rotationAlpha, tg2, yAxis, 0.0f, (float)Math.PI * 2.0f);
-		//rotator.setSchedulingBounds(bounds);
 
-
-		//tg2.addChild(rotator);
 		tg2.addChild(shape);
 		tg1.addChild(tg2);
 		objRoot.addChild(tg1);
