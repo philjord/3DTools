@@ -64,6 +64,8 @@ public class Texture2DDisplay {
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.addBranchGraph(createSceneGraph(filename, inputStream));
 	}
+	
+	
 
 	/**
 	 * Builds a scenegraph for the application to render.
