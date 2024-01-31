@@ -25,7 +25,7 @@ public class YawPitch
 	 * 
 	 * NOTE We are using -z as "north" so 0 yaw points that direction
 	 * 
-	 * Pitch is up and down, so 0 is level PI is straight up -PI is straight down
+	 * Pitch is up and down, so 0 is level PI/2 is straight up -PI/2 is straight down
 	 */
 	public YawPitch()
 	{
