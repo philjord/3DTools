@@ -15,6 +15,8 @@ import org.jogamp.java3d.Node;
 */
 public class StructureUpdateBehavior extends QueuingCallbackBehavior implements QueuingCallbackBehavior.CallBack
 {
+	
+	public static long SLOW_TIME_MS = 5;
 	public StructureUpdateBehavior()
 	{
 		super();
@@ -78,7 +80,7 @@ public class StructureUpdateBehavior extends QueuingCallbackBehavior implements 
 				structureUpdate.parent.removeChild(structureUpdate.child);
 			}
 
-			if ((System.currentTimeMillis() - startTime) > 5)
+			if ((System.currentTimeMillis() - startTime) > SLOW_TIME_MS)
 				System.out.println("Structure (" + structureUpdate.type.name() + " " + structureUpdate.parent.getName() + "-"
 						+ structureUpdate.child.getName() + ") update took " + (System.currentTimeMillis() - startTime) + "ms");
 		}
