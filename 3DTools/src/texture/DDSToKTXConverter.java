@@ -79,7 +79,7 @@ public class DDSToKTXConverter {
 
 				if (fmt == DDSImage.D3DFMT_R8G8B8) {
 					format = FORMAT.ETC2PACKAGE_RGB;
-				} else if (fmt == DDSImage.D3DFMT_A8R8G8B8 || fmt == DDSImage.D3DFMT_X8R8G8B8) {
+				} else if (fmt == DDSImage.D3DFMT_A8R8G8B8 || fmt == DDSImage.D3DFMT_X8R8G8B8 || fmt == DDSImage.D3DFMT_A8B8G8R8) {
 					format = FORMAT.ETC2PACKAGE_RGBA;
 				} else if (fmt == DDSImage.D3DFMT_DXT1) {
 					if (!decomp.decompressedIsOpaque()) {
