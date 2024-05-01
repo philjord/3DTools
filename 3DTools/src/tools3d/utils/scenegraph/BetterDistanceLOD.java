@@ -25,13 +25,14 @@ public class BetterDistanceLOD extends Behavior
 
 	private float MIN_FADE_RANGE = 1f; //TODO: better as a percent of min dist?
 
-	private WakeupOnElapsedFrames wakeupFrame0 = new WakeupOnElapsedFrames(0, true);
+	private WakeupOnElapsedFrames wakeupFrame0 = new WakeupOnElapsedFrames(10, true);// make it a bit slow cos it's not real important not every frame important anyway
 
-	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(2, true);
+	// note these can't be shared which is a pity
+	private WakeupOnElapsedFrames wakeupFrame2 = new WakeupOnElapsedFrames(20, true);
 
-	private WakeupOnElapsedFrames wakeupFrame5 = new WakeupOnElapsedFrames(5, true);
+	private WakeupOnElapsedFrames wakeupFrame5 = new WakeupOnElapsedFrames(50, true);
 
-	private WakeupOnElapsedFrames wakeupFrame10 = new WakeupOnElapsedFrames(10, true);
+	private WakeupOnElapsedFrames wakeupFrame10 = new WakeupOnElapsedFrames(100, true);
 
 	private int prevIndex = -1;
 
@@ -257,7 +258,6 @@ public class BetterDistanceLOD extends Behavior
 
 		// Insert wakeup condition into queueif based on proximity to interesting ness
 		if (distDiff < 1.5)
-
 			wakeupOn(wakeupFrame0);
 		else if (distDiff < 5)
 			wakeupOn(wakeupFrame2);
