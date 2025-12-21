@@ -18,7 +18,7 @@ public class HUDCircle {
 
 	public void addToCanvas(Canvas3D2D canvas) {
 		labelButton = new Button(canvas.getRenderMode(), canvas.getFont(), "", 0.25f, 0.25f);
-		labelButton.setEnabled(true);
+		labelButton.setVisible(true);
 		labelButton.moveTo(0f, 0f, -0.1f);
 		labelButton.setColor(0.9f, 0.9f, 0.9f, 0.9f);
 		canvas.addUIShape(labelButton);

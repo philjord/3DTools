@@ -58,7 +58,7 @@ public class HUDFPSCounter
 	public void addToCanvas(Canvas3D2D canvas3d2d)
 	{
 		fpsLabel = canvas3d2d.createLabel();
-		fpsLabel.setEnabled(true);
+		fpsLabel.setVisible(true);
 		fpsLabel.moveTo(-0.98f, 0.9f, 0f);
 		fpsLabel.setColor(1f, 1f, 0f, 1f);
 

@@ -19,6 +19,9 @@ public class Camera extends Viewer
 	public static long MIN_FRAME_CYCLE_TIME = 15;// max 66fps
 
 	private double FOV = 80;
+	
+	// Joal is causing trouble so for now allow sound to be disabled, the boolean success = mixer.initialize(); on android causes a crash
+	public static boolean NO_SOUND = false;
 
 	public static JOALMixer mixer = null;
 
@@ -44,7 +47,7 @@ public class Camera extends Viewer
 		getView().setFieldOfView(fov);
 
 		//other wise restricted access exception
-		if (mixer == null && getView().getUserHeadToVworldEnable())
+		if (!NO_SOUND && mixer == null && getView().getUserHeadToVworldEnable())
 		{
 			// create and adds a joalmixer as the audio device
 			mixer = new JOALMixer(getPhysicalEnvironment());

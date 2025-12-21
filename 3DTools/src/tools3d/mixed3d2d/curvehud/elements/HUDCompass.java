@@ -41,12 +41,12 @@ public class HUDCompass implements LocationUpdateListener
 	public void addToCanvas(Canvas3D2D canvas)
 	{
 		textElementBear = canvas.createLabel();
-		textElementBear.setEnabled(true);
+		textElementBear.setVisible(true);
 		textElementBear.moveTo(-0.98f, 0.74f, 0f);
 		textElementBear.setColor(0f, 0f, 0f, 1f);
 
 		textElementAzi = canvas.createLabel();
-		textElementAzi.setEnabled(true);
+		textElementAzi.setVisible(true);
 		textElementAzi.moveTo(-0.98f, 0.7f, 0f);
 		textElementAzi.setColor(0f, 0f, 0f, 1f);
 

@@ -16,7 +16,7 @@ public class HUDCrossHair {
 
 	public void addToCanvas(Canvas3D2D canvas) {
 		crossHairCtr = new CrossHair(0, 0.05f, 0.05f, 0.002f);
-		crossHairCtr.setEnabled(true);
+		crossHairCtr.setVisible(true);
 		crossHairCtr.moveTo(0f, 0f, -0.1f);
 		crossHairCtr.setColor(0.9f, 0.9f, 0.9f, 0.9f);
 		canvas.addUIShape(crossHairCtr);

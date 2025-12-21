@@ -26,7 +26,7 @@ public class HUDPosition implements LocationUpdateListener
 	public void addToCanvas(Canvas3D2D canvas3d2d)
 	{
 		posLabel = canvas3d2d.createLabel();
-		posLabel.setEnabled(true);
+		posLabel.setVisible(true);
 		posLabel.moveTo(-0.98f, 0.8f, 0f);
 		posLabel.setColor(0.0f, 0.1f, 0.1f, 0.85f);
 	}

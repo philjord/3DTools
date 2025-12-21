@@ -76,11 +76,11 @@ public class HUDText {
 		if (textShadowElement == null) {
 
 			textShadowElement = new Label(0, currentTextFont, fontSize * 0.002f, text);
-			textShadowElement.setEnabled(true);
+			textShadowElement.setVisible(true);
 			textShadowElement.setColor(textShadowColor.x, textShadowColor.y, textShadowColor.z, textShadowColor.w);
 
 			textElement = new Label(0, currentTextFont, fontSize * 0.002f, text);
-			textElement.setEnabled(true);
+			textElement.setVisible(true);
 			textElement.setColor(currentTextColor.x, currentTextColor.y, currentTextColor.z, currentTextColor.w);
 
 			if (alignHCenter) {
