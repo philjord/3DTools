@@ -26,6 +26,11 @@ public class Canvas3D2D extends Canvas3D
 		super(glwin);	 
 		initRenderer();
 	}	
+	
+	public Canvas3D2D(boolean offScreen)
+	{
+		super(offScreen);
+	}
 
 	public Canvas3D2D()
 	{
