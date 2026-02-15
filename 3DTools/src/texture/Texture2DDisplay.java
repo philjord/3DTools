@@ -42,6 +42,7 @@ public class Texture2DDisplay {
 		sortOutCanvas();
 
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
+		su.getViewer().getView().setBackClipDistance(5000);
 		su.addBranchGraph(createSceneGraph(filename, inputStream));
 	}
 
@@ -49,6 +50,7 @@ public class Texture2DDisplay {
 		sortOutCanvas();
 
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
+		su.getViewer().getView().setBackClipDistance(5000);
 		su.addBranchGraph(createSceneGraph(filename, tex));
 	}
 
@@ -72,6 +74,8 @@ public class Texture2DDisplay {
 		});
 
 		canvas3D.getGLWindow().setSize(800, 800);
+		CompressedTextureLoader.setAnisotropicFilterDegree(8);
+		
 	}
 
 	/**
