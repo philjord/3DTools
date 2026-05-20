@@ -152,11 +152,50 @@ public class NavigationInputNewtKey implements KeyListener
 		{
 			if (upHeldDown && !downHeldDown)
 			{
-				navigationProcesor.setYChange(VERTICAL_RATE);
+				// slowly increase the rise speed
+				Thread upT = new Thread() {
+					@Override
+					public void run() {
+						VERTICAL_RATE = 0f;
+						for (int i = 5; i < 20; i++) {
+							if(upHeldDown) {// skip out when key released
+								VERTICAL_RATE += i;
+								navigationProcesor.setYChange(VERTICAL_RATE);
+							}
+							else
+								break;
+							
+							try {
+								Thread.sleep(60);
+							} catch (InterruptedException e) {
+							}
+						}					
+					}
+				};
+				upT.start();				
 			}
 			else if (downHeldDown && !upHeldDown)
-			{
-				navigationProcesor.setYChange(-VERTICAL_RATE);
+			{// slowly increase the lower speed
+				Thread upT = new Thread() {
+					@Override
+					public void run() {
+						VERTICAL_RATE = 0f;
+						for (int i = 5; i < 20; i++) {
+							if(downHeldDown) {// skip out when key released
+								VERTICAL_RATE += i;
+								navigationProcesor.setYChange(-VERTICAL_RATE);
+							}
+							else
+								break;
+							
+							try {
+								Thread.sleep(60);
+							} catch (InterruptedException e) {
+							}
+						}					
+					}
+				};
+				upT.start();				
 			}
 			else
 			{
