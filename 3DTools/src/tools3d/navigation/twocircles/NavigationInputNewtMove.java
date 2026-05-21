@@ -14,7 +14,7 @@ public class NavigationInputNewtMove implements MouseListener
 
 	public final static float FORWARD_RATE = 8.0f;
 
-	public final static float FAST_FORWARD_RATE = 100.0f;
+	public static float FAST_FORWARD_RATE = 100.0f;
 
 	public final static float BACKWARD_RATE = 3.5f;
 
@@ -104,7 +104,27 @@ public class NavigationInputNewtMove implements MouseListener
 	{
 		if (runHeldDown)
 		{
-			navigationProcesor.setZChange(FAST_FORWARD_RATE);
+			// slowly increase the speed
+			Thread upT = new Thread() {
+				@Override
+				public void run() {
+					FAST_FORWARD_RATE = 0f;
+					for (int i = 12; i < 20; i++) {
+						if(runHeldDown) {// skip out when key released
+							FAST_FORWARD_RATE += i;
+							navigationProcesor.setZChange(FAST_FORWARD_RATE);
+						}
+						else
+							break;
+						
+						try {
+							Thread.sleep(175);
+						} catch (InterruptedException e) {
+						}
+					}					
+				}
+			};
+			upT.start();		
 		}
 		else if (backHeldDown)
 		{
@@ -135,11 +155,50 @@ public class NavigationInputNewtMove implements MouseListener
 		{
 			if (upHeldDown && !downHeldDown)
 			{
-				navigationProcesor.setYChange(VERTICAL_RATE);
+				// slowly increase the rise speed
+				Thread upT = new Thread() {
+					@Override
+					public void run() {
+						VERTICAL_RATE = 0f;
+						for (int i = 5; i < 20; i++) {
+							if(upHeldDown) {// skip out when key released
+								VERTICAL_RATE += i;
+								navigationProcesor.setYChange(VERTICAL_RATE);
+							}
+							else
+								break;
+							
+							try {
+								Thread.sleep(60);
+							} catch (InterruptedException e) {
+							}
+						}					
+					}
+				};
+				upT.start();				
 			}
 			else if (downHeldDown && !upHeldDown)
-			{
-				navigationProcesor.setYChange(-VERTICAL_RATE);
+			{// slowly increase the lower speed
+				Thread upT = new Thread() {
+					@Override
+					public void run() {
+						VERTICAL_RATE = 0f;
+						for (int i = 5; i < 20; i++) {
+							if(downHeldDown) {// skip out when key released
+								VERTICAL_RATE += i;
+								navigationProcesor.setYChange(-VERTICAL_RATE);
+							}
+							else
+								break;
+							
+							try {
+								Thread.sleep(60);
+							} catch (InterruptedException e) {
+							}
+						}					
+					}
+				};
+				upT.start();				
 			}
 			else
 			{

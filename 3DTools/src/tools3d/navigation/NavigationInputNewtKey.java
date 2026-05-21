@@ -10,7 +10,7 @@ public class NavigationInputNewtKey implements KeyListener
 
 	public final static float FORWARD_RATE = 8.0f;
 
-	public final static float FAST_FORWARD_RATE = 100.0f;
+	public static float FAST_FORWARD_RATE = 100.0f;
 
 	public final static float BACKWARD_RATE = 3.5f;
 
@@ -121,7 +121,26 @@ public class NavigationInputNewtKey implements KeyListener
 	{
 		if (runHeldDown)
 		{
-			navigationProcesor.setZChange(FAST_FORWARD_RATE);
+			// slowly increase the speed
+			Thread upT = new Thread() {
+				@Override
+				public void run() {
+					FAST_FORWARD_RATE = 0f;
+					for (int i = 12; i < 20; i++) {
+						if (runHeldDown) {// skip out when key released
+							FAST_FORWARD_RATE += i;
+							navigationProcesor.setZChange(FAST_FORWARD_RATE);
+						} else
+							break;
+
+						try {
+							Thread.sleep(175);
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+			};
+			upT.start();
 		}
 		else if (backHeldDown)
 		{
