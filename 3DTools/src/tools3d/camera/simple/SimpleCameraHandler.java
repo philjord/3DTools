@@ -192,11 +192,11 @@ public class SimpleCameraHandler extends BranchGroup
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
 
-				if (e.getKeyCode() == KeyEvent.VK_PLUS || e.getKeyCode() == KeyEvent.VK_2)
+				if (e.getKeyCode() == KeyEvent.VK_PLUS)
 				{
 					forward();
 				}
-				else if (e.getKeyCode() == KeyEvent.VK_MINUS || e.getKeyCode() == KeyEvent.VK_8)
+				else if (e.getKeyCode() == KeyEvent.VK_MINUS)
 				{
 					back();
 				}
