@@ -1,6 +1,7 @@
 package texture;
 
 import java.io.InputStream;
+import java.util.ArrayDeque;
 
 import org.jogamp.java3d.BoundingSphere;
 import org.jogamp.java3d.BranchGroup;
@@ -8,6 +9,7 @@ import org.jogamp.java3d.Canvas3D;
 import org.jogamp.java3d.ColoringAttributes;
 import org.jogamp.java3d.GeometryArray;
 import org.jogamp.java3d.IndexedTriangleArray;
+import org.jogamp.java3d.JoglesPipeline;
 import org.jogamp.java3d.PolygonAttributes;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.Texture;
@@ -27,6 +29,7 @@ import org.jogamp.vecmath.Vector3f;
 import com.jogamp.newt.event.KeyAdapter;
 import com.jogamp.newt.event.KeyEvent;
 
+
 /**
  * very simple texture visualizer, throws up glwindow in java3d with esc key as the exit and a basic mouse rotate, to
  * display a quad with compressed DDS or ETC2 texture
@@ -35,32 +38,46 @@ import com.jogamp.newt.event.KeyEvent;
  */
 public class Texture2DDisplay {
 
-	// only one showing at a time , cause removeNotify breaks things when 2 glwindows are showing, but it shouldn't and I should fix it!
-	public static Canvas3D canvas3D;
+	private static final int			MAX_CANVAS3D_VISIBLE	= 3;
+	public static ArrayDeque<Canvas3D>	canvas3Ds				= new ArrayDeque<Canvas3D>();	// fifo list
 
 	public static void showImageInShape(String filename, InputStream inputStream) {
-		sortOutCanvas();
+		// FIXME: the holding of context may add speed but it causes the pipeline to not call releaseContext on each update pass
+		// on the GLWindow Surface so the GLWindow setVisible(false) won't remove it
+		// and it can't be destroyed, to fix this issue at the least stopping renderer should force a releaseCtx on the pipeline		
+		JoglesPipeline.LATE_RELEASE_CONTEXT = false;
 
+		Canvas3D canvas3D = sortOutCanvas();
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewer().getView().setBackClipDistance(5000);
-		su.addBranchGraph(createSceneGraph(filename, inputStream));
+		su.addBranchGraph(createSceneGraph(filename, inputStream, canvas3D));
 	}
 
 	public static void showImageInShape(String filename, Texture tex) {
-		sortOutCanvas();
 
+		// FIXME: the holding of context may add speed but it causes the pipeline to not call releaseContext on each update pass
+		// on the GLWindow Surface so the GLWindow setVisible(false) won't remove it
+		// and it can't be destroyed, to fix this issue at the least stopping renderer should force a releaseCtx on the pipeline		
+		JoglesPipeline.LATE_RELEASE_CONTEXT = false;
+
+		Canvas3D canvas3D = sortOutCanvas();
 		SimpleUniverse su = new SimpleUniverse(canvas3D);
 		su.getViewer().getView().setBackClipDistance(5000);
-		su.addBranchGraph(createSceneGraph(filename, tex));
+		su.addBranchGraph(createSceneGraph(filename, tex, canvas3D));
+
 	}
 
-	private static void sortOutCanvas() {
-		if (canvas3D != null) {
-			canvas3D.removeNotify();
-			canvas3D.getGLWindow().destroy();
+	private static Canvas3D sortOutCanvas() {
+
+		while (canvas3Ds.size() > MAX_CANVAS3D_VISIBLE - 1) {
+			Canvas3D c = canvas3Ds.removeFirst();
+			c.removeNotify();
+			c.getGLWindow().destroy();
 		}
 
-		canvas3D = new Canvas3D();
+		Canvas3D canvas3D = new Canvas3D();
+		canvas3Ds.addLast(canvas3D);
+
 		canvas3D.addNotify();
 
 		canvas3D.getGLWindow().addKeyListener(new KeyAdapter() {
@@ -75,19 +92,20 @@ public class Texture2DDisplay {
 
 		canvas3D.getGLWindow().setSize(800, 800);
 		CompressedTextureLoader.setAnisotropicFilterDegree(8);
-		
+		return canvas3D;
 	}
 
 	/**
 	 * Builds a scenegraph for the application to render.
+	 * @param canvas3d
 	 * @return the root level of the scenegraph
 	 */
-	private static BranchGroup createSceneGraph(String filename, InputStream inputStream) {
+	private static BranchGroup createSceneGraph(String filename, InputStream inputStream, Canvas3D canvas3d) {
 		Texture tex = CompressedTextureLoader.UNKNOWN.getTexture(filename, inputStream);
-		return createSceneGraph(filename, tex);
+		return createSceneGraph(filename, tex, canvas3d);
 	}
 
-	private static BranchGroup createSceneGraph(String filename, Texture tex) {
+	private static BranchGroup createSceneGraph(String filename, Texture tex, Canvas3D canvas3d) {
 		final BranchGroup objRoot = new BranchGroup();
 
 		double w = tex.getWidth();
@@ -139,15 +157,14 @@ public class Texture2DDisplay {
 
 		TransformGroup tg2 = new TransformGroup();
 		tg2.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		MouseWheelZoom mouseWheelZoom = new MouseWheelZoom(canvas3D);
+		MouseWheelZoom mouseWheelZoom = new MouseWheelZoom(canvas3d);
 		mouseWheelZoom.setTransformGroup(tg2);
 		tg2.addChild(mouseWheelZoom);
 		mouseWheelZoom.setSchedulingBounds(bounds);
-		
-		
+
 		TransformGroup tg3 = new TransformGroup();
 		tg3.setCapability(TransformGroup.ALLOW_TRANSFORM_WRITE);
-		MouseRotate mouseRotate = new MouseRotate(canvas3D);
+		MouseRotate mouseRotate = new MouseRotate(canvas3d);
 		mouseRotate.setTransformGroup(tg3);
 		tg3.addChild(mouseRotate);
 		mouseRotate.setSchedulingBounds(bounds);

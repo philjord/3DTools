@@ -10,7 +10,7 @@
 	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/jl1.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/lib/tritonus_share.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/MpegAudioSPI1.9.5/mp3spi1.9.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/jogamp-fat-2.6.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/jogamp-fat-2.6.0.jar" sourcepath="C:/Users/pjnz/.m2/repository/org/jogamp/jogl/jogl-all/2.6.0/jogl-all-2.6.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/jogl-fonts-p0.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ETCPack"/>
 	<classpathentry exported="true" kind="lib" path="C:/Users/pjnz/.m2/repository/org/jogamp/java3d/java3d-core-and/1.7.2/java3d-core-and-1.7.2.jar" sourcepath="C:/Users/pjnz/.m2/repository/org/jogamp/java3d/java3d-core-and/1.7.2/java3d-core-and-1.7.2-sources.jar">
