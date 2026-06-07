@@ -590,18 +590,13 @@ public class DDSDecompressorExt {
 		int blockWidth = Math.min(width, BLOCK_SIZE);
 		int blockHeight = Math.min(height, BLOCK_SIZE);
 
-		ByteBuffer pixels = ByteBuffer.allocateDirect(width * height * 1).order(ByteOrder.nativeOrder());
+		ByteBuffer directBuffer = ByteBuffer.allocateDirect(width * height * 1).order(ByteOrder.nativeOrder());
+		ByteBuffer pixels = directBuffer;
 		
 		for (int row = 0; row < numBlocksHigh; row++) {
 			for (int col = 0; col < numBlocksWide; col++) {
-				int red0 = buffer.get(); //signed byte
-				int red1 = buffer.get(); //signed byte
-				
-				if(!signed) {
-					red0 &= 0xff; //unsigned byte
-					red1 &= 0xff; //unsigned byte
-				}
-					
+				int red0 = signed ? buffer.get() : buffer.get() & 0xff;
+				int red1 = signed ? buffer.get() : buffer.get() & 0xff;									
 
 				// next 6 bytes are a look up list (note long casts, important!)
 				long redBits = (buffer.get() & 0xffL) << 0L //
@@ -638,7 +633,7 @@ public class DDSDecompressorExt {
 						//FIXME: should I ever keep -1 to 1 range? also test signed data not tested
 						//normalised -1 to 1 range of SNORM to 0 to 1
 						if(signed)
-							red += 255;
+							red += 127;
 						
 						pixels.put(((row * blockHeight) * (numBlocksWide * blockWidth)) // previous columns and row
 									+ (br * (numBlocksWide * blockWidth)) + (col * blockWidth) + bc,
@@ -648,17 +643,17 @@ public class DDSDecompressorExt {
 			}
 
 		}
-		return new NioImageBuffer(width, height, ImageType.TYPE_BYTE_GRAY, pixels);
+		return new NioImageBuffer(width, height, ImageType.TYPE_BYTE_GRAY, directBuffer);
 	}
 
 	//https://en.wikipedia.org/wiki/S3_Texture_Compression
 	//BC5 	Interpolated two-channel
 	private NioImageBuffer decodeBC5UNio() {
-		return decodeBC4Nio(false);
+		return decodeBC5Nio(false);
 	}
 
 	private NioImageBuffer decodeBC5SNio() {
-		return decodeBC4Nio(true);
+		return decodeBC5Nio(true);
 	}
 
 	private NioImageBuffer decodeBC5Nio(boolean signed) {
@@ -679,13 +674,8 @@ public class DDSDecompressorExt {
 		
 		for (int row = 0; row < numBlocksHigh; row++) {
 			for (int col = 0; col < numBlocksWide; col++) {
-				int red0 = buffer.get(); //signed byte
-				int red1 = buffer.get(); //signed byte
-				
-				if(!signed) {
-					red0 &= 0xff; //unsigned byte
-					red1 &= 0xff; //unsigned byte
-				}
+				int red0 = signed ? buffer.get() : buffer.get() & 0xff;
+				int red1 = signed ? buffer.get() : buffer.get() & 0xff;
 					
 
 				// next 6 bytes are a look up list (note long casts, important!)
@@ -696,13 +686,8 @@ public class DDSDecompressorExt {
 									| (buffer.get() & 0xffL) << 32L //
 									| (buffer.get() & 0xffL) << 40L;//
 				
-				int green0 = buffer.get(); //signed byte
-				int green1 = buffer.get(); //signed byte
-				
-				if(!signed) {
-					green0 &= 0xff; //unsigned byte
-					green1 &= 0xff; //unsigned byte
-				}
+				int green0 = signed ? buffer.get() : buffer.get() & 0xff;
+				int green1 = signed ? buffer.get() : buffer.get() & 0xff;
 					
 
 				// next 6 bytes are a look up list (note long casts, important!)
@@ -742,7 +727,7 @@ public class DDSDecompressorExt {
 						int green = 0;
 
 						if (greenCode == 0) {
-							green = red0;
+							green = green0;
 						} else if (greenCode == 1) {
 							green = green1;
 						} else if (green0 > green1) {
@@ -760,8 +745,8 @@ public class DDSDecompressorExt {
 						//FIXME: should I ever keep -1 to 1 range? also test signed data not tested
 						//normalised -1 to 1 range of SNORM to 0 to 1
 						if(signed) {
-							red += 255;
-							green += 255;
+							red += 127;
+							green += 127;
 						}
 						
 						short pixel88 = (short)((green << 8) | (red << 0));
@@ -773,7 +758,7 @@ public class DDSDecompressorExt {
 			}
 
 		}
-		return new NioImageBuffer(width, height, ImageType.TYPE_BYTE_RG, pixels);
+		return new NioImageBuffer(width, height, ImageType.TYPE_BYTE_RG, directBuffer);
 	}
 
 	/**
