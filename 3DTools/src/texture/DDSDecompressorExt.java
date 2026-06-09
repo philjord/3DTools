@@ -715,9 +715,9 @@ public class DDSDecompressorExt {
 							red = ((8 - redCode) * red0 + (redCode - 1) * red1) / 7;
 						} else {
 							if (redCode == 6)
-								red = signed ? -127 : 0;
+								red = signed ? -128 : 0;
 							else if (redCode == 7)
-								red =  signed ? 126 : 255;
+								red =  signed ? 127 : 255;
 							else
 								red = ((6 - redCode) * red0 + (redCode - 1) * red1) / 5;
 						}
@@ -734,9 +734,9 @@ public class DDSDecompressorExt {
 							green = ((8 - greenCode) * green0 + (greenCode - 1) * green1) / 7;
 						} else {
 							if (greenCode == 6)
-								green = signed ? -127 : 0;
+								green = signed ? -128 : 0;
 							else if (greenCode == 7)
-								green =  signed ? 126 : 255;
+								green =  signed ? 127 : 255;
 							else
 								green = ((6 - greenCode) * green0 + (greenCode - 1) * green1) / 5;
 						}
