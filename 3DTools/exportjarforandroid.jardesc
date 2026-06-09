@@ -11,7 +11,26 @@
         </sealing>
     </manifest>
     <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
-        <javaElement handleIdentifier="=3DTools/src"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;org.jogamp.java3d{J3dUtil.java"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;de.fruitfly.ovr"/>
         <javaElement handleIdentifier="=Tools/src"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;texture"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.audio"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.audio.converter"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.camera"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.camera.simple"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.mixed3d2d"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.mixed3d2d.curvehud.elements"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.navigation"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.navigation.rules"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.navigation.twocircles"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.occulsion.frustum"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.ovr"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.universe"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.utils"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.utils.infoText"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.utils.leafnode"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.utils.loader"/>
+        <javaElement handleIdentifier="=3DTools/src&lt;tools3d.utils.scenegraph"/>
     </selectedElements>
 </jardesc>
