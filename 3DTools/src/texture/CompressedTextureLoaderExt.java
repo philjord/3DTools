@@ -792,7 +792,7 @@ public abstract class CompressedTextureLoaderExt {
 
 				tex.setName(filename);
 
-				tex.setBaseLevel(0);
+				tex.setBaseLevel(0); // notice we litterraly throw away the real 0 so this is the level==1 as the 0
 				tex.setMaximumLevel(levels > 2 ? levels - 2 : 0);
 
 				tex.setBoundaryModeS(Texture.WRAP);
