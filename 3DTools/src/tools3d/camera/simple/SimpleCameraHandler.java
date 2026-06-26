@@ -118,7 +118,7 @@ public class SimpleCameraHandler extends BranchGroup
 			{
 				if (e.getButton() == MouseEvent.BUTTON1)
 				{
-					centerOnPickedObject(e);
+					centerOnPickedObject(e);				
 				}
 				else if (e.getButton() == MouseEvent.BUTTON3)
 				{
@@ -264,7 +264,15 @@ public class SimpleCameraHandler extends BranchGroup
 		}
 		catch (NullPointerException e)
 		{
-			e.printStackTrace();
+			//extremely common, bug in Java3D
+			/* java.lang.NullPointerException
+			at org.jogamp.java3d.IndexedTriangleStripArrayRetained.intersect(IndexedTriangleStripArrayRetained.java:67)
+			at org.jogamp.java3d.Shape3DRetained.intersect(Shape3DRetained.java:684)
+			at org.jogamp.java3d.PickInfo.pick(PickInfo.java:889)
+			at org.jogamp.java3d.BranchGroupRetained.pickAllSorted(BranchGroupRetained.java:304)
+			at org.jogamp.java3d.BranchGroupRetained.pickClosest(BranchGroupRetained.java:337)
+			at org.jogamp.java3d.BranchGroup.pickClosest(BranchGroup.java:457)
+			at org.jogamp.java3d.utils.pickfast.PickTool.pickClosest(PickTool.java:444)*/
 		}
 
 		if (result != null)
