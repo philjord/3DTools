@@ -181,12 +181,14 @@ public abstract class VaryingLODBehaviour extends Behavior
 		//System.out.println("dist " + dist);
 		*/
 
-		if (!frustumOnly)
+		//FIXME: frustrumOnly is well broken
+		if (!frustumOnly || true)
 		{
 			process();
 		}
 		else
 		{
+			//tODO: very very breaken code not good at all!
 			//New code for in frustum only	
 			try
 			{
@@ -204,13 +206,20 @@ public abstract class VaryingLODBehaviour extends Behavior
 
 					b.transform(mv);
 
+					// This looks to be adapted from 
+					//OrientedShape3DRetained.updateOrientedTransform
+					
+					// a better option would be
+					//GeometryStrucutre.getVisibleBHTrees
+					
+					
 					//NifCharacter is good
 					//J3dNiController seems normally to be a 50 (bones good, but flip texture no so)
 					//if (b.getRadius() == 50)
 
 					// get center
 					b.getCenter(c);
-					// get trans from world to clip
+					// get trans from world to clip  
 					view.getCanvas3D(0).getVworldProjection(pj, pr);
 					//use a 4tuple to allow perspective to be returned
 					t.set(c.x, c.y, c.z, 1);
@@ -237,6 +246,11 @@ public abstract class VaryingLODBehaviour extends Behavior
 					if (sphereIntersectUnitBox(c, r2))
 					{
 						process();
+					} else
+					{
+					//	System.out.println("I chose not to process based on");
+					//	System.out.println("c " + c+ " r2 " + r2);
+					//	System.out.println("sphereIntersectUnitBox(c, r2) " + sphereIntersectUnitBox(c, r2));
 					}
 				}
 
