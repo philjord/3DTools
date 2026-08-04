@@ -11,10 +11,12 @@ import org.jogamp.java3d.GeometryArray;
 import org.jogamp.java3d.IndexedTriangleArray;
 import org.jogamp.java3d.JoglesPipeline;
 import org.jogamp.java3d.PolygonAttributes;
+import org.jogamp.java3d.RenderingAttributes;
 import org.jogamp.java3d.Shape3D;
 import org.jogamp.java3d.Texture;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
+import org.jogamp.java3d.TransparencyAttributes;
 import org.jogamp.java3d.compressedtexture.CompressedTextureLoader;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseRotate;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseWheelZoom;
@@ -145,7 +147,20 @@ public class Texture2DDisplay {
 		ap.setColoringAttributes(ca);
 
 		ap.setTexture(tex);
-
+		
+		boolean alphaTest = false;
+		if(alphaTest) {
+			// to show the alpha channel I need a ta, but can be optional on a geometry
+			//TODO: a key that turns this on off
+			TransparencyAttributes ta = new TransparencyAttributes();
+			ta.setTransparencyMode(TransparencyAttributes.BLENDED);
+			ap.setTransparencyAttributes(ta);
+			RenderingAttributes ra = new RenderingAttributes();
+			ra.setAlphaTestFunction(RenderingAttributes.GREATER);
+			ra.setAlphaTestValue(156f/255f);// this needs to match the alpha test value in the texture, notice it can be multiplied by the vertex color alpha
+			ap.setRenderingAttributes(ra);
+		}
+		
 		shape.setAppearance(ap);
 
 		TransformGroup tg1 = new TransformGroup();
