@@ -7,7 +7,6 @@ import java.nio.ByteBuffer;
 
 import org.jogamp.java3d.NioImageBuffer;
 import org.jogamp.java3d.NioImageBuffer.ImageType;
-import org.jogamp.java3d.compressedtexture.CompressedTextureLoader;
 
 import compressedtexture.DDSImage;
 import etcpack.ETCPack.FORMAT;
@@ -17,7 +16,7 @@ public class DDSToKTXConverter {
 
 	public static ByteBuffer convertDDSToKTX(InputStream inputStream, String filename) {
 		try {
-			DDSImage ddsImage = DDSImage.read(CompressedTextureLoader.toByteBuffer(inputStream));
+			DDSImage ddsImage = DDSImage.read(CompressedTextureLoaderExt.toByteBuffer(inputStream));
 			return convertDDSToKTX(ddsImage, filename);
 		} catch (IOException e) {
 			System.out.println("convertDDSToKTX had an IO problem with " + filename + " : " + e.getMessage());

@@ -99,7 +99,7 @@ public class SimpleCameraHandler extends BranchGroup {
 				yawPitch.set(viewTransform);
 				viewTransform.setRotation(yawPitch.get(new Quat4d()));
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
-				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " Loc = " + loc);
+				//canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " Loc = " + loc);
 			}
 		});
 
@@ -147,7 +147,7 @@ public class SimpleCameraHandler extends BranchGroup {
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
 
-				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " Loc = " + loc);
+				//canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " Loc = " + loc);
 			}
 
 		});
@@ -197,7 +197,7 @@ public class SimpleCameraHandler extends BranchGroup {
 
 				viewingPlatform.getViewPlatformTransform().setTransform(viewTransform);
 
-				canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
+				//canvas3D.getGLWindow().setTitle("Rot = " + yawPitch + " loc = " + loc);
 			}
 
 		});

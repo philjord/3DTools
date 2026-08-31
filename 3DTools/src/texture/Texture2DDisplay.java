@@ -17,7 +17,6 @@ import org.jogamp.java3d.Texture;
 import org.jogamp.java3d.Transform3D;
 import org.jogamp.java3d.TransformGroup;
 import org.jogamp.java3d.TransparencyAttributes;
-import org.jogamp.java3d.compressedtexture.CompressedTextureLoader;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseRotate;
 import org.jogamp.java3d.utils.behaviors.mouse.MouseWheelZoom;
 import org.jogamp.java3d.utils.shader.SimpleShaderAppearance;
@@ -93,7 +92,7 @@ public class Texture2DDisplay {
 		});
 
 		canvas3D.getGLWindow().setSize(800, 800);
-		CompressedTextureLoader.setAnisotropicFilterDegree(8);
+		CompressedTextureLoaderExt.setAnisotropicFilterDegree(8);
 		return canvas3D;
 	}
 
@@ -103,11 +102,12 @@ public class Texture2DDisplay {
 	 * @return the root level of the scenegraph
 	 */
 	private static BranchGroup createSceneGraph(String filename, InputStream inputStream, Canvas3D canvas3d) {
-		Texture tex = CompressedTextureLoader.UNKNOWN.getTexture(filename, inputStream);
+		Texture tex = CompressedTextureLoaderExt.UNKNOWN.getTexture(filename, inputStream);
 		return createSceneGraph(filename, tex, canvas3d);
 	}
 
 	private static BranchGroup createSceneGraph(String filename, Texture tex, Canvas3D canvas3d) {
+		canvas3d.getGLWindow().setTitle("Texture: " + filename);	
 		final BranchGroup objRoot = new BranchGroup();
 
 		double w = tex.getWidth();
